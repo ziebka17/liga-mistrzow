@@ -63,10 +63,36 @@
 </head>
 <body class="font-body text-slate-100 antialiased">
 
+<!-- EKRAN LOGOWANIA -->
+<div id="loginOverlay" class="fixed inset-0 z-[999] bg-[#050A23]/98 backdrop-blur-md flex items-center justify-center p-4">
+  <div class="panel-box p-6 sm:p-8 w-full max-w-md space-y-5 shadow-2xl border-zloto/30">
+    <div class="text-center">
+      <div class="text-zloto tracking-[.4em] text-xs">★ ★ ★ ★ ★</div>
+      <h2 class="font-display font-black text-xl sm:text-2xl mt-2 text-zloto">Liga Mistrzów</h2>
+      <p class="text-xs text-mut mt-1">Zbita Szybka · Zaloguj się do systemu</p>
+    </div>
+    <form id="loginForm" class="space-y-4" onsubmit="return false;">
+      <div>
+        <label class="block text-[10px] font-bold text-mut uppercase tracking-widest mb-1.5">Login</label>
+        <input id="loginInput" type="text" placeholder="np. antek_klif" class="w-full bg-[#050A23] border border-linia rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-zloto focus:outline-none transition">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-mut uppercase tracking-widest mb-1.5">Hasło</label>
+        <input id="passInput" type="password" placeholder="••••••••••••" class="w-full bg-[#050A23] border border-linia rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-zloto focus:outline-none transition">
+      </div>
+      <div id="loginErr" class="text-xs text-red-400 font-semibold min-h-[16px] text-center"></div>
+      <button id="loginBtn" type="submit" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZALOGUJ SIĘ</button>
+    </form>
+  </div>
+</div>
+
 <div class="bg-[#03061A] border-b border-linia/60 text-[11px]">
   <div class="max-w-[1480px] mx-auto px-4 py-1.5 flex items-center justify-between gap-3">
     <div class="text-mut num" id="matchday">—</div>
     <div class="flex items-center gap-2">
+      <span id="userBar" class="text-zloto font-bold hidden"></span>
+      <button id="logoutBtn" class="hidden text-[10px] text-red-400 hover:underline border border-red-500/30 rounded px-1.5 py-0.5">Wyloguj</button>
+      <span class="text-linia">|</span>
       <span id="statusLock" class="text-mut num">—</span>
       <span class="text-linia">|</span>
       <span class="flex items-center gap-1.5 text-mut"><span id="kropka" class="w-2 h-2 rounded-full bg-slate-500"></span><span id="statusTxt">łączenie…</span></span>
@@ -180,6 +206,29 @@ const firebaseConfig = {
   measurementId: "G-GRQ7HEZDC2"
 };
 const ADMIN_PIN = "6969";
+
+// BAZA UNIKALNYCH HASEŁ I LOGINÓW
+const USER_CREDENTIALS = {
+  "antek_klif": "A#9kL!2p8$xQ",
+  "michal_klif": "M8!xF#3vL9$z",
+  "szymon_klif": "S#4zP!7vK1$w",
+  "marcel_sco": "M#2xR!9vS5$q",
+  "wiktor_sco": "W#8vK!3xS7$m",
+  "mateusz_h_sco": "H#5mS!1vO9$p",
+  "jakub_sco": "J#3mS!8vO2$k",
+  "krystian_krk": "K#7jK!4vR6$z",
+  "adrian_krk": "A#1rK!9vR4$p",
+  "michal_krk": "M#6rK!2vR8$s",
+  "mateusz_szcz": "M#3sS!7vZ5$w",
+  "piotrek_szcz": "P#8sS!1vZ9$m",
+  "maks_rzm": "M#5rZ!4vM2$k",
+  "szymon_rzm": "S#9rZ!8vM1$x",
+  "kris_rzm": "K#2rZ!6vM3$p",
+  "kacper_wwa": "K#7wW!3vA9$z",
+  "cupryjak_wwa": "C#4wW!8vA1$m",
+  "olivier_wwa": "O#1wW!5vA6$p"
+};
+
 let fb = null, db = null, demo = false;
 
 const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 22, DNI_WOLNE = [1, 2];
@@ -214,6 +263,68 @@ const $ = (id) => document.getElementById(id);
 const fmt = (n) => Math.round(n).toLocaleString("pl-PL");
 const zl = (n) => fmt(n) + " zł";
 const imie = (n) => n.split(" (")[0];
+
+// ═══════════════ LOGOWANIE I AUTORYZACJA ═══════════════
+function sprawdzLogowanie() {
+  const loggedUser = localStorage.getItem("lm_logged_user");
+  const overlay = $("loginOverlay");
+  const userBar = $("userBar");
+  const logoutBtn = $("logoutBtn");
+
+  if (loggedUser && USER_CREDENTIALS[loggedUser]) {
+    overlay.classList.add("hidden");
+    const p = PLAYERS.find(x => x.id === loggedUser);
+    if (userBar) {
+      userBar.textContent = `👤 ${p ? p.n : loggedUser}`;
+      userBar.classList.remove("hidden");
+    }
+    if (logoutBtn) logoutBtn.classList.remove("hidden");
+
+    // Automatyczne ustawianie zalogowanego gracza w opcjach wyboru dziennika i raportu
+    setTimeout(() => {
+      if ($("dzObrot-gracz")) $("dzObrot-gracz").value = loggedUser;
+      if ($("dzPodejscia-gracz")) $("dzPodejscia-gracz").value = loggedUser;
+      if ($("rapKto")) $("rapKto").value = loggedUser;
+    }, 100);
+  } else {
+    overlay.classList.remove("hidden");
+    if (userBar) userBar.classList.add("hidden");
+    if (logoutBtn) logoutBtn.classList.add("hidden");
+  }
+}
+
+function zaloguj() {
+  const login = $("loginInput").value.trim();
+  const pass = $("passInput").value.trim();
+  const errEl = $("loginErr");
+
+  if (!login || !pass) {
+    errEl.textContent = "Podaj login i hasło.";
+    return;
+  }
+
+  if (USER_CREDENTIALS[login] && USER_CREDENTIALS[login] === pass) {
+    localStorage.setItem("lm_logged_user", login);
+    errEl.textContent = "";
+    sprawdzLogowanie();
+    toast("✅ Zalogowano pomyślnie!");
+  } else {
+    errEl.textContent = "Nieprawidłowy login lub hasło.";
+  }
+}
+
+function wyloguj() {
+  localStorage.removeItem("lm_logged_user");
+  $("loginInput").value = "";
+  $("passInput").value = "";
+  sprawdzLogowanie();
+  toast("Wylogowano z systemu.");
+}
+
+$("loginBtn").onclick = zaloguj;
+$("logoutBtn").onclick = wyloguj;
+$("loginForm").onsubmit = (e) => { e.preventDefault(); zaloguj(); };
+sprawdzLogowanie();
 
 function dzisNr(){ const t = new Date(); if (t.getFullYear()!==ROK || t.getMonth()!==MIESIAC) return t < new Date(ROK,MIESIAC,1) ? 0 : 31; return t.getDate(); }
 function etykieta(d){ const dn = ["nd","pn","wt","śr","cz","pt","so"][new Date(ROK,MIESIAC,d).getDay()]; return `${String(d).padStart(2,"0")}.09 (${dn})`; }
@@ -288,6 +399,7 @@ function renderLokalizacje(w){
 function renderDziennik(kind){
   const cfg = kind==="obrot" ? { id:"dzObrot", tytul:"💰 Dziennik obrotu", ey:"Wpisz wynik dnia", pole:"Kwota obrotu (zł)", jedn:"zł", klucz:"obrot", krok:10, ph:"np. 1500" } : { id:"dzPodejscia", tytul:"🎯 Dziennik podejść", ey:"Wpisz liczbę podejść", pole:"Liczba podejść do klienta", jedn:"", klucz:"podejscia", krok:1, ph:"np. 24" };
   const el = $("tab-" + cfg.id), dz = dzisNr(), domyslny = DNI.includes(dz) ? dz : DNI[0];
+  const loggedUser = localStorage.getItem("lm_logged_user") || PLAYERS[0].id;
   if (!el.dataset.built){
     el.innerHTML = `<div class="grid lg:grid-cols-5 gap-4">
       <div class="panel-box p-4 sm:p-5 lg:col-span-2 space-y-3">
@@ -295,7 +407,7 @@ function renderDziennik(kind){
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Dzień września</label>
         <select id="${cfg.id}-dzien" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${DNI.map(d=>`<option value="${d}" ${d===domyslny?"selected":""}>${etykieta(d)}</option>`).join("")}</select>
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Zawodnik</label>
-        <select id="${cfg.id}-gracz" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select>
+        <select id="${cfg.id}-gracz" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select>
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">${cfg.pole}</label>
         <input id="${cfg.id}-wart" type="number" min="0" step="${cfg.krok}" inputmode="numeric" placeholder="${cfg.ph}" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-2xl num font-bold text-zloto">
         <div class="seg grid grid-cols-3 gap-2 text-[11px]"><button data-v="0" class="rounded-lg py-2">0 — byłem, zero</button><button data-v="X" class="rounded-lg py-2">X — nieobecny</button><button data-v="L4" class="rounded-lg py-2">L4 — zwolnienie</button></div>
@@ -353,8 +465,7 @@ function renderWykresy(w){
   if (chP){ chP.data.datasets = dsP; chP.update("none"); } else chP = new Chart($("chPodejscia"), { type:"bar", data:{ labels, datasets:dsP }, options:{ ...opcje("podejścia / dzień"), scales:{ x:{ stacked:true, ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ stacked:true, ticks:{ color:"#8FA3D9" }, grid:{ color:"#1E2B66" } } } } });
 }
 
-// ═══════════════ 🏆 LOŻA MISTRZÓW — fakty sportowe + konkret sprzedażowy ═══════════════
-// Każdy wpis: udokumentowany fakt (rok / liczba), sens dla sprzedawcy, gotowe zdanie do klienta.
+// ═══════════════ 🏆 LOŻA MISTRZÓW ═══════════════
 const LEGENDY = [
   { n:"Roger Federer", d:"🎾", fakt:"W przemówieniu w Dartmouth (2024) policzył: wygrał prawie 80% meczów, ale tylko 54% rozegranych punktów.", sens:"Nawet najlepszy przegrywa niemal co drugą wymianę. Liczy się, jak szybko zapominasz o poprzednim punkcie.", ton:"reset" },
   { n:"Michael Jordan", d:"🏀", fakt:"W reklamie Nike (1997) wyliczył: ponad 9 000 spudłowanych rzutów, 26 przegranych decydujących akcji — i właśnie dlatego wygrywał.", sens:"Odmowa to statystyka, nie ocena Ciebie. Kto nie pyta, nie ma nawet szansy spudłować.", ton:"odwaga" },
@@ -427,7 +538,7 @@ function renderLoza(){
   $("lozaBtn").onclick = pokaz; $("lozaSyt").onchange = pokaz; pokaz();
 }
 
-// ═══════════════ 📈 PEŁNA ANALITYKA (29 kolumn jak w Warroomie) ═══════════════
+// ═══════════════ 📈 PEŁNA ANALITYKA (29 kolumn) ═══════════════
 function analityka(w){
   const dz = dzisNr(), { out, pozostale } = symulacja(w);
   const siec = w.reduce((s,x)=>s+x.obrot,0), lokS = {}, lokDni = {};
@@ -474,7 +585,7 @@ function renderAnalityka(w){
 }
 
 // ═══════════════ 🧠 MÓJ RAPORT TRENERA ═══════════════
-function symulacja(w){ // lekkie Monte Carlo: szansa na złoto + prognoza, tylko uczestnicy
+function symulacja(w){
   const dz = dzisNr(), pozostale = DNI.filter(d=>d>dz).length, ucz = w.filter(x=>!x.klif), SIM = 400;
   const par = ucz.map(x=>{ const dod=[]; for (const d of DNI){ if (d>dz) break; const st = status(state.obrot?.[d]?.[x.id], d); if (st.typ==="kwota" && st.w>0) dod.push(Math.log(st.w)); }
     const mu = dod.length ? dod.reduce((a,b)=>a+b,0)/dod.length : 0; let sig = .5; if (dod.length>1){ sig = Math.sqrt(dod.reduce((a,b)=>a+(b-mu)**2,0)/(dod.length-1)) || .4; }
@@ -487,10 +598,11 @@ function symulacja(w){ // lekkie Monte Carlo: szansa na złoto + prognoza, tylko
 }
 function renderRaport(w){
   const el = $("tab-raport");
+  const loggedUser = localStorage.getItem("lm_logged_user") || PLAYERS[0].id;
   if (!el.dataset.built){
     el.innerHTML = `<div class="panel-box p-4 sm:p-5 space-y-4">
       <div class="flex flex-wrap items-end justify-between gap-3"><div><div class="eyebrow">Osobista analityka</div><h2 class="font-display font-bold text-sm text-zloto">🧠 Mój raport trenera</h2></div>
-        <div class="flex gap-2 items-center"><select id="rapKto" class="bg-noc border border-linia rounded-xl px-3 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select><button id="rapCel" class="rounded-xl px-3 py-2 text-xs font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">✏️ mój cel</button></div></div>
+        <div class="flex gap-2 items-center"><select id="rapKto" class="bg-noc border border-linia rounded-xl px-3 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select><button id="rapCel" class="rounded-xl px-3 py-2 text-xs font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">✏️ mój cel</button></div></div>
       <div id="rapTresc"></div></div>`;
     el.dataset.built = "1";
     $("rapKto").onchange = () => renderRaport(oblicz());
@@ -547,7 +659,7 @@ function renderAdmin(){
   $("aTryb").onclick = () => zapiszAdmin({ editMode: !state.admin?.editMode });
   $("aZamknij").onclick = () => zapiszAdmin({ unlockUntil: 0, editMode: false });
   $("aReset").onclick = async () => { if (prompt('Wpisz RESET, aby skasować wszystkie dane września:') !== "RESET") return toast("Anulowano."); if (demo){ state.obrot={}; state.podejscia={}; state.log=[]; render(); } else { await fb.remove(fb.ref(db,"obrot")); await fb.remove(fb.ref(db,"podejscia")); await fb.remove(fb.ref(db,"log")); } toast("🧹 Dane wyzerowane."); };
-  $("aWyloguj").onclick = () => { adminSession = false; render(); toast("Wylogowano."); };
+  $("aWyloguj").onclick = () => { adminSession = false; render(); toast("Wylogowano z trybu kierownika."); };
 }
 
 function renderStatus(){
@@ -555,7 +667,7 @@ function renderStatus(){
   $("matchday").textContent = DNI.includes(dz) ? `MATCHDAY ${nr} / 26 · ${etykieta(dz)}` : dz === 0 ? "Sezon startuje 1.09" : dz === 31 ? "Sezon zakończony" : `${dz}.09 · dzień wolny`;
   $("statusLock").textContent = adminSession ? "🔑 kierownik" : edycjaGlobalna() ? "🔓 edycja otwarta" : !DNI.includes(dz) ? "📅 brak dnia handlowego" : h >= GODZINA_BLOKADY ? `🔒 po ${GODZINA_BLOKADY}:00 — dziś zamknięte` : `🟢 dziś otwarte do ${GODZINA_BLOKADY}:00`;
 }
-// Każda sekcja osobno — awaria jednej (np. brak Chart.js w podglądzie) nie gasi pozostałych.
+
 function render(){
   const w = oblicz();
   [["liga",()=>renderLiga(w)],["podejscia",()=>renderPodejscia(w)],["lokalizacje",()=>renderLokalizacje(w)],["dzObrot",()=>renderDziennik("obrot")],["dzPodejscia",()=>renderDziennik("podejscia")],["wykresy",()=>renderWykresy(w)],["analityka",()=>renderAnalityka(w)],["raport",()=>renderRaport(w)],["loza",renderLoza],["admin",renderAdmin],["status",renderStatus]]
