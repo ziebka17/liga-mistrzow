@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-full">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050A23">
+<title>Liga Mistrzów · Zbita Szybka — Wrzesień 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      colors: { noc:'#050A23', panel:'#0B1440', panel2:'#101B52', linia:'#1E2B66', zloto:'#E8B84B', szmaragd:'#10B981', neon:'#38BDF8', mut:'#8FA3D9', klif:'#3A1418', klifTxt:'#FF8A8A' },
+      fontFamily: { display:['Unbounded','sans-serif'], body:['Manrope','system-ui','sans-serif'] }
+    } }
+  };
+</script>
+<style>
+  body{ background:#050A23; background-image:radial-gradient(900px 480px at 50% -160px, rgba(232,184,75,.10), transparent 70%); }
+  .num{ font-variant-numeric: tabular-nums; }
+  .tab-panel{ display:none; animation: wjazd .28s cubic-bezier(.2,.9,.25,1); }
+  .tab-panel.active{ display:block; }
+  @keyframes wjazd{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none;} }
+  .nav-btn{ transition: color .15s, background-color .15s, border-color .15s; white-space:nowrap; }
+  .nav-btn.active{ background:rgba(232,184,75,.12); border-color:#E8B84B; color:#E8B84B; }
+  .karta{ background:linear-gradient(160deg,#101B52,#0B1440); border:1px solid #1E2B66; border-radius:1rem; transition: transform .18s, border-color .18s, box-shadow .18s; }
+  .karta:hover{ border-color:rgba(232,184,75,.45); box-shadow:0 14px 40px rgba(0,0,0,.45); transform:translateY(-2px); }
+  table.liga th{ position:sticky; top:0; background:#101B52; z-index:2; }
+  table.liga tbody tr{ transition: background-color .15s; }
+  table.liga tbody tr:hover{ background:rgba(143,163,217,.08); }
+  tr.klif{ background:#3A1418 !important; }
+  tr.klif td{ color:#F2C4C4; }
+  tr.klif td.nazwa{ color:#FF8A8A; font-weight:700; }
+  tr.zloto{ background:#3A2F14; } tr.srebro{ background:#232B44; } tr.braz{ background:#33241B; }
+  .seg button{ border:1px solid #1E2B66; }
+  .seg button.on{ background:rgba(232,184,75,.15); border-color:#E8B84B; color:#E8B84B; }
+  input,select{ color-scheme:dark; }
+  ::-webkit-scrollbar{ height:8px; width:8px; } ::-webkit-scrollbar-thumb{ background:#1E2B66; border-radius:8px; }
+  .toast{ animation: toastIn .25s ease, toastOut .3s ease 3.2s forwards; }
+  @keyframes toastIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+  @keyframes toastOut{ to{opacity:0; transform:translateY(12px);} }
+  .stars{ letter-spacing:.35em; color:#E8B84B; }
+</style>
+</head>
+<body class="h-full font-body text-slate-100 antialiased">
+
+<!-- ═══════════════ NAGŁÓWEK ═══════════════ -->
+<header class="border-b border-linia/70 bg-noc/80 backdrop-blur sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <div class="min-w-0">
+      <div class="stars text-[10px] sm:text-xs">★ ★ ★ ★ ★</div>
+      <h1 class="font-display font-extrabold text-base sm:text-xl leading-tight bg-gradient-to-br from-[#FFF3D6] via-zloto to-[#9C6B1D] bg-clip-text text-transparent truncate">Liga Mistrzów · Zbita Szybka</h1>
+      <div class="text-[11px] text-mut">Wrzesień 2026 · 26 dni handlowych · 18 zawodników</div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <div id="statusSync" class="hidden sm:flex items-center gap-2 text-[11px] text-mut border border-linia rounded-full px-3 py-1.5"><span id="kropka" class="w-2 h-2 rounded-full bg-slate-500"></span><span id="statusTxt">łączenie…</span></div>
+      <div id="statusLock" class="text-[11px] border border-linia rounded-full px-3 py-1.5 num text-mut">—</div>
+    </div>
+  </div>
+  <nav class="max-w-7xl mx-auto px-2 sm:px-4 pb-2 flex gap-1 overflow-x-auto" id="nav"></nav>
+</header>
+
+<main class="max-w-7xl mx-auto px-3 sm:px-4 py-5 space-y-5">
+
+  <div id="bannerConfig" class="hidden karta p-4 border-yellow-500/60 text-sm">
+    <b class="text-zloto">⚠️ Brak konfiguracji Firebase.</b> Aplikacja działa w trybie podglądu (dane tylko w tej karcie, bez synchronizacji). Wklej swój <code class="text-neon">firebaseConfig</code> na górze skryptu w <code>index.html</code> — instrukcja w README.
+  </div>
+
+  <!-- 🏆 LIGA -->
+  <section id="tab-liga" class="tab-panel">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4" id="kpiLiga"></div>
+    <div class="karta overflow-hidden">
+      <div class="px-4 py-3 border-b border-linia flex items-center justify-between flex-wrap gap-2">
+        <h2 class="font-display font-bold text-sm sm:text-base text-zloto">🏆 Klasyfikacja generalna — obrót</h2>
+        <span class="text-[11px] text-mut">🔴 czerwone wiersze = Klif, poza konkursem</span>
+      </div>
+      <div class="overflow-x-auto"><table class="liga min-w-[860px] w-full text-sm"><thead><tr class="text-[11px] uppercase tracking-wide text-mut">
+        <th class="px-3 py-2.5 text-left">Miejsce</th><th class="px-3 py-2.5 text-left">Zawodnik</th><th class="px-3 py-2.5 text-left">Lokalizacja</th>
+        <th class="px-3 py-2.5 text-right">Obrót łączny</th><th class="px-3 py-2.5 text-right">Suma podejść</th><th class="px-3 py-2.5 text-right">Śr. podejść / dzień</th>
+        <th class="px-3 py-2.5 text-right">Zł / podejście</th><th class="px-3 py-2.5 text-right">Rekord dnia (PB)</th>
+      </tr></thead><tbody id="tbLiga"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- 🎯 RANKING PODEJŚĆ -->
+  <section id="tab-podejscia" class="tab-panel">
+    <div class="karta overflow-hidden">
+      <div class="px-4 py-3 border-b border-linia"><h2 class="font-display font-bold text-sm sm:text-base text-zloto">🎯 Ranking podejść — kto najodważniej wychodzi do ludzi</h2></div>
+      <div class="overflow-x-auto"><table class="liga min-w-[860px] w-full text-sm"><thead><tr class="text-[11px] uppercase tracking-wide text-mut">
+        <th class="px-3 py-2.5 text-left">Miejsce</th><th class="px-3 py-2.5 text-left">Zawodnik</th><th class="px-3 py-2.5 text-left">Lokalizacja</th>
+        <th class="px-3 py-2.5 text-right">Suma podejść</th><th class="px-3 py-2.5 text-right">Śr. / dzień</th><th class="px-3 py-2.5 text-right">Obrót łączny</th>
+        <th class="px-3 py-2.5 text-right">Zł / podejście</th><th class="px-3 py-2.5 text-left">Status / tytuł</th>
+      </tr></thead><tbody id="tbPodejscia"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- 🏢 LOKALIZACJE -->
+  <section id="tab-lokalizacje" class="tab-panel">
+    <div class="karta overflow-hidden">
+      <div class="px-4 py-3 border-b border-linia"><h2 class="font-display font-bold text-sm sm:text-base text-zloto">🏢 Bitwa wysp — ranking lokalizacji</h2></div>
+      <div class="overflow-x-auto"><table class="liga min-w-[720px] w-full text-sm"><thead><tr class="text-[11px] uppercase tracking-wide text-mut">
+        <th class="px-3 py-2.5 text-left">Miejsce</th><th class="px-3 py-2.5 text-left">Lokalizacja</th><th class="px-3 py-2.5 text-right">Obrót łączny</th>
+        <th class="px-3 py-2.5 text-right">Udział %</th><th class="px-3 py-2.5 text-right">Śr. na handlowca</th><th class="px-3 py-2.5 text-left">Lider lokalizacji</th>
+      </tr></thead><tbody id="tbLokalizacje"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- 💰 DZIENNIK OBROTU -->
+  <section id="tab-dzObrot" class="tab-panel"></section>
+
+  <!-- 🎯 DZIENNIK PODEJŚĆ -->
+  <section id="tab-dzPodejscia" class="tab-panel"></section>
+
+  <!-- 📊 WYKRESY -->
+  <section id="tab-wykresy" class="tab-panel space-y-4">
+    <div class="karta p-4"><h2 class="font-display font-bold text-sm text-zloto mb-3">📈 Skumulowany obrót w czasie</h2><div class="relative h-[340px] sm:h-[420px]"><canvas id="chObrot"></canvas></div></div>
+    <div class="karta p-4"><h2 class="font-display font-bold text-sm text-zloto mb-3">🎯 Dzienna dynamika podejść</h2><div class="relative h-[320px] sm:h-[400px]"><canvas id="chPodejscia"></canvas></div></div>
+  </section>
+
+  <!-- 📖 LEGENDA -->
+  <section id="tab-legenda" class="tab-panel space-y-4">
+    <div class="karta overflow-hidden">
+      <div class="px-4 py-3 border-b border-linia"><h2 class="font-display font-bold text-sm text-zloto">📖 Co wpisywać w dziennikach</h2></div>
+      <div class="overflow-x-auto"><table class="min-w-[640px] w-full text-sm"><thead><tr class="text-[11px] uppercase text-mut bg-panel2"><th class="px-3 py-2 text-left">Wpis</th><th class="px-3 py-2 text-left">Znaczenie</th><th class="px-3 py-2 text-left">Wpływ na statystyki</th></tr></thead>
+      <tbody class="divide-y divide-linia">
+        <tr><td class="px-3 py-2.5 font-bold text-zloto">Kwota / liczba</td><td class="px-3 py-2.5">Pracował, zarobił / podchodził</td><td class="px-3 py-2.5 text-mut">Podnosi obrót, średnią i rekord dnia.</td></tr>
+        <tr><td class="px-3 py-2.5 font-bold text-zloto">0</td><td class="px-3 py-2.5">Był w pracy, zero wyniku</td><td class="px-3 py-2.5 text-mut">Dzień liczy się do frekwencji, obniża średnią.</td></tr>
+        <tr><td class="px-3 py-2.5 font-bold text-zloto">X</td><td class="px-3 py-2.5">Nieobecność nieusprawiedliwiona</td><td class="px-3 py-2.5 text-mut">Liczy się jak 0 — najdroższy wpis w systemie.</td></tr>
+        <tr><td class="px-3 py-2.5 font-bold text-zloto">L4</td><td class="px-3 py-2.5">Zwolnienie lekarskie</td><td class="px-3 py-2.5 text-mut">Dzień w ogóle NIE liczy się — ani na plus, ani na minus.</td></tr>
+        <tr><td class="px-3 py-2.5 font-bold text-zloto">Puste</td><td class="px-3 py-2.5">Brak danych</td><td class="px-3 py-2.5 text-mut">Dziś: okres łaski. Miniony dzień: traktowane jak X.</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="karta p-4 text-sm space-y-2">
+      <h3 class="font-display font-bold text-zloto text-sm">🎯 Podejścia</h3>
+      <p class="text-slate-200">Podejście = każda rozpoczęta rozmowa sprzedażowa z klientem (także bez sprzedaży). Wpisujesz liczbę za dzień w Dzienniku Podejść. Konwersja zł/podejście = obrót ÷ liczba podejść — pokazuje, kto strzela celnie, a kto tylko dużo.</p>
+      <h3 class="font-display font-bold text-zloto text-sm pt-2">🔒 Reguła godziny 22:00</h3>
+      <p class="text-slate-200">Wyniki z <b>dnia bieżącego</b> można wpisywać i poprawiać do <b>22:00</b>. Dni minione są zamknięte. Po 22:00 zmiany wprowadza wyłącznie kierownik (PIN). <b>Wyjątek: 1 i 2 września są zawsze otwarte</b> do wstecznego uzupełnienia.</p>
+      <h3 class="font-display font-bold text-zloto text-sm pt-2">🔴 Klif</h3>
+      <p class="text-slate-200">Antek, Michał i Szymon z Klifu wpisują dzienniki i mają pełne statystyki, ale w tym miesiącu są <b>poza konkursem</b> — nie zajmują miejsc ani medali.</p>
+      <p class="text-zloto font-semibold pt-2">💪 Warroom nie ocenia ludzi — mierzy walkę. Wpisuj uczciwie, walcz codziennie, a tabela odda Ci sprawiedliwość.</p>
+    </div>
+  </section>
+
+  <!-- 🔑 ADMIN -->
+  <section id="tab-admin" class="tab-panel"></section>
+</main>
+
+<div id="toasty" class="fixed bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-50 pointer-events-none px-4"></div>
+
+<script type="module">
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  1) TU WKLEJ SWÓJ firebaseConfig (Firebase Console → Ustawienia   ║
+// ║     projektu → Twoje aplikacje → Web → „Konfiguracja SDK”).      ║
+// ╚══════════════════════════════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey: "AIzaSyC0VxDtQ89RkVCpwXqSUAsYP-XX8b4607Q",
+  authDomain: "liga-mistrzow-zbita.firebaseapp.com",
+  databaseURL: "https://liga-mistrzow-zbita-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "liga-mistrzow-zbita",
+  storageBucket: "liga-mistrzow-zbita.firebasestorage.app",
+  messagingSenderId: "978921284835",
+  appId: "1:978921284835:web:d08855faf5165d52ed11d6",
+  measurementId: "G-GRQ7HEZDC2"
+};
+const ADMIN_PIN = "1234"; // zmień przed wysłaniem linku zespołowi
+
+// Firebase ładowana dynamicznie na końcu (patrz START) — interfejs rysuje się zawsze, nawet bez sieci.
+let fb = null; // { ref, onValue, set, update, remove, push }
+
+// ═══════════════ KONFIGURACJA LIGI ═══════════════
+const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 22, DNI_WOLNE = [1, 2];
+const DNI = [1,2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30];
+const PLAYERS = [
+  { id:"antek_klif", n:"Antek (Klif)", lok:"Klif", klif:true },
+  { id:"michal_klif", n:"Michał (Klif)", lok:"Klif", klif:true },
+  { id:"szymon_klif", n:"Szymon (Klif)", lok:"Klif", klif:true },
+  { id:"marcel_sco", n:"Marcel Michalczuk (SCO)", lok:"Szczecin Outlet" },
+  { id:"wiktor_sco", n:"Wiktor Kowalewski (SCO)", lok:"Szczecin Outlet" },
+  { id:"mateusz_h_sco", n:"Mateusz Hofman (SCO)", lok:"Szczecin Outlet" },
+  { id:"jakub_sco", n:"Jakub Mańczak (SCO)", lok:"Szczecin Outlet" },
+  { id:"krystian_krk", n:"Krystian Jurek (Krk)", lok:"Kraków" },
+  { id:"adrian_krk", n:"Adrian (Krk)", lok:"Kraków" },
+  { id:"michal_krk", n:"michał (Krk)", lok:"Kraków" },
+  { id:"mateusz_szcz", n:"Mateusz Szczęśliwa", lok:"Szczęśliwa" },
+  { id:"piotrek_szcz", n:"Piotrek Szczęśliwa", lok:"Szczęśliwa" },
+  { id:"maks_rzm", n:"Maks (RZM)", lok:"RZM" },
+  { id:"szymon_rzm", n:"Szymon (RZM)", lok:"RZM" },
+  { id:"kris_rzm", n:"Kris (RZM)", lok:"RZM" },
+  { id:"kacper_wwa", n:"Kacper (WWA)", lok:"Warszawa" },
+  { id:"cupryjak_wwa", n:"Cupryjak (WWA)", lok:"Warszawa" },
+  { id:"olivier_wwa", n:"Olivier (WWA)", lok:"Warszawa" }
+];
+const KOLORY = ["#E8B84B","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#8FA3D9","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
+const TABS = [
+  ["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],
+  ["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],
+  ["legenda","📖 Legenda"],["admin","🔑 Kierownik"]
+];
+
+// ═══════════════ STAN ═══════════════
+let state = { obrot:{}, podejscia:{}, log:[], admin:{ unlockUntil:0, editMode:false } };
+let adminSession = false, db = null, demo = false;
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => Math.round(n).toLocaleString("pl-PL");
+const zl = (n) => fmt(n) + " zł";
+
+function dzisNr(){ const t = new Date(); if (t.getFullYear()!==ROK || t.getMonth()!==MIESIAC) return t < new Date(ROK,MIESIAC,1) ? 0 : 31; return t.getDate(); }
+function etykieta(d){ const dn = ["nd","pn","wt","śr","cz","pt","so"][new Date(ROK,MIESIAC,d).getDay()]; return `${String(d).padStart(2,"0")}.09 (${dn})`; }
+function edycjaGlobalna(){ return state.admin?.editMode || (state.admin?.unlockUntil||0) > Date.now(); }
+function dzienZablokowany(d){
+  if (DNI_WOLNE.includes(d) || adminSession || edycjaGlobalna()) return false;
+  const dz = dzisNr(); if (d < dz) return true; if (d > dz) return false;
+  return new Date().getHours() >= GODZINA_BLOKADY;
+}
+function status(v, d){ // → {typ, w}
+  const dz = dzisNr();
+  if (v === undefined || v === null || v === "") return d === dz ? {typ:"laska"} : d < dz ? {typ:"x"} : {typ:"przyszly"};
+  if (typeof v === "number") return {typ:"kwota", w:v};
+  const s = String(v).trim().toLowerCase();
+  if (s === "x") return {typ:"x"}; if (s === "l4") return {typ:"l4"};
+  const n = parseFloat(s.replace(/\s/g,"").replace(",",".")); return isNaN(n) ? {typ:"laska"} : {typ:"kwota", w:n};
+}
+
+// ═══════════════ SILNIK ═══════════════
+function oblicz(){
+  const dz = dzisNr(), wyniki = [];
+  for (const p of PLAYERS){
+    let obrot=0, pb=0, otwarte=0, dniAkt=0, sumaP=0, pbP=0; const dzienneO=[], dzienneP=[], cum=[]; let c=0;
+    for (const d of DNI){
+      const so = status(state.obrot?.[d]?.[p.id], d), sp = status(state.podejscia?.[d]?.[p.id], d);
+      let o = 0, pp = 0;
+      if (d <= dz && so.typ !== "l4" && so.typ !== "laska" && so.typ !== "przyszly"){
+        otwarte++; if (so.typ === "kwota"){ dniAkt++; obrot += so.w; pb = Math.max(pb, so.w); o = so.w; }
+        if (sp.typ === "kwota"){ sumaP += sp.w; pbP = Math.max(pbP, sp.w); pp = sp.w; }
+      }
+      c += o; dzienneO.push(o); dzienneP.push(pp); cum.push(d <= dz ? c : null);
+    }
+    wyniki.push({ ...p, obrot, pb, otwarte, dniAkt, sumaP, pbP, srP: otwarte ? sumaP/otwarte : 0, konw: sumaP ? obrot/sumaP : 0, cum, dzienneP });
+  }
+  return wyniki;
+}
+function lokacje(w){
+  const m = {};
+  for (const x of w){ m[x.lok] ??= { lok:x.lok, obrot:0, akt:0, lider:"—", liderO:-1 }; m[x.lok].obrot += x.obrot; if (x.dniAkt) m[x.lok].akt++; if (x.obrot > m[x.lok].liderO){ m[x.lok].liderO = x.obrot; m[x.lok].lider = x.n; } }
+  const l = Object.values(m).sort((a,b)=>b.obrot-a.obrot), suma = l.reduce((s,x)=>s+x.obrot,0);
+  return l.map(x=>({ ...x, udzial: suma ? 100*x.obrot/suma : 0, naH: x.akt ? x.obrot/x.akt : 0 }));
+}
+
+// ═══════════════ RENDER ═══════════════
+function klasaWiersza(w, miejsce){ return w.klif ? "klif" : miejsce===1 ? "zloto" : miejsce===2 ? "srebro" : miejsce===3 ? "braz" : ""; }
+function komMiejsca(w, miejsce){
+  if (w.klif) return `<span class="text-klifTxt font-bold text-xs">🔴 KLIF</span><div class="text-[10px] text-klifTxt/80">poza konkursem</div>`;
+  const medal = miejsce===1?"🥇":miejsce===2?"🥈":miejsce===3?"🥉":""; return `<span class="text-zloto font-bold">${medal} ${miejsce}.</span>`;
+}
+function renderLiga(w){
+  const lista = [...w].sort((a,b)=>b.obrot-a.obrot); let m = 0;
+  $("tbLiga").innerHTML = lista.map(x=>{ if(!x.klif) m++; const mi = x.klif?0:m; return `<tr class="${klasaWiersza(x,mi)} border-t border-linia">
+    <td class="px-3 py-2.5">${komMiejsca(x,mi)}</td><td class="px-3 py-2.5 nazwa font-semibold">${x.n}</td><td class="px-3 py-2.5 text-mut">${x.lok}</td>
+    <td class="px-3 py-2.5 text-right num font-bold ${x.klif?"":"text-zloto"}">${zl(x.obrot)}</td><td class="px-3 py-2.5 text-right num">${fmt(x.sumaP)}</td>
+    <td class="px-3 py-2.5 text-right num">${x.srP.toFixed(1)}</td><td class="px-3 py-2.5 text-right num">${x.konw?zl(x.konw):"—"}</td><td class="px-3 py-2.5 text-right num">${zl(x.pb)}</td></tr>`; }).join("");
+  const ucz = lista.filter(x=>!x.klif), siec = w.reduce((s,x)=>s+x.obrot,0), lok = lokacje(w);
+  const lider = ucz[0]; const pbMax = [...w].sort((a,b)=>b.pb-a.pb)[0];
+  $("kpiLiga").innerHTML = [
+    ["Obrót sieci", zl(siec), "text-zloto"], ["Lider", lider && lider.obrot ? `${lider.n.split(" (")[0]} · ${zl(lider.obrot)}` : "sezon w grze", "text-slate-100"],
+    ["Najmocniejsza wyspa", lok[0] && lok[0].obrot ? `${lok[0].lok} · ${lok[0].udzial.toFixed(1)}%` : "—", "text-neon"],
+    ["Rekord dnia", pbMax && pbMax.pb ? `${zl(pbMax.pb)} · ${pbMax.n.split(" (")[0]}` : "—", "text-szmaragd"]
+  ].map(([e,v,c])=>`<div class="karta p-3 sm:p-4"><div class="text-[10px] uppercase tracking-wider text-mut">${e}</div><div class="font-display font-bold text-sm sm:text-base mt-1 ${c} num truncate">${v}</div></div>`).join("");
+}
+function renderPodejscia(w){
+  const lista = [...w].sort((a,b)=>b.sumaP-a.sumaP); let m = 0;
+  $("tbPodejscia").innerHTML = lista.map(x=>{ if(!x.klif) m++; const mi = x.klif?0:m;
+    const tytul = x.klif ? "🔴 Klif — poza konkursem" : mi===1 && x.sumaP ? "👑 Król podejść" : mi<=3 && x.sumaP ? "🔥 TOP 3 odwagi" : x.konw>=150 && x.sumaP>=10 ? "🎯 Snajper (wysoka konwersja)" : x.sumaP ? "⚔️ W grze" : "⏳ Czekamy na start";
+    return `<tr class="${klasaWiersza(x,mi)} border-t border-linia"><td class="px-3 py-2.5">${komMiejsca(x,mi)}</td><td class="px-3 py-2.5 nazwa font-semibold">${x.n}</td><td class="px-3 py-2.5 text-mut">${x.lok}</td>
+    <td class="px-3 py-2.5 text-right num font-bold ${x.klif?"":"text-neon"}">${fmt(x.sumaP)}</td><td class="px-3 py-2.5 text-right num">${x.srP.toFixed(1)}</td><td class="px-3 py-2.5 text-right num">${zl(x.obrot)}</td>
+    <td class="px-3 py-2.5 text-right num">${x.konw?zl(x.konw):"—"}</td><td class="px-3 py-2.5 text-xs">${tytul}</td></tr>`; }).join("");
+}
+function renderLokalizacje(w){
+  $("tbLokalizacje").innerHTML = lokacje(w).map((l,i)=>`<tr class="${i===0?"zloto":""} border-t border-linia"><td class="px-3 py-2.5 text-zloto font-bold">${i===0?"🥇":i===1?"🥈":i===2?"🥉":""} ${i+1}.</td>
+    <td class="px-3 py-2.5 font-semibold ${l.lok==="Klif"?"text-klifTxt":""}">${l.lok}${l.lok==="Klif"?' <span class="text-[10px]">🔴 poza konkursem</span>':""}</td><td class="px-3 py-2.5 text-right num font-bold">${zl(l.obrot)}</td>
+    <td class="px-3 py-2.5 text-right num">${l.udzial.toFixed(1)}%</td><td class="px-3 py-2.5 text-right num">${zl(l.naH)}</td><td class="px-3 py-2.5 text-mut text-xs">${l.lider} (${zl(l.liderO)})</td></tr>`).join("");
+}
+
+// ── Dzienniki (bliźniacze) ──
+function renderDziennik(kind){
+  const cfg = kind==="obrot" ? { id:"dzObrot", tytul:"💰 Dziennik obrotu", pole:"Kwota obrotu (zł)", jednostka:"zł", klucz:"obrot" } : { id:"dzPodejscia", tytul:"🎯 Dziennik podejść", pole:"Liczba podejść", jednostka:"", klucz:"podejscia" };
+  const dz = dzisNr(), domyslny = DNI.includes(dz) ? dz : DNI[0];
+  const el = $(cfg.id);
+  if (!el.dataset.built){
+    el.innerHTML = `<div class="grid lg:grid-cols-5 gap-4">
+      <div class="karta p-4 sm:p-5 lg:col-span-2 space-y-3">
+        <h2 class="font-display font-bold text-sm text-zloto">${cfg.tytul}</h2>
+        <label class="block text-[11px] font-bold text-mut uppercase tracking-wide">Dzień września</label>
+        <select id="${cfg.id}-dzien" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${DNI.map(d=>`<option value="${d}" ${d===domyslny?"selected":""}>${etykieta(d)}</option>`).join("")}</select>
+        <label class="block text-[11px] font-bold text-mut uppercase tracking-wide">Zawodnik</label>
+        <select id="${cfg.id}-gracz" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select>
+        <label class="block text-[11px] font-bold text-mut uppercase tracking-wide">${cfg.pole}</label>
+        <input id="${cfg.id}-wart" type="number" min="0" step="${kind==="obrot"?10:1}" inputmode="numeric" placeholder="np. ${kind==="obrot"?"1500":"24"}" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-lg num font-bold">
+        <div class="seg flex gap-2 text-xs"><button data-v="0" class="flex-1 rounded-lg py-2">0 — byłem, zero</button><button data-v="X" class="flex-1 rounded-lg py-2">X — nieobecny</button><button data-v="L4" class="flex-1 rounded-lg py-2">L4 — zwolnienie</button></div>
+        <div id="${cfg.id}-lock" class="text-xs rounded-xl px-3 py-2 border"></div>
+        <button id="${cfg.id}-zapisz" class="w-full rounded-xl py-3 font-extrabold tracking-wide text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZAPISZ</button>
+        <div class="text-[11px] text-mut">Aktualna wartość w bazie dla wybranego dnia i gracza: <b id="${cfg.id}-biez" class="text-slate-100">—</b></div>
+      </div>
+      <div class="karta p-4 sm:p-5 lg:col-span-3">
+        <div class="flex items-center justify-between mb-3"><h3 class="font-display font-bold text-sm text-zloto">🕒 Ostatnie wpisy</h3><span class="text-[11px] text-mut">synchronizacja na żywo</span></div>
+        <div id="${cfg.id}-hist" class="divide-y divide-linia text-sm"></div>
+        <h3 class="font-display font-bold text-sm text-zloto mt-5 mb-2">📅 Podgląd dnia</h3>
+        <div id="${cfg.id}-dzienPodglad" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs"></div>
+      </div></div>`;
+    el.dataset.built = "1";
+    const odswiezLock = () => {
+      const d = +$(`${cfg.id}-dzien`).value, pid = $(`${cfg.id}-gracz`).value, zab = dzienZablokowany(d), lk = $(`${cfg.id}-lock`);
+      lk.className = "text-xs rounded-xl px-3 py-2 border " + (zab ? "border-red-500/50 text-red-300 bg-red-950/30" : "border-szmaragd/40 text-szmaragd bg-emerald-950/20");
+      lk.textContent = zab ? `🔒 Dzień ${d}.09 jest zamknięty (reguła 22:00). Zmiany wprowadza tylko kierownik.` : DNI_WOLNE.includes(d) ? `✅ ${d}.09 — dzień otwarty dla wszystkich (wyjątek 1–2 września).` : adminSession ? "🔑 Tryb kierownika — edycja bez ograniczeń." : `✅ Otwarte do ${GODZINA_BLOKADY}:00.`;
+      $(`${cfg.id}-zapisz`).disabled = zab; $(`${cfg.id}-zapisz`).classList.toggle("opacity-40", zab);
+      const v = state[cfg.klucz]?.[d]?.[pid]; $(`${cfg.id}-biez`).textContent = v===undefined||v===""?"brak wpisu":String(v);
+      const dane = state[cfg.klucz]?.[d] || {};
+      $(`${cfg.id}-dzienPodglad`).innerHTML = PLAYERS.map(p=>`<div class="rounded-lg border ${p.klif?"border-red-900 bg-klif/60":"border-linia bg-noc/60"} px-2 py-1.5 flex justify-between gap-2"><span class="truncate ${p.klif?"text-klifTxt":"text-mut"}">${p.n.split(" (")[0]}</span><b class="num">${dane[p.id]===undefined||dane[p.id]===""?"—":dane[p.id]}</b></div>`).join("");
+    };
+    el._odswiez = odswiezLock;
+    $(`${cfg.id}-dzien`).onchange = odswiezLock; $(`${cfg.id}-gracz`).onchange = odswiezLock;
+    el.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{ $(`${cfg.id}-wart`).value = b.dataset.v; el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); });
+    $(`${cfg.id}-wart`).oninput = ()=>el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on"));
+    $(`${cfg.id}-zapisz`).onclick = () => zapisz(cfg.klucz, +$(`${cfg.id}-dzien`).value, $(`${cfg.id}-gracz`).value, $(`${cfg.id}-wart`).value, cfg);
+  }
+  el._odswiez();
+  const hist = state.log.filter(x=>x.typ===cfg.klucz).slice(-12).reverse();
+  $(`${cfg.id}-hist`).innerHTML = hist.length ? hist.map(x=>{ const p = PLAYERS.find(q=>q.id===x.pid); return `<div class="py-2 flex items-center justify-between gap-3"><div class="min-w-0"><div class="font-semibold truncate ${p?.klif?"text-klifTxt":""}">${p?.n||x.pid}</div><div class="text-[11px] text-mut">${etykieta(x.d)} · ${new Date(x.t).toLocaleString("pl-PL",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit"})}${x.admin?" · 🔑":""}</div></div><div class="num font-bold ${kind==="obrot"?"text-zloto":"text-neon"}">${typeof x.v==="number"?(kind==="obrot"?zl(x.v):x.v):x.v}</div></div>`; }).join("") : `<div class="py-6 text-center text-mut text-sm">Jeszcze pusto — pierwszy wpis otwiera sezon.</div>`;
+}
+async function zapisz(klucz, d, pid, surowe, cfg){
+  if (dzienZablokowany(d)) return toast("🔒 Dzień zamknięty — poproś kierownika.", "err");
+  let v; const s = String(surowe).trim().toUpperCase();
+  if (s === "X" || s === "L4") v = s; else { const n = parseFloat(s.replace(",",".")); if (isNaN(n) || n < 0) return toast("Podaj liczbę, 0, X albo L4.", "err"); v = n; }
+  const wpis = { t: Date.now(), typ: klucz, d, pid, v, admin: adminSession };
+  try {
+    if (demo){ (state[klucz][d] ??= {})[pid] = v; state.log.push(wpis); render(); }
+    else { await fb.set(fb.ref(db, `${klucz}/${d}/${pid}`), v); await fb.push(fb.ref(db, "log"), wpis); }
+    toast(`✅ Zapisano: ${PLAYERS.find(p=>p.id===pid).n} · ${etykieta(d)} · ${v}${cfg.jednostka?" "+cfg.jednostka:""}`);
+    $(`${cfg.id}-wart`).value = "";
+  } catch(e){ toast("Błąd zapisu: " + e.message, "err"); }
+}
+
+// ── Wykresy ──
+let chO = null, chP = null;
+function renderWykresy(w){
+  const labels = DNI.map(d=>d+".09");
+  const opcje = (tytulY) => ({ responsive:true, maintainAspectRatio:false, interaction:{ mode:"index", intersect:false },
+    plugins:{ legend:{ position:"bottom", labels:{ color:"#EDF1FF", boxWidth:10, font:{ size:10 } } }, tooltip:{ backgroundColor:"#0B1440", borderColor:"#1E2B66", borderWidth:1, titleColor:"#E8B84B" } },
+    scales:{ x:{ ticks:{ color:"#8FA3D9", maxRotation:45, font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" }, title:{ display:true, text:tytulY, color:"#8FA3D9" } } } });
+  const dsO = w.map((x,i)=>({ label:x.n, data:x.cum, borderColor:KOLORY[i], backgroundColor:KOLORY[i]+"22", borderWidth: x.klif?1.5:2.2, borderDash: x.klif?[5,4]:[], tension:.35, pointRadius:0, pointHitRadius:12, spanGaps:false }));
+  const dsP = w.map((x,i)=>({ label:x.n, data:x.dzienneP, backgroundColor:KOLORY[i]+(x.klif?"66":"CC"), borderColor:KOLORY[i], borderWidth:1, stack:"p" }));
+  if (chO){ chO.data.datasets = dsO; chO.update("none"); } else chO = new Chart($("chObrot"), { type:"line", data:{ labels, datasets:dsO }, options:opcje("zł narastająco") });
+  if (chP){ chP.data.datasets = dsP; chP.update("none"); } else chP = new Chart($("chPodejscia"), { type:"bar", data:{ labels, datasets:dsP }, options:{ ...opcje("podejścia / dzień"), scales:{ x:{ stacked:true, ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ stacked:true, ticks:{ color:"#8FA3D9" }, grid:{ color:"#1E2B66" } } } } });
+}
+
+// ── Panel kierownika ──
+function renderAdmin(){
+  const el = $("tab-admin");
+  if (!adminSession){
+    el.innerHTML = `<div class="max-w-md mx-auto karta p-6 space-y-3"><h2 class="font-display font-bold text-zloto text-sm">🔑 Panel kierownika</h2><p class="text-xs text-mut">Podaj PIN, aby edytować dowolny dzień o dowolnej porze, odblokować dni dla zespołu lub zresetować dane.</p>
+      <input id="pin" type="password" inputmode="numeric" placeholder="PIN" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-center text-2xl tracking-[.5em] num"><button id="pinBtn" class="w-full rounded-xl py-3 font-extrabold text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ODBLOKUJ</button><div id="pinErr" class="text-xs text-red-300 text-center min-h-[16px]"></div></div>`;
+    const go = () => { if ($("pin").value === ADMIN_PIN){ adminSession = true; toast("🔑 Tryb kierownika aktywny w tej karcie."); render(); } else $("pinErr").textContent = "Błędny PIN."; };
+    $("pinBtn").onclick = go; $("pin").onkeydown = e => { if (e.key === "Enter") go(); };
+    return;
+  }
+  const odbl = (state.admin?.unlockUntil||0) > Date.now();
+  el.innerHTML = `<div class="grid md:grid-cols-2 gap-4">
+    <div class="karta p-5 space-y-3"><h2 class="font-display font-bold text-zloto text-sm">🔓 Blokada 22:00 — sterowanie dla całego zespołu</h2>
+      <div class="text-sm">Stan: <b class="${state.admin?.editMode?"text-szmaragd":odbl?"text-neon":"text-mut"}">${state.admin?.editMode ? "TRYB EDYCJI WŁĄCZONY (wszystkie dni otwarte dla wszystkich)" : odbl ? "odblokowane do " + new Date(state.admin.unlockUntil).toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"}) : "blokada aktywna (standard)"}</b></div>
+      <button id="aOdbl" class="w-full rounded-xl py-2.5 font-bold border border-neon/50 text-neon hover:bg-neon/10">Odblokuj zamknięte dni na 30 min</button>
+      <button id="aTryb" class="w-full rounded-xl py-2.5 font-bold border border-szmaragd/50 text-szmaragd hover:bg-szmaragd/10">${state.admin?.editMode?"Wyłącz tryb edycji":"Włącz stały tryb edycji"}</button>
+      <button id="aZamknij" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Przywróć blokadę natychmiast</button>
+    </div>
+    <div class="karta p-5 space-y-3"><h2 class="font-display font-bold text-zloto text-sm">🧹 Dane</h2>
+      <p class="text-xs text-mut">Reset kasuje WSZYSTKIE wpisy obrotu, podejść i historię — u każdego użytkownika. Nie da się cofnąć.</p>
+      <button id="aReset" class="w-full rounded-xl py-2.5 font-bold border border-red-500/50 text-red-300 hover:bg-red-950/40">Zresetuj wszystkie dane września</button>
+      <button id="aWyloguj" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Wyloguj z trybu kierownika</button>
+      <div class="text-[11px] text-mut pt-2">W tej karcie masz pełną edycję każdego dnia — wpisy oznaczane są 🔑 w historii. PIN można zmienić w pliku index.html (stała ADMIN_PIN).</div>
+    </div></div>`;
+  const zapiszAdmin = (obj) => demo ? (Object.assign(state.admin, obj), render(), Promise.resolve()) : fb.update(fb.ref(db, "admin"), obj);
+  $("aOdbl").onclick = () => zapiszAdmin({ unlockUntil: Date.now() + 30*60000 }).then(()=>toast("🔓 Zespół może edytować przez 30 minut."));
+  $("aTryb").onclick = () => zapiszAdmin({ editMode: !state.admin?.editMode });
+  $("aZamknij").onclick = () => zapiszAdmin({ unlockUntil: 0, editMode: false });
+  $("aReset").onclick = async () => { if (prompt('Wpisz RESET, aby skasować wszystkie dane września:') !== "RESET") return toast("Anulowano."); if (demo){ state.obrot={}; state.podejscia={}; state.log=[]; render(); } else { await fb.remove(fb.ref(db,"obrot")); await fb.remove(fb.ref(db,"podejscia")); await fb.remove(fb.ref(db,"log")); } toast("🧹 Dane wyzerowane."); };
+  $("aWyloguj").onclick = () => { adminSession = false; render(); toast("Wylogowano."); };
+}
+
+function renderStatus(){
+  const dz = dzisNr(), h = new Date().getHours();
+  const txt = adminSession ? "🔑 kierownik" : edycjaGlobalna() ? "🔓 edycja otwarta" : !DNI.includes(dz) ? "📅 dziś brak dnia handlowego" : h >= GODZINA_BLOKADY ? `🔒 po ${GODZINA_BLOKADY}:00 — dziś zamknięte` : `🟢 dziś otwarte do ${GODZINA_BLOKADY}:00`;
+  $("statusLock").textContent = txt;
+}
+function render(){
+  const w = oblicz();
+  renderLiga(w); renderPodejscia(w); renderLokalizacje(w); renderDziennik("obrot"); renderDziennik("podejscia"); renderWykresy(w); renderAdmin(); renderStatus();
+}
+function toast(msg, typ){
+  const t = document.createElement("div"); t.className = `toast pointer-events-auto max-w-md w-full text-sm rounded-xl px-4 py-3 border shadow-2xl ${typ==="err" ? "bg-red-950/90 border-red-500/50 text-red-100" : "bg-panel2/95 border-zloto/40 text-slate-100"}`; t.textContent = msg; $("toasty").appendChild(t); setTimeout(()=>t.remove(), 3600);
+}
+
+// ═══════════════ NAWIGACJA ═══════════════
+$("nav").innerHTML = TABS.map(([id,n])=>`<button data-tab="${id}" class="nav-btn text-xs sm:text-sm px-3 py-2 rounded-lg border border-transparent text-mut hover:text-slate-100">${n}</button>`).join("");
+function pokazTab(id){ document.querySelectorAll(".tab-panel").forEach(p=>p.classList.toggle("active", p.id==="tab-"+id)); document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.tab===id)); if (id==="wykresy"){ chO?.resize(); chP?.resize(); } location.hash = id; }
+$("nav").onclick = e => { const b = e.target.closest("button"); if (b) pokazTab(b.dataset.tab); };
+
+// ═══════════════ START ═══════════════
+render();
+pokazTab(TABS.some(t=>t[0]===location.hash.slice(1)) ? location.hash.slice(1) : "liga");
+setInterval(renderStatus, 30000);
+setInterval(()=>{ $("tab-dzObrot")._odswiez?.(); $("tab-dzPodejscia")._odswiez?.(); }, 60000);
+
+function trybPodgladu(powod){
+  demo = true; $("bannerConfig").classList.remove("hidden");
+  $("kropka").className = "w-2 h-2 rounded-full bg-yellow-400"; $("statusTxt").textContent = "tryb podglądu";
+  if (powod) $("bannerConfig").innerHTML = `<b class="text-zloto">⚠️ Tryb podglądu.</b> ${powod} Dane działają tylko w tej karcie, bez synchronizacji.`;
+}
+(async () => {
+  if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "WKLEJ_TUTAJ") return trybPodgladu("");
+  try {
+    const [{ initializeApp }, dbMod] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+    ]);
+    fb = { ref: dbMod.ref, onValue: dbMod.onValue, set: dbMod.set, update: dbMod.update, remove: dbMod.remove, push: dbMod.push };
+    const app = initializeApp(firebaseConfig); db = dbMod.getDatabase(app);
+    fb.onValue(fb.ref(db, "/"), snap => {
+      const v = snap.val() || {};
+      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false } };
+      render(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
+    }, err => { $("kropka").className = "w-2 h-2 rounded-full bg-red-500"; $("statusTxt").textContent = "błąd bazy"; toast("Firebase: " + err.message + " — sprawdź reguły bazy (krok 2).", "err"); });
+  } catch (e) {
+    trybPodgladu("Nie udało się pobrać biblioteki Firebase (brak sieci albo podgląd w zamkniętym środowisku). Na GitHub Pages połączenie działa normalnie.");
+  }
+})();
+</script>
+</body>
+</html>
