@@ -16,7 +16,8 @@
   } } };
 </script>
 <style>
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; font-size:clamp(14px, 0.42vw + 12.3px, 19px); }
+  @media (min-width:2200px){ html{ font-size:21px; } }
   body{ background:#050A23; }
   .num{ font-variant-numeric:tabular-nums; }
   .hero{ position:relative; overflow:hidden; background:radial-gradient(1200px 520px at 50% -240px, rgba(232,184,75,.16), transparent 70%), linear-gradient(180deg,#0B1440 0%,#050A23 100%); }
@@ -41,8 +42,18 @@
   tr.klif td{ background:#3A1418 !important; color:#F2C4C4; } tr.klif td.nazwa{ color:#FF8A8A; font-weight:700; }
   tr.zloto td{ background:#3A2F14; } tr.srebro td{ background:#232B44; } tr.braz td{ background:#33241B; }
   .podium{ display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; align-items:end; }
-  .podium .p{ border-radius:.9rem; padding:.9rem .7rem; text-align:center; border:1px solid #1E2B66; background:linear-gradient(160deg,#101B52,#0B1440); }
+  .podium .p{ border-radius:.9rem; padding:.8rem .45rem; min-width:0; text-align:center; border:1px solid #1E2B66; background:linear-gradient(160deg,#101B52,#0B1440); }
+  .podium .p .truncate{ max-width:100%; }
   .podium .p1{ border-color:rgba(232,184,75,.55); background:linear-gradient(160deg,#3A2F14,#0B1440); transform:translateY(-6px); }
+  .mk{ display:grid; grid-template-columns:52px 1fr auto; gap:.6rem; align-items:center; padding:.75rem .9rem; }
+  .mk.klif{ background:#3A1418; } .mk.zloto{ background:#3A2F14; } .mk.srebro{ background:#232B44; } .mk.braz{ background:#33241B; }
+  .mk .m{ font-weight:800; text-align:center; font-size:.95rem; }
+  .mk .n{ font-weight:700; font-size:.9rem; line-height:1.2; } .mk .l{ font-size:.68rem; color:#8FA3D9; }
+  .mk .v{ text-align:right; font-weight:800; font-size:.95rem; } .mk .s{ text-align:right; font-size:.68rem; color:#8FA3D9; }
+  .mk.klif .n, .mk.klif .m{ color:#FF8A8A; }
+  table.analit th, table.analit td{ white-space:nowrap; padding:.55rem .6rem; }
+  table.analit th:nth-child(2), table.analit td:nth-child(2){ position:sticky; left:52px; background:#0B1440; z-index:1; }
+  table.analit th:first-child, table.analit td:first-child{ min-width:52px; }
   .seg button{ border:1px solid #1E2B66; } .seg button.on{ background:rgba(232,184,75,.15); border-color:#E8B84B; color:#E8B84B; }
   input,select{ color-scheme:dark; }
   ::-webkit-scrollbar{ height:8px; width:8px; } ::-webkit-scrollbar-thumb{ background:#1E2B66; border-radius:8px; }
@@ -53,7 +64,7 @@
 <body class="font-body text-slate-100 antialiased">
 
 <div class="bg-[#03061A] border-b border-linia/60 text-[11px]">
-  <div class="max-w-7xl mx-auto px-4 py-1.5 flex items-center justify-between gap-3">
+  <div class="max-w-[1480px] mx-auto px-4 py-1.5 flex items-center justify-between gap-3">
     <div class="text-mut num" id="matchday">—</div>
     <div class="flex items-center gap-2">
       <span id="statusLock" class="text-mut num">—</span>
@@ -65,16 +76,16 @@
 
 <header class="hero border-b border-linia/70">
   <div class="pierscien"></div>
-  <div class="relative max-w-7xl mx-auto px-4 pt-7 pb-4 text-center">
+  <div class="relative max-w-[1480px] mx-auto px-4 pt-7 pb-4 text-center">
     <div class="text-zloto tracking-[.4em] text-xs">★ ★ ★ ★ ★</div>
-    <h1 class="font-display font-black text-2xl sm:text-4xl mt-2 bg-gradient-to-br from-[#FFF3D6] via-zloto to-[#9C6B1D] bg-clip-text text-transparent">Liga Mistrzów</h1>
+    <h1 class="font-display font-black text-[1.6rem] sm:text-4xl mt-2 bg-gradient-to-br from-[#FFF3D6] via-zloto to-[#9C6B1D] bg-clip-text text-transparent">Liga Mistrzów</h1>
     <div class="font-display font-bold text-xs sm:text-sm tracking-[.25em] text-slate-200 mt-1">ZBITA SZYBKA · WRZESIEŃ 2026</div>
     <div class="text-[11px] text-mut mt-2">26 dni handlowych · 18 zawodników · 6 wysp w Polsce</div>
   </div>
-  <nav class="relative max-w-7xl mx-auto px-2 flex gap-0.5 overflow-x-auto justify-start sm:justify-center border-t border-linia/60" id="nav"></nav>
+  <nav class="relative max-w-[1480px] mx-auto px-2 flex flex-wrap gap-0.5 justify-center border-t border-linia/60" id="nav"></nav>
 </header>
 
-<main class="max-w-7xl mx-auto px-3 sm:px-4 py-5 space-y-5">
+<main class="max-w-[1480px] mx-auto px-3 sm:px-4 py-5 space-y-5">
   <div id="bannerConfig" class="hidden panel-box p-4 border-yellow-500/60 text-sm"></div>
 
   <section id="tab-liga" class="tab-panel space-y-4">
@@ -84,7 +95,8 @@
     </div>
     <div class="panel-box overflow-hidden">
       <div class="panel-hd"><div><div class="eyebrow">Tabela</div><h2 class="font-display font-bold text-sm text-zloto">🏆 Klasyfikacja generalna</h2></div><span class="text-[11px] text-mut hidden sm:inline">🔴 czerwone wiersze = Klif, poza konkursem</span></div>
-      <div class="overflow-x-auto"><table class="liga min-w-[900px] text-sm"><thead><tr>
+      <div id="cardsLiga" class="md:hidden divide-y divide-linia"></div>
+      <div class="overflow-x-auto hidden md:block"><table class="liga min-w-[900px] text-sm"><thead><tr>
         <th class="text-left">Miejsce</th><th class="text-left">Zawodnik</th><th class="text-left">Lokalizacja</th><th class="text-right">Obrót łączny</th><th class="text-right">Suma podejść</th><th class="text-right">Śr. podejść / dzień</th><th class="text-right">Zł / podejście</th><th class="text-right">Rekord dnia (PB)</th>
       </tr></thead><tbody id="tbLiga"></tbody></table></div>
     </div>
@@ -93,7 +105,8 @@
   <section id="tab-podejscia" class="tab-panel">
     <div class="panel-box overflow-hidden">
       <div class="panel-hd"><div><div class="eyebrow">Ranking</div><h2 class="font-display font-bold text-sm text-zloto">🎯 Kto najodważniej wychodzi do klienta</h2></div></div>
-      <div class="overflow-x-auto"><table class="liga min-w-[900px] text-sm"><thead><tr>
+      <div id="cardsPodejscia" class="md:hidden divide-y divide-linia"></div>
+      <div class="overflow-x-auto hidden md:block"><table class="liga min-w-[900px] text-sm"><thead><tr>
         <th class="text-left">Miejsce</th><th class="text-left">Zawodnik</th><th class="text-left">Lokalizacja</th><th class="text-right">Suma podejść</th><th class="text-right">Śr. / dzień</th><th class="text-right">Obrót łączny</th><th class="text-right">Zł / podejście</th><th class="text-left">Status / tytuł</th>
       </tr></thead><tbody id="tbPodejscia"></tbody></table></div>
     </div>
@@ -102,8 +115,9 @@
   <section id="tab-lokalizacje" class="tab-panel">
     <div class="panel-box overflow-hidden">
       <div class="panel-hd"><div><div class="eyebrow">Bitwa wysp</div><h2 class="font-display font-bold text-sm text-zloto">🏢 Ranking lokalizacji</h2></div></div>
-      <div class="overflow-x-auto"><table class="liga min-w-[760px] text-sm"><thead><tr>
-        <th class="text-left">Miejsce</th><th class="text-left">Lokalizacja</th><th class="text-right">Obrót łączny</th><th class="text-right">Udział %</th><th class="text-right">Śr. na handlowca</th><th class="text-left">Lider lokalizacji</th>
+      <div id="cardsLokalizacje" class="md:hidden divide-y divide-linia"></div>
+      <div class="overflow-x-auto hidden md:block"><table class="liga min-w-[760px] text-sm"><thead><tr>
+        <th class="text-left">Miejsce</th><th class="text-left">Lokalizacja</th><th class="text-right">Obrót łączny</th><th class="text-right">Udział %</th><th class="text-right">Aktywni</th><th class="text-right">Śr. na handlowca</th><th class="text-left">Lider lokalizacji</th><th class="text-right">Indeks mocy</th><th class="text-left">Status</th>
       </tr></thead><tbody id="tbLokalizacje"></tbody></table></div>
     </div>
   </section>
@@ -136,10 +150,19 @@
     </div>
   </section>
 
+  <section id="tab-analityka" class="tab-panel">
+    <div class="panel-box overflow-hidden">
+      <div class="panel-hd"><div><div class="eyebrow">Executive Warroom · 29 kolumn</div><h2 class="font-display font-bold text-sm text-zloto">📈 Pełna analityka zawodników</h2></div><span class="text-[11px] text-mut">przewiń w bok · nazwisko zostaje przyklejone</span></div>
+      <div class="overflow-x-auto"><table class="liga analit text-xs" id="tbAnalityka"></table></div>
+    </div>
+    <div class="text-[11px] text-mut px-1 mt-3 leading-relaxed"><b class="text-zloto">Skróty:</b> PROGNOZA / PODŁOGA / SUFIT — mediana oraz 5. i 95. percentyl 400 symulacji Monte Carlo (log-normalnych) do końca miesiąca · Z-SCORE — ile odchyleń standardowych od średniej sieci · SHARPE — średnia dzienna ÷ zmienność (stabilność wyniku) · KELLY — teoretyczny udział kapitału przy zakładzie na zawodnika · KURS BUK — 100 ÷ szansa · POGOŃ — ile dziennie trzeba nadrobić do lidera · LICZBA MAGICZNA — 💀 gdy strata > dni × rekord dnia (matematyczna eliminacja), 🪦 gdy brakuje tempa (+20%) · CV% — zmienność dzienna · MOMENTUM — ostatnie 4 dni vs wcześniejsza baza · EFEKT OBECNOŚCI — o ile rośnie utarg wyspy, gdy zawodnik pracuje.</div>
+  </section>
+  <section id="tab-raport" class="tab-panel"></section>
+  <section id="tab-loza" class="tab-panel"></section>
   <section id="tab-admin" class="tab-panel"></section>
 </main>
 
-<footer class="max-w-7xl mx-auto px-4 py-6 text-center text-[11px] text-mut">Zbita Szybka Elite · Executive Warroom · wrzesień 2026</footer>
+<footer class="max-w-[1480px] mx-auto px-4 py-6 text-center text-[11px] text-mut">Zbita Szybka Elite · Executive Warroom · wrzesień 2026</footer>
 <div id="toasty" class="fixed bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-50 pointer-events-none px-4"></div>
 
 <script type="module">
@@ -182,9 +205,10 @@ const PLAYERS = [
   { id:"olivier_wwa", n:"Olivier (WWA)", lok:"Warszawa" }
 ];
 const KOLORY = ["#E8B84B","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#8FA3D9","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
-const TABS = [["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],["legenda","📖 Legenda"],["admin","🔑 Kierownik"]];
+const TABS = [["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],["analityka","📈 Analityka"],["raport","🧠 Mój raport"],["loza","🏆 Loża Mistrzów"],["legenda","📖 Legenda"],["admin","🔑 Kierownik"]];
 
-let state = { obrot:{}, podejscia:{}, log:[], admin:{ unlockUntil:0, editMode:false } };
+let state = { obrot:{}, podejscia:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{} };
+const CEL_DOMYSLNY = 70000;
 let adminSession = false;
 const $ = (id) => document.getElementById(id);
 const fmt = (n) => Math.round(n).toLocaleString("pl-PL");
@@ -229,14 +253,18 @@ function lokacje(w){
   const m = {};
   for (const x of w){ m[x.lok] ??= { lok:x.lok, obrot:0, akt:0, lider:"—", liderO:-1 }; m[x.lok].obrot += x.obrot; if (x.dniAkt) m[x.lok].akt++; if (x.obrot > m[x.lok].liderO){ m[x.lok].liderO = x.obrot; m[x.lok].lider = x.n; } }
   const l = Object.values(m).sort((a,b)=>b.obrot-a.obrot), suma = l.reduce((s,x)=>s+x.obrot,0);
-  return l.map(x=>({ ...x, udzial: suma ? 100*x.obrot/suma : 0, naH: x.akt ? x.obrot/x.akt : 0 }));
+  const srLok = suma / Math.max(1, l.length);
+  return l.map((x,i)=>({ ...x, udzial: suma ? 100*x.obrot/suma : 0, naH: x.akt ? x.obrot/x.akt : 0, indeks: srLok ? Math.round(100*x.obrot/srLok) : 0,
+    status: i===0 ? "👑 Lider lokalizacji w Polsce" : i===1 ? "🔥 2. miejsce w sieci" : (srLok && x.obrot >= srLok) ? "📈 Powyżej średniej krajowej" : "🐢 Poniżej średniej krajowej" }));
 }
 
 const klasa = (w,m) => w.klif ? "klif" : m===1 ? "zloto" : m===2 ? "srebro" : m===3 ? "braz" : "";
 const kom = (w,m) => w.klif ? `<span class="text-klifTxt font-bold text-xs">🔴 KLIF</span><div class="text-[10px] text-klifTxt/80">poza konkursem</div>` : `<span class="text-zloto font-bold">${m===1?"🥇":m===2?"🥈":m===3?"🥉":""} ${m}.</span>`;
 
+const kartaM = (x, mi, glowna, pod) => `<div class="mk ${klasa(x,mi)}"><div class="m">${x.klif ? "🔴" : (mi===1?"🥇":mi===2?"🥈":mi===3?"🥉":mi+".")}</div><div class="min-w-0"><div class="n truncate">${x.n}</div><div class="l truncate">${x.klif ? "Klif · poza konkursem" : x.lok}</div></div><div><div class="v num ${x.klif?"":"text-zloto"}">${glowna}</div><div class="s num">${pod}</div></div></div>`;
 function renderLiga(w){
   const lista = [...w].sort((a,b)=>b.obrot-a.obrot); let m = 0;
+  let mm = 0; $("cardsLiga").innerHTML = lista.map(x=>{ if(!x.klif) mm++; const mi = x.klif?0:mm; return kartaM(x, mi, zl(x.obrot), `${fmt(x.sumaP)} podejść · ${x.konw?zl(x.konw)+"/podej.":"—"} · PB ${zl(x.pb)}`); }).join("");
   $("tbLiga").innerHTML = lista.map(x=>{ if(!x.klif) m++; const mi = x.klif?0:m; return `<tr class="${klasa(x,mi)}"><td>${kom(x,mi)}</td><td class="nazwa font-semibold">${x.n}</td><td class="text-mut">${x.lok}</td>
     <td class="text-right num font-bold ${x.klif?"":"text-zloto"}">${zl(x.obrot)}</td><td class="text-right num">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-right num">${zl(x.pb)}</td></tr>`; }).join("");
   const ucz = lista.filter(x=>!x.klif), siec = w.reduce((s,x)=>s+x.obrot,0), lok = lokacje(w), pbMax = [...w].sort((a,b)=>b.pb-a.pb)[0];
@@ -247,12 +275,14 @@ function renderLiga(w){
 }
 function renderPodejscia(w){
   const lista = [...w].sort((a,b)=>b.sumaP-a.sumaP); let m = 0;
+  let mm = 0; $("cardsPodejscia").innerHTML = lista.map(x=>{ if(!x.klif) mm++; const mi = x.klif?0:mm; return kartaM(x, mi, fmt(x.sumaP) + " podejść", `${x.srP.toFixed(1)}/dzień · ${zl(x.obrot)} · ${x.konw?zl(x.konw)+"/podej.":"—"}`); }).join("");
   $("tbPodejscia").innerHTML = lista.map(x=>{ if(!x.klif) m++; const mi = x.klif?0:m;
     const tytul = x.klif ? "🔴 Klif — poza konkursem" : mi===1 && x.sumaP ? "👑 Król podejść" : mi<=3 && x.sumaP ? "🔥 TOP 3 odwagi" : x.konw>=150 && x.sumaP>=10 ? "🎯 Snajper (wysoka konwersja)" : x.sumaP ? "⚔️ W grze" : "⏳ Czekamy na start";
     return `<tr class="${klasa(x,mi)}"><td>${kom(x,mi)}</td><td class="nazwa font-semibold">${x.n}</td><td class="text-mut">${x.lok}</td><td class="text-right num font-bold ${x.klif?"":"text-neon"}">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${zl(x.obrot)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-xs">${tytul}</td></tr>`; }).join("");
 }
 function renderLokalizacje(w){
-  $("tbLokalizacje").innerHTML = lokacje(w).map((l,i)=>`<tr class="${i===0?"zloto":""}"><td class="text-zloto font-bold">${i===0?"🥇":i===1?"🥈":i===2?"🥉":""} ${i+1}.</td><td class="font-semibold ${l.lok==="Klif"?"text-klifTxt":""}">${l.lok}${l.lok==="Klif"?' <span class="text-[10px]">🔴 poza konkursem</span>':""}</td><td class="text-right num font-bold">${zl(l.obrot)}</td><td class="text-right num">${l.udzial.toFixed(1)}%</td><td class="text-right num">${zl(l.naH)}</td><td class="text-mut text-xs">${l.lider} (${zl(l.liderO)})</td></tr>`).join("");
+  $("cardsLokalizacje").innerHTML = lokacje(w).map((l,i)=>`<div class="mk ${i===0?"zloto":""}"><div class="m">${i===0?"🥇":i===1?"🥈":i===2?"🥉":(i+1)+"."}</div><div class="min-w-0"><div class="n truncate ${l.lok==="Klif"?"text-klifTxt":""}">${l.lok}</div><div class="l truncate">lider: ${imie(l.lider)} · ${l.udzial.toFixed(1)}% sieci</div></div><div><div class="v num text-zloto">${zl(l.obrot)}</div><div class="s num">${zl(l.naH)} / handl.</div></div></div>`).join("");
+  $("tbLokalizacje").innerHTML = lokacje(w).map((l,i)=>`<tr class="${i===0?"zloto":""}"><td class="text-zloto font-bold">${i===0?"🥇":i===1?"🥈":i===2?"🥉":""} ${i+1}.</td><td class="font-semibold ${l.lok==="Klif"?"text-klifTxt":""}">${l.lok}${l.lok==="Klif"?' <span class="text-[10px]">🔴 poza konkursem</span>':""}</td><td class="text-right num font-bold">${zl(l.obrot)}</td><td class="text-right num">${l.udzial.toFixed(1)}%</td><td class="text-right num">${l.akt}</td><td class="text-right num">${zl(l.naH)}</td><td class="text-mut text-xs">${l.lider} (${zl(l.liderO)})</td><td class="text-right num">${l.indeks} pkt</td><td class="text-xs">${l.status}</td></tr>`).join("");
 }
 
 function renderDziennik(kind){
@@ -323,6 +353,172 @@ function renderWykresy(w){
   if (chP){ chP.data.datasets = dsP; chP.update("none"); } else chP = new Chart($("chPodejscia"), { type:"bar", data:{ labels, datasets:dsP }, options:{ ...opcje("podejścia / dzień"), scales:{ x:{ stacked:true, ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ stacked:true, ticks:{ color:"#8FA3D9" }, grid:{ color:"#1E2B66" } } } } });
 }
 
+// ═══════════════ 🏆 LOŻA MISTRZÓW — fakty sportowe + konkret sprzedażowy ═══════════════
+// Każdy wpis: udokumentowany fakt (rok / liczba), sens dla sprzedawcy, gotowe zdanie do klienta.
+const LEGENDY = [
+  { n:"Roger Federer", d:"🎾", fakt:"W przemówieniu w Dartmouth (2024) policzył: wygrał prawie 80% meczów, ale tylko 54% rozegranych punktów.", sens:"Nawet najlepszy przegrywa niemal co drugą wymianę. Liczy się, jak szybko zapominasz o poprzednim punkcie.", ton:"reset" },
+  { n:"Michael Jordan", d:"🏀", fakt:"W reklamie Nike (1997) wyliczył: ponad 9 000 spudłowanych rzutów, 26 przegranych decydujących akcji — i właśnie dlatego wygrywał.", sens:"Odmowa to statystyka, nie ocena Ciebie. Kto nie pyta, nie ma nawet szansy spudłować.", ton:"odwaga" },
+  { n:"Kobe Bryant", d:"🐍", fakt:"Trenował o 4:00 rano przed oficjalnym treningiem; „Mamba Mentality” to jego własna nazwa na obsesję nad detalami.", sens:"Przewaga bierze się z rzeczy, których nikt nie widzi: ekspozycja, znajomość produktu, rytuał.", ton:"dyscyplina" },
+  { n:"Muhammad Ali", d:"🥊", fakt:"„Nienawidziłem każdej minuty treningu, ale mówiłem: wycierp teraz i żyj resztę życia jako mistrz.” Trzykrotny mistrz świata wagi ciężkiej (1964, 1974, 1978).", sens:"Ostatnia godzina zmiany boli. Właśnie wtedy jedno dodatkowe pytanie oddziela mistrza od reszty.", ton:"wytrwałość" },
+  { n:"Mike Tyson", d:"🥊", fakt:"„Każdy ma plan, dopóki nie dostanie w twarz” — powiedział przed walką z Holyfieldem (1996).", sens:"Twój cios to „za drogo” o 9:05. Nie planuj reakcji — wytrenuj ją tak, by wychodziła sama.", ton:"garda" },
+  { n:"Cristiano Ronaldo", d:"⚽", fakt:"„Talent bez ciężkiej pracy jest niczym” — jego najczęściej cytowane zdanie; ponad 900 goli w karierze.", sens:"Podejścia to strzały na bramkę. Nie liczy się skuteczność jednego — liczy się, ile ich oddasz.", ton:"objętość" },
+  { n:"Leo Messi", d:"⚽", fakt:"Jako 13-latek przyjmował zastrzyki hormonu wzrostu; skończył z ośmioma Złotymi Piłkami.", sens:"Miejsce w tabeli na starcie miesiąca nie mówi nic o mecie.", ton:"start" },
+  { n:"Usain Bolt", d:"⚡", fakt:"Rekord 9,58 s (Berlin 2009) — przy jednym z najsłabszych startów w stawce; nadrabiał na ostatnich 40 metrach.", sens:"Słaby początek tygodnia nie decyduje. Decyduje, czy trzymasz technikę do ostatniego klienta.", ton:"finisz" },
+  { n:"Tom Brady", d:"🏈", fakt:"Wybrany z numerem 199 w drafcie 2000; siedem Super Bowl; w finale 2017 odrobił 3:28.", sens:"Nie patrz na całą stratę. Patrz na następną akcję — tego klienta, ten dodatek.", ton:"comeback" },
+  { n:"Robert Lewandowski", d:"⚽", fakt:"22 września 2015: pięć goli w 8 minut 59 sekund po wejściu z ławki przeciw Wolfsburgowi.", sens:"Gdy przychodzi ruch, nie filozofuj — ustaw się tam, gdzie spadnie piłka, i wykańczaj.", ton:"seria" },
+  { n:"Iga Świątek", d:"🎾", fakt:"Od 2019 r. pracuje z psycholożką sportową Darią Abramowicz i mówi o tym otwarcie; 5 tytułów wielkoszlemowych do 2024 r.", sens:"Głowa to mięsień. Po trudnym kliencie: oddech, reset, następny dostaje czystą wersję Ciebie.", ton:"reset" },
+  { n:"Adam Małysz", d:"🎿", fakt:"W sezonie 2000/01 wygrał 11 konkursów Pucharu Świata; na pytania o rekordy odpowiadał: „chcę oddać dwa dobre skoki”.", sens:"Proces zamiast tabeli: dwa dobre podejścia z pełnym rytuałem, a wynik przyjdzie sam.", ton:"proces" },
+  { n:"Serena Williams", d:"🎾", fakt:"„Mistrza definiuje nie liczba wygranych, ale to, jak podnosi się po porażce.” 23 tytuły wielkoszlemowe.", sens:"Trzy odmowy z rzędu to dane, nie wyrok. Czwarta rozmowa zaczyna się od zera.", ton:"upadek" },
+  { n:"Michael Phelps", d:"🏊", fakt:"23 złote medale olimpijskie — najwięcej w historii; „nie nakładam limitu na nic”.", sens:"„W mojej galerii nikt nie bierze ładowarek” to limit, który sam sobie nałożyłeś.", ton:"limit" },
+  { n:"LeBron James", d:"🏀", fakt:"„Nothing is given. Everything is earned.” — 20+ sezonów na szczycie NBA.", sens:"Tabela nie pamięta wczoraj. Dziś znów zarabiasz swoje miejsce.", ton:"praca" }
+];
+const SYTUACJE = [
+  { s:"Klient odrzuca wszystkie dodatki do naprawy", r:"To jedna wymiana, nie mecz. Zadaj pytanie raz jeszcze — spokojniej i z konkretem:" },
+  { s:"Klient wpada tylko po odbiór i chce szybko wyjść", r:"Masz dziesięć sekund na jedno zdanie w drzwiach — niech będzie najlepsze dnia:" },
+  { s:"Martwa godzina, pusty korytarz galerii", r:"Trening bez publiczności: wypoleruj ekspozycję i przećwicz na głos:" },
+  { s:"Klient mówi „za drogo”", r:"Cena boli tylko bez kontekstu. Przelicz ją na koszt jednej naprawy po upadku i dodaj:" },
+  { s:"Słyszysz „zastanowię się” trzeci raz z rzędu", r:"To prośba o jeden mocny argument, nie odmowa. Daj go bez wahania:" },
+  { s:"Klient porównuje ceny z internetem przy ladzie", r:"Sprzedaj to, czego internet nie wyśle — montaż na miejscu i gwarancję dotyku:" },
+  { s:"Zdenerwowany klient z reklamacją", r:"Słuchaj, kiwaj głową, nazwij problem. Gdy emocje opadną, odbuduj zaufanie konkretem:" },
+  { s:"Tłum przy wyspie, trzy osoby naraz", r:"Szczyt to żniwa, nie stres. Krótkie komunikaty — a każdą transakcję kończy pytanie:" },
+  { s:"Koniec zmiany, ostatni klient", r:"Czwarta kwarta wygrywa mecze. Ostatni klient dostaje energię pierwszego:" },
+  { s:"Mało podejść na liczniku", r:"Podejścia to strzały na bramkę — bez nich nie ma goli. Zaczynaj od:" },
+  { s:"Klient kupił drogi telefon i „nic nie potrzebuje”", r:"Ekran za sześć tysięcy bez ochrony to odkryty król na szachownicy. Powiedz to wprost:" },
+  { s:"Poniedziałek rano, zero ruchu, motywacja na dnie", r:"Pierwszy set gra się na rozpoznanie. Przygotuj scenę pod wieczorny szczyt i miej gotowe:" }
+];
+const PRODUKTY = [
+  "„Szyba antyrefleksyjna za 200 zł to upgrade wzroku — zero odblasków, montaż na miejscu w dwie minuty.”",
+  "„Ładowarka 3w1 za 450 zł to stacja dowodzenia: telefon, zegarek i słuchawki jednym ruchem.”",
+  "„Azotek galu duo za 150 zł to czysta moc GaN — dwa urządzenia naraz, zero kompromisów.”",
+  "„Magiczna piana za 50 zł to rytuał dla ekranu — telefon za sześć tysięcy zasługuje na nanotech.”",
+  "„Magiczny sznurek za 80 zł to ubezpieczenie — klient kupuje spokój, nie sznurek.”",
+  "„Ochrona 360: szyba za 200 zł plus etui — pakiet tańszy niż jedna naprawa, po którym telefon przeżyje właściciela.”",
+  "„Magiczne szmatki za 50 zł domykają rytuał — mała rzecz, a klient wraca po nie jak po kawę.”"
+];
+const SZABLONY = [
+  (a,sy,pr)=>`${a.n}: ${a.fakt} ${a.sens} ${sy.s.toLowerCase()}? ${sy.r} ${pr}`,
+  (a,sy,pr)=>`${sy.s}? Posłuchaj, co na to ${a.n}. ${a.fakt} ${sy.r} ${pr} ${a.sens}`,
+  (a,sy,pr)=>`Lekcja z Loży. ${a.fakt} — ${a.n}. Twój mecz dziś: ${sy.s.toLowerCase()}. ${sy.r} ${pr}`,
+  (a,sy,pr)=>`${a.sens} Tak grał ${a.n}: ${a.fakt} ${sy.r} ${pr}`
+];
+let lozaHist = [];
+function poradaLozy(iS){
+  for (let p = 0; p < 30; p++){
+    const iA = Math.floor(Math.random()*LEGENDY.length), iP = Math.floor(Math.random()*PRODUKTY.length), iT = Math.floor(Math.random()*SZABLONY.length);
+    const sy = iS >= 0 ? iS : Math.floor(Math.random()*SYTUACJE.length), kl = `${iA}-${sy}-${iP}-${iT}`;
+    if (!lozaHist.includes(kl)){ lozaHist.push(kl); if (lozaHist.length > 40) lozaHist.shift(); return { a: LEGENDY[iA], t: SZABLONY[iT](LEGENDY[iA], SYTUACJE[sy], PRODUKTY[iP]), s: SYTUACJE[sy].s }; }
+  }
+  const a = LEGENDY[0]; return { a, t: SZABLONY[0](a, SYTUACJE[0], PRODUKTY[0]), s: SYTUACJE[0].s };
+}
+function renderLoza(){
+  const el = $("tab-loza"); if (el.dataset.built) return;
+  el.innerHTML = `<div class="grid lg:grid-cols-5 gap-4">
+    <div class="panel-box p-5 lg:col-span-3 space-y-4">
+      <div><div class="eyebrow">Mentalność mistrzów · ${LEGENDY.length} legend · ${LEGENDY.length*SYTUACJE.length*PRODUKTY.length*SZABLONY.length} kombinacji</div><h2 class="font-display font-bold text-sm text-zloto">🏆 Loża Mistrzów</h2></div>
+      <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Twoja sytuacja</label>
+      <select id="lozaSyt" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm"><option value="-1">🎲 dowolna — zaskocz mnie</option>${SYTUACJE.map((x,i)=>`<option value="${i}">${x.s}</option>`).join("")}</select>
+      <div id="lozaKarta" class="rounded-2xl border border-zloto/30 bg-gradient-to-br from-panel2 to-panel p-5 min-h-[180px]"></div>
+      <button id="lozaBtn" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">🎾 POTRZEBUJĘ RADY</button>
+    </div>
+    <div class="panel-box p-5 lg:col-span-2"><div class="eyebrow mb-3">Legendy w Loży</div><div class="space-y-2 text-xs">${LEGENDY.map(a=>`<div class="flex gap-2 items-start"><span class="text-base leading-none">${a.d}</span><div><b class="text-slate-100">${a.n}</b><div class="text-mut">${a.fakt}</div></div></div>`).join("")}</div></div>
+  </div>`;
+  el.dataset.built = "1";
+  const pokaz = () => { const r = poradaLozy(+$("lozaSyt").value); $("lozaKarta").innerHTML = `<div class="flex items-center justify-between gap-2 mb-3"><span class="text-[10px] font-bold tracking-widest uppercase text-zloto border border-zloto/40 rounded-full px-3 py-1">${r.a.d} ${r.a.n}</span><span class="text-[10px] text-mut truncate">${r.s}</span></div><p class="text-sm leading-relaxed">${r.t}</p>`; };
+  $("lozaBtn").onclick = pokaz; $("lozaSyt").onchange = pokaz; pokaz();
+}
+
+// ═══════════════ 📈 PEŁNA ANALITYKA (29 kolumn jak w Warroomie) ═══════════════
+function analityka(w){
+  const dz = dzisNr(), { out, pozostale } = symulacja(w);
+  const siec = w.reduce((s,x)=>s+x.obrot,0), lokS = {}, lokDni = {};
+  const dzienneMap = {};
+  for (const x of w){
+    const dzn = [], praca = [];
+    for (const d of DNI){ if (d>dz) break; const st = status(state.obrot?.[d]?.[x.id], d); if (["l4","laska","przyszly"].includes(st.typ)){ dzn.push(null); praca.push(null); continue; } dzn.push(st.typ==="kwota"?st.w:0); praca.push(st.typ==="kwota"); }
+    dzienneMap[x.id] = { dzn, praca };
+    lokS[x.lok] = (lokS[x.lok]||0) + x.obrot; lokDni[x.lok] ??= []; dzn.forEach((v,i)=>{ lokDni[x.lok][i] = (lokDni[x.lok][i]||0) + (v||0); });
+  }
+  const obroty = w.map(x=>x.obrot), sr = obroty.reduce((a,b)=>a+b,0)/w.length, sd = Math.sqrt(obroty.reduce((a,b)=>a+(b-sr)**2,0)/Math.max(1,w.length-1)) || 1;
+  const maxO = Math.max(1,...obroty), maxPB = Math.max(1,...w.map(x=>x.pb));
+  const ucz = [...w].filter(x=>!x.klif).sort((a,b)=>b.obrot-a.obrot), lider = ucz[0];
+  return w.map(x=>{
+    const { dzn, praca } = dzienneMap[x.id], real = dzn.filter(v=>v!==null);
+    const m = real.length ? real.reduce((a,b)=>a+b,0)/real.length : 0, s2 = real.length>1 ? Math.sqrt(real.reduce((a,b)=>a+(b-m)**2,0)/(real.length-1)) : 0;
+    let momentum = 0; if (real.length>=6){ const o=real.slice(-4), b=real.slice(0,-4); const mo=o.reduce((a,c)=>a+c,0)/4, mb=b.reduce((a,c)=>a+c,0)/b.length; momentum = mb ? Math.round(100*(mo/mb-1)) : (mo?100:0); }
+    let zS=0,zN=0,bS=0,bN=0; praca.forEach((p,i)=>{ if (p===null) return; const v = lokDni[x.lok][i]||0; if (p){zS+=v;zN++;} else {bS+=v;bN++;} });
+    const efekt = bN===0 ? "💯 zawsze obecny" : (()=>{ const ez=zN?zS/zN:0, eb=bN?bS/bN:0; const r = eb ? Math.round(100*(ez/eb-1)) : 100; return (r>=0?"+":"")+r+"% punktu"; })();
+    const sim = out[x.id] || { prognoza:x.obrot, podloga:x.obrot, sufit:x.obrot, szansa:-1 };
+    const cel = state.cele?.[x.id] || CEL_DOMYSLNY, poz = x.klif ? 0 : ucz.findIndex(q=>q.id===x.id)+1, strata = lider ? lider.obrot - x.obrot : 0, srD = x.otwarte ? x.obrot/x.otwarte : 0;
+    const q = ucz.length>1 ? (poz-1)/(ucz.length-1) : 0;
+    const a = {
+      cel, procCelu: Math.round(100*x.obrot/cel), udzialPL: siec ? (100*x.obrot/siec) : 0, udzialLok: lokS[x.lok] ? 100*x.obrot/lokS[x.lok] : 0,
+      efficiency: sr ? Math.round(100*x.obrot/sr) : 0, zscore: (x.obrot-sr)/sd, sharpe: s2 ? m/s2 : 0, cv: m ? 100*s2/m : 0,
+      mvp: Math.min(10, 5*x.obrot/maxO + 3*(x.otwarte ? x.dniAkt/x.otwarte : 0) + 2*x.pb/maxPB), momentum, efekt,
+      prognoza: sim.prognoza, podloga: sim.podloga, sufit: sim.sufit, szansa: sim.szansa
+    };
+    if (x.klif){ Object.assign(a, { kurs:"—", pogon:"—", magiczna:"—", kelly:"—", status:"🔴 Klif — poza konkursem" }); }
+    else if (poz===1 && x.obrot>0){ Object.assign(a, { kurs: a.szansa>=99.5 ? "1.00 (Lock)" : a.szansa>0 ? (100/a.szansa).toFixed(2) : "—", pogon:"👑 LIDER", magiczna:"👑 LIDER", kelly: Math.max(0,(2*a.szansa-100)).toFixed(1)+"%", status:"👑 LIDER SIECI" }); }
+    else Object.assign(a, { kurs: a.szansa>0 ? (100/a.szansa).toFixed(2) : "—", kelly:"0.0%", pogon: pozostale ? "+"+fmt(Math.ceil(strata/pozostale))+" zł/dz" : "—",
+      magiczna: pozostale===0 ? (strata>0?"💀 ELIMINACJA":"—") : strata > pozostale*Math.max(1,x.pb) ? "💀 ELIMINACJA (mat.)" : strata > pozostale*srD*1.2 ? "🪦 POZA ZASIĘGIEM" : "GOŃ: "+fmt(strata)+" zł",
+      status: poz<=3 ? "🔥 TOP 3" : q<=.25 ? "📈 Q4" : q<=.5 ? "⚖️ Q3" : q<=.75 ? "🥊 Q2" : "🐢 Q1" });
+    return { ...x, poz, ...a };
+  }).sort((a,b)=>b.obrot-a.obrot);
+}
+function renderAnalityka(w){
+  const H = ["MIEJSCE","ZAWODNIK","OBRÓT","TWÓJ CEL","% CELU","DNI AKT.","UDZIAŁ PL","UDZIAŁ PUNKT","EFFICIENCY","ŚR. SUROWA","PROGNOZA MC","PODŁOGA","SUFIT","Z-SCORE","SHARPE","KELLY","MVP","SZANSA","KURS BUK","POGOŃ","L. MAGICZNA","PB","CV %","MOMENTUM","EFEKT OBECN.","STATUS","🎯 PODEJŚCIA","ŚR. POD./DZ","ZŁ / POD."];
+  const rows = analityka(w);
+  $("tbAnalityka").innerHTML = `<thead><tr>${H.map((h,i)=>`<th class="${i<2||i===25||i===24||i===19||i===20?"text-left":"text-right"}">${h}</th>`).join("")}</tr></thead><tbody>` + rows.map(x=>{
+    const c = x.klif ? "klif" : x.poz===1 ? "zloto" : x.poz===2 ? "srebro" : x.poz===3 ? "braz" : "";
+    const R = (v) => `<td class="text-right num">${v}</td>`, L = (v) => `<td class="text-left">${v}</td>`;
+    return `<tr class="${c}">${L(x.klif?'<span class="text-klifTxt font-bold">🔴 KLIF</span>':`<span class="text-zloto font-bold">${x.poz===1?"🥇":x.poz===2?"🥈":x.poz===3?"🥉":""} ${x.poz}.</span>`)}<td class="nazwa font-semibold">${x.n}</td>${R(zl(x.obrot))}${R(zl(x.cel))}${R(x.procCelu+"%")}${R(x.dniAkt+" / "+x.otwarte)}${R(x.udzialPL.toFixed(1)+"%")}${R(x.udzialLok.toFixed(1)+"%")}${R(x.efficiency+" pkt")}${R(zl(x.otwarte?x.obrot/x.otwarte:0))}${R(x.klif?"—":zl(x.prognoza))}${R(x.klif?"—":zl(x.podloga))}${R(x.klif?"—":zl(x.sufit))}${R((x.zscore>=0?"+":"")+x.zscore.toFixed(2)+" σ")}${R(x.sharpe.toFixed(2))}${R(x.kelly)}${R(x.mvp.toFixed(1)+" / 10")}${R(x.szansa>=0?x.szansa.toFixed(1)+"%":"—")}${R(x.kurs)}${L(x.pogon)}${L(x.magiczna)}${R(zl(x.pb))}${R(x.cv.toFixed(1)+"%")}${L((x.momentum>=0?"▲ +":"▼ ")+x.momentum+"%")}${L(x.efekt)}${L(x.status)}${R(fmt(x.sumaP))}${R(x.srP.toFixed(1))}${R(x.konw?zl(x.konw):"—")}</tr>`; }).join("") + "</tbody>";
+}
+
+// ═══════════════ 🧠 MÓJ RAPORT TRENERA ═══════════════
+function symulacja(w){ // lekkie Monte Carlo: szansa na złoto + prognoza, tylko uczestnicy
+  const dz = dzisNr(), pozostale = DNI.filter(d=>d>dz).length, ucz = w.filter(x=>!x.klif), SIM = 400;
+  const par = ucz.map(x=>{ const dod=[]; for (const d of DNI){ if (d>dz) break; const st = status(state.obrot?.[d]?.[x.id], d); if (st.typ==="kwota" && st.w>0) dod.push(Math.log(st.w)); }
+    const mu = dod.length ? dod.reduce((a,b)=>a+b,0)/dod.length : 0; let sig = .5; if (dod.length>1){ sig = Math.sqrt(dod.reduce((a,b)=>a+(b-mu)**2,0)/(dod.length-1)) || .4; }
+    return { id:x.id, obrot:x.obrot, p: x.otwarte ? dod.length/x.otwarte : 0, mu, sig, sumy:[] }; });
+  const wyg = {}; par.forEach(q=>wyg[q.id]=0);
+  const ktos = par.some(q=>q.p>0);
+  for (let s=0; s<SIM; s++){ let naj=null, najW=-1; for (const q of par){ let suma=q.obrot; for (let d=0; d<pozostale; d++){ if (Math.random()<q.p){ const z=Math.sqrt(-2*Math.log(Math.random()||1e-9))*Math.cos(2*Math.PI*Math.random()); suma+=Math.exp(q.mu+q.sig*z); } } q.sumy.push(suma); if (suma>najW){najW=suma;naj=q.id;} } if (naj) wyg[naj]++; }
+  const out = {}; par.forEach(q=>{ q.sumy.sort((a,b)=>a-b); out[q.id] = { prognoza: q.sumy[Math.floor(SIM/2)], podloga: q.sumy[Math.floor(SIM*0.05)], sufit: q.sumy[Math.floor(SIM*0.95)-1], szansa: ktos ? 100*wyg[q.id]/SIM : 0 }; });
+  return { out, pozostale };
+}
+function renderRaport(w){
+  const el = $("tab-raport");
+  if (!el.dataset.built){
+    el.innerHTML = `<div class="panel-box p-4 sm:p-5 space-y-4">
+      <div class="flex flex-wrap items-end justify-between gap-3"><div><div class="eyebrow">Osobista analityka</div><h2 class="font-display font-bold text-sm text-zloto">🧠 Mój raport trenera</h2></div>
+        <div class="flex gap-2 items-center"><select id="rapKto" class="bg-noc border border-linia rounded-xl px-3 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select><button id="rapCel" class="rounded-xl px-3 py-2 text-xs font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">✏️ mój cel</button></div></div>
+      <div id="rapTresc"></div></div>`;
+    el.dataset.built = "1";
+    $("rapKto").onchange = () => renderRaport(oblicz());
+    $("rapCel").onclick = async () => { const pid = $("rapKto").value; const nowy = parseInt(prompt("Twój indywidualny cel na wrzesień (zł):", state.cele?.[pid] || CEL_DOMYSLNY), 10); if (isNaN(nowy) || nowy < 1000) return; if (demo){ (state.cele ??= {})[pid] = nowy; render(); } else await fb.set(fb.ref(db, `cele/${pid}`), nowy); toast(`🎯 Cel ustawiony: ${zl(nowy)}`); };
+  }
+  const pid = $("rapKto").value, x = w.find(q=>q.id===pid); if (!x) return;
+  const { out, pozostale } = symulacja(w), sim = out[pid] || { prognoza: x.obrot, szansa: -1 };
+  const ucz = [...w].filter(q=>!q.klif).sort((a,b)=>b.obrot-a.obrot), lider = ucz[0], miejsce = ucz.findIndex(q=>q.id===pid)+1;
+  const cel = state.cele?.[pid] || CEL_DOMYSLNY, proc = Math.round(100*x.obrot/cel), brak = Math.max(0, cel - x.obrot), sr = x.otwarte ? x.obrot/x.otwarte : 0;
+  const strata = lider ? lider.obrot - x.obrot : 0;
+  const pogon = x.klif ? "poza konkursem" : miejsce===1 && x.obrot>0 ? "👑 LIDER" : pozostale ? "+" + zl(Math.ceil(strata/pozostale)) + "/dzień" : "—";
+  const magiczna = x.klif ? "—" : miejsce===1 && x.obrot>0 ? "👑 prowadzisz" : pozostale===0 ? "koniec sezonu" : strata > pozostale*Math.max(1,x.pb) ? "💀 eliminacja matematyczna" : strata > pozostale*sr*1.2 ? "🪦 poza zasięgiem tempa (+20%)" : "GOŃ: " + zl(strata);
+  const dzienne = []; for (const d of DNI){ if (d>dzisNr()) break; const st = status(state.obrot?.[d]?.[pid], d); if (!["l4","laska","przyszly"].includes(st.typ)) dzienne.push(st.typ==="kwota"?st.w:0); }
+  let momentum = 0; if (dzienne.length>=6){ const o = dzienne.slice(-4), b = dzienne.slice(0,-4); const mo = o.reduce((a,c)=>a+c,0)/o.length, mb = b.reduce((a,c)=>a+c,0)/b.length; momentum = mb ? Math.round(100*(mo/mb-1)) : 0; }
+  const master = brak===0 ? `🎯 Cel ${zl(cel)} wykonany (${zl(x.obrot)}). Teraz gra się o rekordy i styl.` : `Do celu ${zl(cel)} brakuje ${zl(brak)}. To: ${Math.ceil(brak/200)}× szyba (200 zł) LUB ${Math.ceil(brak/450)}× ładowarka 3w1 (450 zł) LUB ${Math.ceil(brak/150)}× azotek duo (150 zł) LUB ${Math.ceil(brak/80)}× sznurek (80 zł). Górę rozbija się na sztuki — sztuki się sprzedaje.${pozostale ? ` Tempo potrzebne: ${zl(Math.ceil(brak/pozostale))}/dzień przez ${pozostale} dni.` : ""}`;
+  const K = (e,v,c="") => `<div class="panel-box p-3"><div class="eyebrow">${e}</div><div class="font-display font-bold text-sm mt-1 num ${c}">${v}</div></div>`;
+  const dzis = dzisNr(), rada = LEGENDY[(dzis + pid.length) % LEGENDY.length];
+  $("rapTresc").innerHTML = `
+    <div class="flex flex-wrap items-baseline gap-2 mb-3"><span class="font-display font-bold text-lg ${x.klif?"text-klifTxt":"text-zloto"}">${x.n}</span><span class="text-xs text-mut">${x.lok}${x.klif?" · 🔴 poza konkursem":" · miejsce "+miejsce+" / "+ucz.length}</span></div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+      ${K("Obrót", zl(x.obrot), "text-zloto")}${K("% celu ("+fmt(cel)+" zł)", proc+"%", proc>=100?"text-szmaragd":"")}${K("Średnia / dzień", zl(sr))}${K("Dni aktywne", x.dniAkt+" / "+x.otwarte)}
+      ${K("Rekord dnia", zl(x.pb), "text-zloto")}${K("Prognoza MC", x.klif?"—":zl(sim.prognoza))}${K("Szansa na złoto", x.klif?"—":sim.szansa.toFixed(1)+"%", sim.szansa>=50?"text-szmaragd":"")}${K("Pogoń", pogon)}
+      ${K("Momentum", (momentum>=0?"▲ +":"▼ ")+momentum+"%", momentum>=0?"text-szmaragd":"text-red-300")}${K("Liczba magiczna", magiczna)}${K("Podejścia", fmt(x.sumaP)+" (śr. "+x.srP.toFixed(1)+")", "text-neon")}${K("Zł / podejście", x.konw?zl(x.konw):"—")}
+    </div>
+    <div class="rounded-2xl border border-linia bg-noc/50 p-4 mt-4 text-sm"><b class="text-zloto">🥊 Masterplan:</b> ${master}</div>
+    <div class="rounded-2xl border border-zloto/30 bg-gradient-to-br from-panel2 to-panel p-4 mt-3 text-sm"><div class="text-[10px] font-bold tracking-widest uppercase text-zloto mb-1">${rada.d} rada dnia · ${rada.n}</div><p>${rada.fakt} <b>${rada.sens}</b></p><p class="text-mut text-xs mt-2">Więcej w zakładce 🏆 Loża Mistrzów — rady dopasowane do konkretnej sytuacji przy ladzie.</p></div>`;
+}
+
 function renderAdmin(){
   const el = $("tab-admin");
   if (!adminSession){
@@ -362,14 +558,14 @@ function renderStatus(){
 // Każda sekcja osobno — awaria jednej (np. brak Chart.js w podglądzie) nie gasi pozostałych.
 function render(){
   const w = oblicz();
-  [["liga",()=>renderLiga(w)],["podejscia",()=>renderPodejscia(w)],["lokalizacje",()=>renderLokalizacje(w)],["dzObrot",()=>renderDziennik("obrot")],["dzPodejscia",()=>renderDziennik("podejscia")],["wykresy",()=>renderWykresy(w)],["admin",renderAdmin],["status",renderStatus]]
+  [["liga",()=>renderLiga(w)],["podejscia",()=>renderPodejscia(w)],["lokalizacje",()=>renderLokalizacje(w)],["dzObrot",()=>renderDziennik("obrot")],["dzPodejscia",()=>renderDziennik("podejscia")],["wykresy",()=>renderWykresy(w)],["analityka",()=>renderAnalityka(w)],["raport",()=>renderRaport(w)],["loza",renderLoza],["admin",renderAdmin],["status",renderStatus]]
     .forEach(([n,f])=>{ try { f(); } catch(e){ console.error("Sekcja " + n + ":", e); } });
 }
 function toast(msg, typ){
   const t = document.createElement("div"); t.className = `toast pointer-events-auto max-w-md w-full text-sm rounded-xl px-4 py-3 border shadow-2xl ${typ==="err" ? "bg-red-950/90 border-red-500/50 text-red-100" : "bg-panel2/95 border-zloto/40 text-slate-100"}`; t.textContent = msg; $("toasty").appendChild(t); setTimeout(()=>t.remove(), 3600);
 }
 
-$("nav").innerHTML = TABS.map(([id,n])=>`<button data-tab="${id}" class="nav-btn text-[11px] sm:text-xs font-bold px-3.5 py-3 text-mut hover:text-slate-100">${n}</button>`).join("");
+$("nav").innerHTML = TABS.map(([id,n])=>`<button data-tab="${id}" class="nav-btn text-[11px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-mut hover:text-slate-100">${n}</button>`).join("");
 function pokazTab(id){ document.querySelectorAll(".tab-panel").forEach(p=>p.classList.toggle("active", p.id==="tab-"+id)); document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.tab===id)); if (id==="wykresy"){ try { chO?.resize(); chP?.resize(); } catch(e){} } }
 $("nav").onclick = e => { const b = e.target.closest("button"); if (b) pokazTab(b.dataset.tab); };
 
@@ -391,7 +587,7 @@ function trybPodgladu(powod){
     const app = initializeApp(firebaseConfig); db = dbMod.getDatabase(app);
     fb.onValue(fb.ref(db, "/"), snap => {
       const v = snap.val() || {};
-      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false } };
+      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {} };
       render(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
     }, err => { $("kropka").className = "w-2 h-2 rounded-full bg-red-500"; $("statusTxt").textContent = "błąd bazy"; toast("Firebase: " + err.message + " — sprawdź reguły bazy.", "err"); });
   } catch (e) { trybPodgladu("Nie udało się pobrać biblioteki Firebase (brak sieci albo zamknięty podgląd). Na GitHub Pages połączenie działa normalnie."); }
