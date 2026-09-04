@@ -83,7 +83,7 @@
       <div id="loginErr" class="text-xs text-red-400 font-semibold min-h-[16px] text-center"></div>
       <button id="loginBtn" type="submit" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZALOGUJ SIĘ</button>
     </form>
-    <button id="loginAdmin" class="w-full text-[11px] text-mut hover:text-zloto underline underline-offset-2">🔑 jestem kierownikiem — wejdź hasłem kierownika</button>
+    <button id="loginAdmin" class="w-full text-[11px] text-mut hover:text-zloto underline underline-offset-2">🔑 wejście awaryjne kierownika (samym hasłem kierownika)</button>
   </div>
 </div>
 
@@ -219,6 +219,7 @@ const firebaseConfig = {
 // ── BEZPIECZEŃSTWO: w kodzie NIE MA żadnych haseł. Hasło kierownika przechowywane jest jako
 //    odcisk PBKDF2-SHA256 (100 000 iteracji, sól) — nie da się z niego odzyskać hasła.
 //    Hasła zawodników żyją wyłącznie w bazie, również jako odciski; jawne hasło widać raz, przy tworzeniu.
+const ADMIN_LOGIN = "antek_klif"; // kierownik loguje się jak zawodnik — tym loginem; uprawnienia nadaje system
 const ADMIN_DOMYSLNY = { sol: "547a4c32c7cfd8ca95ea4245ba7d76e7", odcisk: "3c07678e7de0bf9b403655e3db9c93b28f4093c0bc24d0fba87c783783da1051" };
 const PBKDF2_ITER = 100000;
 async function odciskHasla(haslo, solHex){
@@ -235,7 +236,7 @@ let fb = null, db = null, demo = false;
 
 const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 22, GODZINA_PRZYPOMNIENIA = 21, DNI_WOLNE = []; // dzień zamyka się o 22:00 i zostaje zamknięty
 const DNI = [1,2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30];
-const PLAYERS = [
+const PLAYERS_BAZOWI = [
   { id:"antek_klif", n:"Antek (Klif)", lok:"Klif", klif:true },
   { id:"michal_klif", n:"Michał (Klif)", lok:"Klif", klif:true },
   { id:"szymon_klif", n:"Szymon (Klif)", lok:"Klif", klif:true },
@@ -255,10 +256,19 @@ const PLAYERS = [
   { id:"cupryjak_wwa", n:"Cupryjak (WWA)", lok:"Warszawa" },
   { id:"olivier_wwa", n:"Olivier (WWA)", lok:"Warszawa" }
 ];
+let PLAYERS = [...PLAYERS_BAZOWI];
+/** Skład = zawodnicy z kodu + zawodnicy dodani w panelu (baza: /zawodnicy). Zwraca true, gdy skład się zmienił. */
+function scalZawodnikow(){
+  const dodani = Object.entries(state.zawodnicy || {}).filter(([id]) => !PLAYERS_BAZOWI.some(p => p.id === id)).map(([id, z]) => ({ id, n: z.n, lok: z.lok, klif: !!z.klif, dodany: true }));
+  const nowy = [...PLAYERS_BAZOWI, ...dodani], zmiana = nowy.length !== PLAYERS.length || nowy.some((p, i) => p.id !== PLAYERS[i]?.id || p.n !== PLAYERS[i]?.n || p.lok !== PLAYERS[i]?.lok);
+  PLAYERS = nowy;
+  if (zmiana) ["tab-dzObrot","tab-dzPodejscia","tab-raport"].forEach(id => { const el = $(id); if (el){ el.dataset.built = ""; el.innerHTML = ""; } });
+  return zmiana;
+}
 const KOLORY = ["#E8B84B","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#8FA3D9","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
 const TABS = [["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],["analityka","📈 Analityka"],["raport","🧠 Mój raport"],["loza","🏆 Loża Mistrzów"],["legenda","📖 Legenda"],["admin","🔑 Kierownik"]];
 
-let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{} };
+let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{}, zawodnicy:{} };
 const CEL_DOMYSLNY = 70000;
 let adminSession = false;
 const $ = (id) => document.getElementById(id);
@@ -274,13 +284,14 @@ function sprawdzLogowanie(poBazie) {
   const userBar = $("userBar");
   const logoutBtn = $("logoutBtn");
 
-  if (loggedUser === "kierownik" && !adminSession) { localStorage.removeItem("lm_logged_user"); } // sesja kierownika nie przeżywa odświeżenia — hasło podaje się ponownie
-  const kontoOK = loggedUser && loggedUser !== "kierownik" && (state.uzytkownicy?.[loggedUser] || (!poBazie && localStorage.getItem("lm_logged_pid")));
+  if (loggedUser === "kierownik" && !adminSession) { localStorage.removeItem("lm_logged_user"); } // wejście awaryjne nie przeżywa odświeżenia
+  if (loggedUser === ADMIN_LOGIN) adminSession = true; // kierownik = konto antek_klif: uprawnienia wracają po odświeżeniu
+  const kontoOK = loggedUser && loggedUser !== "kierownik" && (state.uzytkownicy?.[loggedUser] || loggedUser === ADMIN_LOGIN || (!poBazie && localStorage.getItem("lm_logged_pid")));
   if (kontoOK) {
     overlay.classList.add("hidden");
     const p = PLAYERS.find(x => x.id === zalogowanyPid());
     if (userBar) {
-      userBar.textContent = `👤 ${p ? p.n : loggedUser}`;
+      userBar.textContent = `${adminSession ? "🔑 " : "👤 "}${p ? p.n : loggedUser}${adminSession ? " · kierownik" : ""}`;
       userBar.classList.remove("hidden");
     }
     if (logoutBtn) logoutBtn.classList.remove("hidden");
@@ -308,11 +319,13 @@ async function zaloguj() {
   if (!bazaZaladowana && !demo) { errEl.textContent = "Łączę z bazą — spróbuj za sekundę."; return; }
   $("loginBtn").textContent = "⏳ SPRAWDZAM…";
   const zBazy = state.uzytkownicy?.[login];
-  const ok = zBazy && await sprawdzHaslo(pass, zBazy);
+  const hasloKierownika = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY;
+  const ok = (zBazy && await sprawdzHaslo(pass, zBazy)) || (login === ADMIN_LOGIN && await sprawdzHaslo(pass, hasloKierownika));
   $("loginBtn").textContent = "ZALOGUJ SIĘ";
   if (ok) {
     localStorage.setItem("lm_logged_user", login);
-    localStorage.setItem("lm_logged_pid", zBazy.pid);
+    localStorage.setItem("lm_logged_pid", zBazy?.pid || login);
+    adminSession = (login === ADMIN_LOGIN);
     errEl.textContent = ""; $("passInput").value = "";
     sprawdzLogowanie(true);
     toast("✅ Zalogowano pomyślnie!");
@@ -510,8 +523,8 @@ function renderWykresy(w){
   const opcje = (tytulY) => ({ responsive:true, maintainAspectRatio:false, interaction:{ mode:"index", intersect:false },
     plugins:{ legend:{ position:"bottom", labels:{ color:"#EDF1FF", boxWidth:10, font:{ size:10 } } }, tooltip:{ backgroundColor:"#0B1440", borderColor:"#1E2B66", borderWidth:1, titleColor:"#E8B84B" } },
     scales:{ x:{ ticks:{ color:"#8FA3D9", maxRotation:45, font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" }, title:{ display:true, text:tytulY, color:"#8FA3D9" } } } });
-  const dsO = w.map((x,i)=>({ label:x.n, data:x.cum, borderColor:KOLORY[i], backgroundColor:KOLORY[i]+"22", borderWidth: x.klif?1.5:2.2, borderDash: x.klif?[5,4]:[], tension:.35, pointRadius:0, pointHitRadius:12, spanGaps:false }));
-  const dsP = w.map((x,i)=>({ label:x.n, data:x.dzienneP, backgroundColor:KOLORY[i]+(x.klif?"66":"CC"), borderColor:KOLORY[i], borderWidth:1, stack:"p" }));
+  const dsO = w.map((x,i)=>({ label:x.n, data:x.cum, borderColor:KOLORY[i % KOLORY.length], backgroundColor:KOLORY[i % KOLORY.length]+"22", borderWidth: x.klif?1.5:2.2, borderDash: x.klif?[5,4]:[], tension:.35, pointRadius:0, pointHitRadius:12, spanGaps:false }));
+  const dsP = w.map((x,i)=>({ label:x.n, data:x.dzienneP, backgroundColor:KOLORY[i % KOLORY.length]+(x.klif?"66":"CC"), borderColor:KOLORY[i % KOLORY.length], borderWidth:1, stack:"p" }));
   if (chO){ chO.data.datasets = dsO; chO.update("none"); } else chO = new Chart($("chObrot"), { type:"line", data:{ labels, datasets:dsO }, options:opcje("zł narastająco") });
   if (chP){ chP.data.datasets = dsP; chP.update("none"); } else chP = new Chart($("chPodejscia"), { type:"bar", data:{ labels, datasets:dsP }, options:{ ...opcje("podejścia / dzień"), scales:{ x:{ stacked:true, ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ stacked:true, ticks:{ color:"#8FA3D9" }, grid:{ color:"#1E2B66" } } } } });
 }
@@ -748,7 +761,7 @@ function slug(t){ return String(t||"").toLowerCase().normalize("NFD").replace(/[
 function renderAdmin(){
   const el = $("tab-admin");
   if (!adminSession){
-    el.innerHTML = `<div class="max-w-md mx-auto panel-box p-6 space-y-3"><div class="eyebrow">Dostęp chroniony</div><h2 class="font-display font-bold text-zloto text-sm">🔑 Panel kierownika</h2><p class="text-xs text-mut">Podaj hasło kierownika, aby edytować dowolny dzień, odblokować dni dla zespołu, zarządzać kontami lub zresetować dane.</p>
+    el.innerHTML = `<div class="max-w-md mx-auto panel-box p-6 space-y-3"><div class="eyebrow">Dostęp chroniony</div><h2 class="font-display font-bold text-zloto text-sm">🔑 Panel kierownika</h2><p class="text-xs text-mut">Kierownik (konto <b>${ADMIN_LOGIN}</b>) ma ten panel otwarty automatycznie po zalogowaniu. Inne osoby mogą tu wejść wyłącznie hasłem kierownika.</p>
       <input id="pin" type="password" autocomplete="current-password" placeholder="hasło kierownika" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-sm"><button id="pinBtn" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ODBLOKUJ</button><div id="pinErr" class="text-xs text-red-300 text-center min-h-[16px]"></div></div>`;
     const go = async () => { $("pinBtn").textContent = "⏳…"; const rek = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY; const ok = await sprawdzHaslo($("pin").value, rek); $("pinBtn").textContent = "ODBLOKUJ"; if (ok){ adminSession = true; toast("🔑 Tryb kierownika aktywny w tej karcie."); render(); } else $("pinErr").textContent = "Błędne hasło."; };
     $("pinBtn").onclick = go; $("pin").onkeydown = e => { if (e.key === "Enter") go(); };
@@ -781,6 +794,15 @@ function renderAdmin(){
         <button id="uImportBtn" class="mt-2 rounded-lg px-3 py-2 font-bold border border-szmaragd/50 text-szmaragd hover:bg-szmaragd/10 text-xs">Wgraj hasła z listy</button>
         <div id="uImportWynik" class="mt-2 text-mut whitespace-pre-line"></div>
       </details>
+      <div class="rounded-xl border border-zloto/30 bg-noc/50 p-3 space-y-2"><div class="eyebrow">➕ Nowy zawodnik</div>
+        <div class="grid sm:grid-cols-4 gap-2 text-xs">
+          <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Imię (jak w tabeli)</div><input id="zImie" placeholder="np. Tomek" class="w-full bg-noc border border-linia rounded-lg px-2 py-2"></div>
+          <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Lokalizacja</div><select id="zLok" class="w-full bg-noc border border-linia rounded-lg px-2 py-2">${[...new Set(PLAYERS.map(p=>p.lok))].map(l=>`<option value="${l}">${l}</option>`).join("")}<option value="__nowa">— inna (wpisz obok) —</option></select></div>
+          <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Nowa lokalizacja</div><input id="zLokNowa" placeholder="np. Gdańsk" class="w-full bg-noc border border-linia rounded-lg px-2 py-2"></div>
+          <div class="flex items-end gap-2"><label class="flex items-center gap-1 text-[11px] text-mut"><input id="zKlif" type="checkbox"> poza konkursem</label><button id="zDodaj" class="flex-1 rounded-lg py-2 font-bold border border-zloto/50 text-zloto hover:bg-zloto/10">Dodaj zawodnika + konto</button></div>
+        </div>
+        <div id="zLista" class="text-xs text-mut"></div>
+      </div>
       <div class="flex flex-wrap gap-2"><button id="uHurt" class="rounded-lg px-3 py-2 font-bold border border-neon/50 text-neon hover:bg-neon/10 text-xs">⚡ Utwórz konta wszystkim, którzy ich nie mają</button><button id="uPobierz" class="hidden rounded-lg px-3 py-2 font-bold border border-linia text-mut hover:bg-panel2 text-xs">📥 Pobierz wygenerowane hasła (.txt)</button></div>
       <div id="uWynik" class="hidden rounded-xl border border-szmaragd/50 bg-emerald-950/30 p-3 text-sm whitespace-pre-line font-mono"></div>
       <div class="overflow-x-auto"><table class="liga text-xs min-w-[560px]"><thead><tr><th class="text-left">Login</th><th class="text-left">Zawodnik</th><th class="text-left">Hasło</th><th class="text-left">Dodano</th><th></th></tr></thead><tbody id="uLista"></tbody></table></div>
@@ -795,7 +817,7 @@ function renderAdmin(){
     const u = state.uzytkownicy || {};
     $("uLista").innerHTML = Object.keys(u).sort().map(l => { const p = PLAYERS.find(x=>x.id===u[l].pid); return `<tr><td class="font-mono font-bold">${l}</td><td>${p ? p.n : u[l].pid}</td><td class="text-mut">•••••• <button data-nowe="${l}" class="text-zloto text-[11px] border border-zloto/30 rounded px-2 py-0.5 ml-1">nowe hasło</button></td><td class="text-mut">${u[l].t ? new Date(u[l].t).toLocaleDateString("pl-PL") : "—"}</td><td><button data-usun="${l}" class="text-red-300 text-[11px] border border-red-500/30 rounded px-2 py-0.5">usuń</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak kont — kliknij ⚡, aby utworzyć konta całemu zespołowi.</td></tr>`;
     $("uLista").querySelectorAll("[data-usun]").forEach(b => b.onclick = async () => { const l = b.dataset.usun; if (!confirm(`Usunąć konto ${l}?`)) return; if (demo){ delete state.uzytkownicy[l]; } else await fb.remove(fb.ref(db, `uzytkownicy/${l}`)); toast(`Usunięto konto ${l}.`); if (demo) render(); });
-    $("uLista").querySelectorAll("[data-nowe]").forEach(b => b.onclick = async () => { const l = b.dataset.nowe, pid = state.uzytkownicy[l].pid; await utworzKonto(l, pid); toast(`🔑 Nowe hasło dla ${l} — widoczne poniżej.`); pokazWygenerowane(); if (demo) render(); });
+    $("uLista").querySelectorAll("[data-nowe]").forEach(b => b.onclick = async () => { const l = b.dataset.nowe, pid = state.uzytkownicy[l].pid; if (!confirm(`Wygenerować NOWE hasło dla „${l}”? Dotychczasowe hasło tej osoby przestanie działać.`)) return; await utworzKonto(l, pid); toast(`🔑 Nowe hasło dla ${l} — widoczne poniżej.`); pokazWygenerowane(); if (demo) render(); });
   };
   rysujUzytkownikow();
   $("uDodaj").onclick = async () => {
@@ -813,10 +835,29 @@ function renderAdmin(){
       const login = slug(l.slice(0, i)), haslo = l.slice(i + 1).trim(); const pid = PLAYERS.some(p=>p.id===login) ? login : (state.uzytkownicy?.[login]?.pid || null);
       if (!pid){ raport.push("⚠️ " + login + " — nie pasuje do żadnego zawodnika (użyj loginu = id, np. maks_rzm)"); continue; }
       if (haslo.length < 4){ raport.push("⚠️ " + login + " — hasło za krótkie"); continue; }
-      try { const sol = losowaSol(), odcisk = await odciskHasla(haslo, sol), rekord = { sol, odcisk, pid, t: Date.now() }; if (demo){ (state.uzytkownicy ??= {})[login] = rekord; } else await fb.set(fb.ref(db, `uzytkownicy/${login}`), rekord); n++; raport.push("✅ " + login); }
+      try {
+        let sol, odcisk;
+        if (login === ADMIN_LOGIN){ const hk = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY; sol = hk.sol; odcisk = hk.odcisk; raport.push("ℹ️ " + login + " — konto kierownika: obowiązuje wyłącznie hasło kierownika (linia z listy pominięta)"); }
+        else { sol = losowaSol(); odcisk = await odciskHasla(haslo, sol); raport.push("✅ " + login); }
+        const rekord = { sol, odcisk, pid, t: Date.now() }; if (demo){ (state.uzytkownicy ??= {})[login] = rekord; } else await fb.set(fb.ref(db, `uzytkownicy/${login}`), rekord); n++;
+      }
       catch(e){ raport.push("❌ " + login + ": " + e.message); }
     }
     w.textContent = raport.join("\n"); $("uImport").value = ""; toast(`✅ Wgrano hasła: ${n} kont.`); if (demo) rysujUzytkownikow();
+  };
+  const rysujDodanych = () => { const d = PLAYERS.filter(p=>p.dodany); $("zLista").innerHTML = d.length ? "Dodani z panelu: " + d.map(p=>`<span class="inline-flex items-center gap-1 border border-linia rounded px-2 py-0.5 mr-1 mb-1">${p.n} · ${p.lok}${p.klif?" · 🔴":""} <button data-zusun="${p.id}" class="text-red-300">✕</button></span>`).join("") : "Brak zawodników dodanych z panelu (18 z listy podstawowej jest w kodzie)."; $("zLista").querySelectorAll("[data-zusun]").forEach(b => b.onclick = async () => { const id = b.dataset.zusun; if (!confirm(`Usunąć zawodnika ${id} z listy i jego konto? Wpisane wyniki zostaną w bazie.`)) return; if (demo){ delete state.zawodnicy[id]; delete state.uzytkownicy[id]; scalZawodnikow(); render(); } else { await fb.remove(fb.ref(db, `zawodnicy/${id}`)); await fb.remove(fb.ref(db, `uzytkownicy/${id}`)); } toast(`Usunięto ${id}.`); }); };
+  rysujDodanych();
+  $("zDodaj").onclick = async () => {
+    const imie = $("zImie").value.trim(), lokWyb = $("zLok").value, lokNowa = $("zLokNowa").value.trim(), lok = lokWyb === "__nowa" ? lokNowa : lokWyb, klif = $("zKlif").checked;
+    if (imie.length < 2) return toast("Podaj imię zawodnika.", "err"); if (!lok) return toast("Podaj lokalizację.", "err");
+    const skrot = lok.split(/\s+/).map(w=>w[0]).join("").toUpperCase().slice(0,4);
+    let id = slug(imie + "_" + skrot), n = 2; const bazowy = id; while (PLAYERS.some(p=>p.id===id) || zajety(id)) id = `${bazowy}_${n++}`;
+    const rekord = { n: `${imie} (${skrot})`, lok, klif, t: Date.now() };
+    try {
+      if (demo){ (state.zawodnicy ??= {})[id] = rekord; } else await fb.set(fb.ref(db, `zawodnicy/${id}`), rekord);
+      scalZawodnikow(); await utworzKonto(id, id); pokazWygenerowane(); toast(`✅ Dodano zawodnika ${rekord.n} (login: ${id}).`);
+      $("zImie").value = ""; $("zLokNowa").value = ""; $("zKlif").checked = false; if (demo) render();
+    } catch(e){ toast("Błąd: " + e.message, "err"); }
   };
   $("uHurt").onclick = async () => {
     const bez = PLAYERS.filter(p => !Object.values(state.uzytkownicy || {}).some(u => u.pid === p.id));
@@ -830,7 +871,7 @@ function renderAdmin(){
   $("aZamknij").onclick = () => zapiszAdmin({ unlockUntil: 0, editMode: false });
   $("aReset").onclick = async () => { if (prompt('Wpisz RESET, aby skasować wszystkie dane września:') !== "RESET") return toast("Anulowano."); if (demo){ state.obrot={}; state.podejscia={}; state.log=[]; render(); } else { await fb.remove(fb.ref(db,"obrot")); await fb.remove(fb.ref(db,"podejscia")); await fb.remove(fb.ref(db,"log")); } toast("🧹 Dane wyzerowane."); };
   $("aWyloguj").onclick = () => { adminSession = false; render(); toast("Wylogowano z trybu kierownika."); };
-  $("aHaslo").onclick = async () => { const n = prompt("Nowe hasło kierownika (min. 8 znaków):"); if (!n) return; if (n.length < 8) return toast("Hasło min. 8 znaków.", "err"); const sol = losowaSol(), odcisk = await odciskHasla(n, sol); if (demo){ state.admin.haslo = { sol, odcisk }; } else await fb.update(fb.ref(db, "admin"), { haslo: { sol, odcisk } }); toast("✅ Hasło kierownika zmienione."); };
+  $("aHaslo").onclick = async () => { const n = prompt("Nowe hasło kierownika (min. 8 znaków):"); if (!n) return; if (n.length < 8) return toast("Hasło min. 8 znaków.", "err"); const sol = losowaSol(), odcisk = await odciskHasla(n, sol); const rek = { sol, odcisk, pid: ADMIN_LOGIN, t: Date.now() }; if (demo){ state.admin.haslo = { sol, odcisk }; (state.uzytkownicy ??= {})[ADMIN_LOGIN] = rek; } else { await fb.update(fb.ref(db, "admin"), { haslo: { sol, odcisk } }); await fb.set(fb.ref(db, `uzytkownicy/${ADMIN_LOGIN}`), rek); } toast("✅ Hasło kierownika zmienione — działa zarówno do logowania, jak i do wejścia awaryjnego."); };
 }
 
 function renderStatus(){
@@ -870,8 +911,8 @@ function trybPodgladu(powod){
     const app = initializeApp(firebaseConfig); db = dbMod.getDatabase(app);
     fb.onValue(fb.ref(db, "/"), snap => {
       const v = snap.val() || {};
-      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {} };
-      bazaZaladowana = true; render(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
+      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {}, zawodnicy: v.zawodnicy || {} };
+      bazaZaladowana = true; scalZawodnikow(); render(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
     }, err => { $("kropka").className = "w-2 h-2 rounded-full bg-red-500"; $("statusTxt").textContent = "błąd bazy"; toast("Firebase: " + err.message + " — sprawdź reguły bazy.", "err"); });
   } catch (e) { trybPodgladu("Nie udało się pobrać biblioteki Firebase (brak sieci albo zamknięty podgląd). Na GitHub Pages połączenie działa normalnie."); }
 })();
