@@ -104,7 +104,7 @@
   <div class="pierscien"></div>
   <div class="relative max-w-[1480px] mx-auto px-4 pt-7 pb-4 text-center">
     <div class="text-zloto tracking-[.4em] text-xs">★ ★ ★ ★ ★</div>
-    <h1 class="font-display font-black text-[1.6rem] sm:text-4xl mt-2 bg-gradient-to-br from-[#FFF3D6] via-zloto to-[#9C6B1D] bg-clip-text text-transparent">Liga Mistrzów</h1>
+    <h1 id="tytulLiga" title="Wróć do tabeli Ligi Mistrzów" class="font-display font-black text-[1.6rem] sm:text-4xl mt-2 bg-gradient-to-br from-[#FFF3D6] via-zloto to-[#9C6B1D] bg-clip-text text-transparent cursor-pointer select-none hover:opacity-90 active:scale-[.98] transition">Liga Mistrzów</h1>
     <div class="font-display font-bold text-xs sm:text-sm tracking-[.25em] text-slate-200 mt-1">ZBITA SZYBKA · WRZESIEŃ 2026</div>
     <div class="text-[11px] text-mut mt-2">26 dni handlowych · 18 zawodników · 6 wysp w Polsce</div>
   </div>
@@ -880,6 +880,7 @@ function toast(msg, typ){
 $("nav").innerHTML = TABS.map(([id,n])=>`<button data-tab="${id}" class="nav-btn text-[11px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-mut hover:text-slate-100">${n}</button>`).join("");
 function pokazTab(id){ document.querySelectorAll(".tab-panel").forEach(p=>p.classList.toggle("active", p.id==="tab-"+id)); document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.tab===id)); if (id==="wykresy"){ try { chO?.resize(); chP?.resize(); } catch(e){} } }
 $("nav").onclick = e => { const b = e.target.closest("button"); if (b) pokazTab(b.dataset.tab); };
+$("tytulLiga").onclick = () => { pokazTab("liga"); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
 render();
 pokazTab("liga");
