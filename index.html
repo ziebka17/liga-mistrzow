@@ -106,7 +106,7 @@
     <div class="text-zloto tracking-[.4em] text-xs">★ ★ ★ ★ ★</div>
     <h1 id="tytulLiga" title="Wróć do tabeli Ligi Mistrzów" class="font-display font-black text-[1.6rem] sm:text-4xl mt-2 bg-gradient-to-br from-[#FFF3D6] via-zloto to-[#9C6B1D] bg-clip-text text-transparent cursor-pointer select-none hover:opacity-90 active:scale-[.98] transition">Liga Mistrzów</h1>
     <div class="font-display font-bold text-xs sm:text-sm tracking-[.25em] text-slate-200 mt-1">ZBITA SZYBKA · WRZESIEŃ 2026</div>
-    <div class="text-[11px] text-mut mt-2">26 dni handlowych · 18 zawodników · 6 wysp w Polsce</div>
+    <div id="heroInfo" class="text-[11px] text-mut mt-2">26 dni handlowych · 18 zawodników · 6 wysp w Polsce</div>
   </div>
   <nav class="relative max-w-[1480px] mx-auto px-2 flex flex-wrap gap-0.5 justify-center border-t border-linia/60" id="nav"></nav>
 </header>
@@ -864,6 +864,10 @@ function renderAdmin(){
 
 function renderStatus(){
   const dz = dzisNr(), h = new Date().getHours(), nr = DNI.indexOf(dz) + 1;
+  // podtytuł: cały skład podstawowy (Klif liczony mimo pauzy w tym miesiącu) + zawodnicy dodani z panelu, o ile biorą udział
+  const ucz = PLAYERS.filter(p => !p.dodany || !p.klif), wyspy = new Set(ucz.map(p => p.lok)).size;
+  const odm = (n, j, m, w) => n === 1 ? j : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? m : w;
+  $("heroInfo").textContent = `${DNI.length} dni handlowych · ${ucz.length} ${odm(ucz.length, "zawodnik", "zawodników", "zawodników")} · ${wyspy} ${odm(wyspy, "wyspa", "wyspy", "wysp")} w Polsce`;
   $("matchday").textContent = DNI.includes(dz) ? `MATCHDAY ${nr} / 26 · ${etykieta(dz)}` : dz === 0 ? "Sezon startuje 1.09" : dz === 31 ? "Sezon zakończony" : `${dz}.09 · dzień wolny`;
   $("statusLock").textContent = adminSession ? "🔑 kierownik" : edycjaGlobalna() ? "🔓 edycja otwarta" : !DNI.includes(dz) ? "📅 brak dnia handlowego" : h >= GODZINA_BLOKADY ? `🔒 po ${GODZINA_BLOKADY}:00 — dziś zamknięte` : `🟢 dziś otwarte do ${GODZINA_BLOKADY}:00`;
 }
