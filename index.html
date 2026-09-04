@@ -83,6 +83,7 @@
       <div id="loginErr" class="text-xs text-red-400 font-semibold min-h-[16px] text-center"></div>
       <button id="loginBtn" type="submit" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZALOGUJ SIĘ</button>
     </form>
+    <button id="loginAdmin" class="w-full text-[11px] text-mut hover:text-zloto underline underline-offset-2">🔑 jestem kierownikiem — wejdź hasłem kierownika</button>
   </div>
 </div>
 
@@ -123,7 +124,7 @@
       <div class="panel-hd"><div><div class="eyebrow">Tabela</div><h2 class="font-display font-bold text-sm text-zloto">🏆 Klasyfikacja generalna</h2></div><span class="text-[11px] text-mut hidden sm:inline">🔴 czerwone wiersze = Klif, poza konkursem</span></div>
       <div id="cardsLiga" class="md:hidden divide-y divide-linia"></div>
       <div class="overflow-x-auto hidden md:block"><table class="liga min-w-[900px] text-sm"><thead><tr>
-        <th class="text-left">Miejsce</th><th class="text-left">Zawodnik</th><th class="text-left">Lokalizacja</th><th class="text-right">Obrót łączny</th><th class="text-right">Suma podejść</th><th class="text-right">Śr. podejść / dzień</th><th class="text-right">Zł / podejście</th><th class="text-right">Rekord dnia (PB)</th>
+        <th class="text-left">Miejsce</th><th class="text-left">Zawodnik</th><th class="text-left">Lokalizacja</th><th class="text-right">Obrót łączny</th><th class="text-right">Suma podejść</th><th class="text-right">Śr. podejść / dzień</th><th class="text-right">Zł / podejście</th><th class="text-right">Godziny</th><th class="text-right">Zł / h</th><th class="text-right">Rekord dnia (PB)</th>
       </tr></thead><tbody id="tbLiga"></tbody></table></div>
     </div>
   </section>
@@ -163,14 +164,15 @@
       <tbody>
         <tr><td class="font-bold text-zloto">Kwota / liczba</td><td>Pracował, zarobił / podchodził</td><td class="text-mut">Podnosi obrót, średnią i rekord dnia.</td></tr>
         <tr><td class="font-bold text-zloto">0</td><td>Był w pracy, zero wyniku</td><td class="text-mut">Dzień liczy się do frekwencji, obniża średnią.</td></tr>
-        <tr><td class="font-bold text-zloto">X</td><td>Nieobecność nieusprawiedliwiona</td><td class="text-mut">Liczy się jak 0 — najdroższy wpis w systemie.</td></tr>
+        <tr><td class="font-bold text-zloto">X</td><td>Nieobecność</td><td class="text-mut">System zapisuje dzień jako 0, ale NIE liczy go do statystyk (jak L4).</td></tr>
         <tr><td class="font-bold text-zloto">L4</td><td>Zwolnienie lekarskie</td><td class="text-mut">Dzień w ogóle NIE liczy się — ani na plus, ani na minus.</td></tr>
-        <tr><td class="font-bold text-zloto">Puste</td><td>Brak danych</td><td class="text-mut">Dziś: okres łaski. Miniony dzień: traktowane jak X.</td></tr>
+        <tr><td class="font-bold text-zloto">Puste</td><td>Brak danych</td><td class="text-mut">Dziś: okres łaski. Miniony dzień: liczy się jako 0, dopóki nie uzupełnisz braku — system sam o to poprosi.</td></tr>
+        <tr><td class="font-bold text-zloto">Godziny</td><td>Ile godzin byłeś na zmianie</td><td class="text-mut">Pole WYMAGANE przy wpisie obrotu. Daje statystykę zł / godzinę.</td></tr>
       </tbody></table></div>
     </div>
     <div class="panel-box p-5 text-sm space-y-3">
       <div><div class="eyebrow mb-1">Podejścia</div><p>Podejście = każda rozpoczęta rozmowa sprzedażowa z klientem, także bez sprzedaży. Wpisujesz liczbę za dzień w Dzienniku podejść. Konwersja zł/podejście = obrót ÷ podejścia — pokazuje, kto strzela celnie, a kto tylko dużo.</p></div>
-      <div><div class="eyebrow mb-1">Reguła 22:00</div><p>Wyniki z <b>dnia bieżącego</b> można wpisywać i poprawiać do <b>22:00</b>. Dni minione są zamknięte. Po 22:00 zmiany wprowadza wyłącznie kierownik (PIN). <b>Wyjątek: 1 i 2 września są zawsze otwarte.</b></p></div>
+      <div><div class="eyebrow mb-1">Reguła 22:00</div><p>Wyniki z <b>dnia bieżącego</b> można wpisywać i poprawiać do <b>22:00</b>. Po tej godzinie dzień jest zamknięty na stałe — istniejący wpis zmienia wyłącznie kierownik (PIN). <b>Puste pola z minionych dni można uzupełnić jednorazowo</b> (system prosi o to od 21:00 i po każdym logowaniu).</p></div>
       <div><div class="eyebrow mb-1">Klif</div><p>Antek, Michał i Szymon z Klifu wpisują dzienniki i mają pełne statystyki, ale w tym miesiącu są <b>poza konkursem</b> — bez miejsc i medali.</p></div>
       <p class="text-zloto font-semibold pt-1">💪 Warroom nie ocenia ludzi — mierzy walkę. Wpisuj uczciwie, walcz codziennie, a tabela odda Ci sprawiedliwość.</p>
     </div>
@@ -178,7 +180,7 @@
 
   <section id="tab-analityka" class="tab-panel">
     <div class="panel-box overflow-hidden">
-      <div class="panel-hd"><div><div class="eyebrow">Executive Warroom · 29 kolumn</div><h2 class="font-display font-bold text-sm text-zloto">📈 Pełna analityka zawodników</h2></div><span class="text-[11px] text-mut">przewiń w bok · nazwisko zostaje przyklejone</span></div>
+      <div class="panel-hd"><div><div class="eyebrow">Executive Warroom · 31 kolumn</div><h2 class="font-display font-bold text-sm text-zloto">📈 Pełna analityka zawodników</h2></div><span class="text-[11px] text-mut">przewiń w bok · nazwisko zostaje przyklejone</span></div>
       <div class="overflow-x-auto"><table class="liga analit text-xs" id="tbAnalityka"></table></div>
     </div>
     <div class="text-[11px] text-mut px-1 mt-3 leading-relaxed"><b class="text-zloto">Skróty:</b> PROGNOZA / PODŁOGA / SUFIT — mediana oraz 5. i 95. percentyl 400 symulacji Monte Carlo (log-normalnych) do końca miesiąca · Z-SCORE — ile odchyleń standardowych od średniej sieci · SHARPE — średnia dzienna ÷ zmienność (stabilność wyniku) · KELLY — teoretyczny udział kapitału przy zakładzie na zawodnika · KURS BUK — 100 ÷ szansa · POGOŃ — ile dziennie trzeba nadrobić do lidera · LICZBA MAGICZNA — 💀 gdy strata > dni × rekord dnia (matematyczna eliminacja), 🪦 gdy brakuje tempa (+20%) · CV% — zmienność dzienna · MOMENTUM — ostatnie 4 dni vs wcześniejsza baza · EFEKT OBECNOŚCI — o ile rośnie utarg wyspy, gdy zawodnik pracuje.</div>
@@ -189,6 +191,15 @@
 </main>
 
 <footer class="max-w-[1480px] mx-auto px-4 py-6 text-center text-[11px] text-mut">Zbita Szybka Elite · Executive Warroom · wrzesień 2026</footer>
+<div id="brakiOverlay" class="hidden fixed inset-0 z-[900] bg-[#050A23]/95 backdrop-blur-md overflow-y-auto p-4">
+  <div class="panel-box w-full max-w-2xl mx-auto my-6 p-5 sm:p-6 space-y-4 border-zloto/40">
+    <div><div class="eyebrow">Uzupełnij braki</div><h2 class="font-display font-bold text-zloto text-base">📋 Brakujące wpisy</h2>
+      <p id="brakiTxt" class="text-xs text-mut mt-1"></p></div>
+    <div id="brakiLista" class="space-y-3"></div>
+    <div class="flex gap-2 flex-wrap"><button id="brakiZapisz" class="flex-1 rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ZAPISZ WSZYSTKO</button><button id="brakiPozniej" class="rounded-xl px-4 py-3 text-xs font-bold border border-linia text-mut">Później</button></div>
+    <div id="brakiErr" class="text-xs text-red-300 min-h-[16px]"></div>
+  </div>
+</div>
 <div id="toasty" class="fixed bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-50 pointer-events-none px-4"></div>
 
 <script type="module">
@@ -205,33 +216,24 @@ const firebaseConfig = {
   appId: "1:978921284835:web:d08855faf5165d52ed11d6",
   measurementId: "G-GRQ7HEZDC2"
 };
-const ADMIN_PIN = "6969";
-
-// BAZA UNIKALNYCH HASEŁ I LOGINÓW
-const USER_CREDENTIALS = {
-  "antek_klif": "A#9kL!2p8$xQ",
-  "michal_klif": "M8!xF#3vL9$z",
-  "szymon_klif": "S#4zP!7vK1$w",
-  "marcel_sco": "M#2xR!9vS5$q",
-  "wiktor_sco": "W#8vK!3xS7$m",
-  "mateusz_h_sco": "H#5mS!1vO9$p",
-  "jakub_sco": "J#3mS!8vO2$k",
-  "krystian_krk": "K#7jK!4vR6$z",
-  "adrian_krk": "A#1rK!9vR4$p",
-  "michal_krk": "M#6rK!2vR8$s",
-  "mateusz_szcz": "M#3sS!7vZ5$w",
-  "piotrek_szcz": "P#8sS!1vZ9$m",
-  "maks_rzm": "M#5rZ!4vM2$k",
-  "szymon_rzm": "S#9rZ!8vM1$x",
-  "kris_rzm": "K#2rZ!6vM3$p",
-  "kacper_wwa": "K#7wW!3vA9$z",
-  "cupryjak_wwa": "C#4wW!8vA1$m",
-  "olivier_wwa": "O#1wW!5vA6$p"
-};
+// ── BEZPIECZEŃSTWO: w kodzie NIE MA żadnych haseł. Hasło kierownika przechowywane jest jako
+//    odcisk PBKDF2-SHA256 (100 000 iteracji, sól) — nie da się z niego odzyskać hasła.
+//    Hasła zawodników żyją wyłącznie w bazie, również jako odciski; jawne hasło widać raz, przy tworzeniu.
+const ADMIN_DOMYSLNY = { sol: "547a4c32c7cfd8ca95ea4245ba7d76e7", odcisk: "3c07678e7de0bf9b403655e3db9c93b28f4093c0bc24d0fba87c783783da1051" };
+const PBKDF2_ITER = 100000;
+async function odciskHasla(haslo, solHex){
+  const enc = new TextEncoder();
+  const klucz = await crypto.subtle.importKey("raw", enc.encode(haslo), "PBKDF2", false, ["deriveBits"]);
+  const bity = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: hexNaBajty(solHex), iterations: PBKDF2_ITER }, klucz, 256);
+  return [...new Uint8Array(bity)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function hexNaBajty(hex){ const u = new Uint8Array(hex.length / 2); for (let i = 0; i < u.length; i++) u[i] = parseInt(hex.substr(i * 2, 2), 16); return u; }
+function losowaSol(){ const u = new Uint8Array(16); crypto.getRandomValues(u); return [...u].map(b => b.toString(16).padStart(2, "0")).join(""); }
+async function sprawdzHaslo(haslo, rekord){ if (!rekord || !rekord.sol || !rekord.odcisk) return false; return (await odciskHasla(haslo, rekord.sol)) === rekord.odcisk; }
 
 let fb = null, db = null, demo = false;
 
-const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 22, DNI_WOLNE = [1, 2];
+const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 22, GODZINA_PRZYPOMNIENIA = 21, DNI_WOLNE = []; // dzień zamyka się o 22:00 i zostaje zamknięty
 const DNI = [1,2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30];
 const PLAYERS = [
   { id:"antek_klif", n:"Antek (Klif)", lok:"Klif", klif:true },
@@ -256,7 +258,7 @@ const PLAYERS = [
 const KOLORY = ["#E8B84B","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#8FA3D9","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
 const TABS = [["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],["analityka","📈 Analityka"],["raport","🧠 Mój raport"],["loza","🏆 Loża Mistrzów"],["legenda","📖 Legenda"],["admin","🔑 Kierownik"]];
 
-let state = { obrot:{}, podejscia:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{} };
+let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{} };
 const CEL_DOMYSLNY = 70000;
 let adminSession = false;
 const $ = (id) => document.getElementById(id);
@@ -265,15 +267,18 @@ const zl = (n) => fmt(n) + " zł";
 const imie = (n) => n.split(" (")[0];
 
 // ═══════════════ LOGOWANIE I AUTORYZACJA ═══════════════
-function sprawdzLogowanie() {
+function zalogowanyPid(){ const l = localStorage.getItem("lm_logged_user"); if (!l) return null; if (PLAYERS.some(p=>p.id===l)) return l; return state.uzytkownicy?.[l]?.pid || localStorage.getItem("lm_logged_pid") || null; }
+function sprawdzLogowanie(poBazie) {
   const loggedUser = localStorage.getItem("lm_logged_user");
   const overlay = $("loginOverlay");
   const userBar = $("userBar");
   const logoutBtn = $("logoutBtn");
 
-  if (loggedUser && USER_CREDENTIALS[loggedUser]) {
+  if (loggedUser === "kierownik" && !adminSession) { localStorage.removeItem("lm_logged_user"); } // sesja kierownika nie przeżywa odświeżenia — hasło podaje się ponownie
+  const kontoOK = loggedUser && loggedUser !== "kierownik" && (state.uzytkownicy?.[loggedUser] || (!poBazie && localStorage.getItem("lm_logged_pid")));
+  if (kontoOK) {
     overlay.classList.add("hidden");
-    const p = PLAYERS.find(x => x.id === loggedUser);
+    const p = PLAYERS.find(x => x.id === zalogowanyPid());
     if (userBar) {
       userBar.textContent = `👤 ${p ? p.n : loggedUser}`;
       userBar.classList.remove("hidden");
@@ -281,10 +286,11 @@ function sprawdzLogowanie() {
     if (logoutBtn) logoutBtn.classList.remove("hidden");
 
     // Automatyczne ustawianie zalogowanego gracza w opcjach wyboru dziennika i raportu
+    const pid = zalogowanyPid();
     setTimeout(() => {
-      if ($("dzObrot-gracz")) $("dzObrot-gracz").value = loggedUser;
-      if ($("dzPodejscia-gracz")) $("dzPodejscia-gracz").value = loggedUser;
-      if ($("rapKto")) $("rapKto").value = loggedUser;
+      if (pid && $("dzObrot-gracz")) $("dzObrot-gracz").value = pid;
+      if (pid && $("dzPodejscia-gracz")) $("dzPodejscia-gracz").value = pid;
+      if (pid && $("rapKto")) $("rapKto").value = pid;
     }, 100);
   } else {
     overlay.classList.remove("hidden");
@@ -293,28 +299,32 @@ function sprawdzLogowanie() {
   }
 }
 
-function zaloguj() {
-  const login = $("loginInput").value.trim();
-  const pass = $("passInput").value.trim();
+let bazaZaladowana = false;
+async function zaloguj() {
+  const login = $("loginInput").value.trim().toLowerCase();
+  const pass = $("passInput").value;
   const errEl = $("loginErr");
-
-  if (!login || !pass) {
-    errEl.textContent = "Podaj login i hasło.";
-    return;
-  }
-
-  if (USER_CREDENTIALS[login] && USER_CREDENTIALS[login] === pass) {
+  if (!login || !pass) { errEl.textContent = "Podaj login i hasło."; return; }
+  if (!bazaZaladowana && !demo) { errEl.textContent = "Łączę z bazą — spróbuj za sekundę."; return; }
+  $("loginBtn").textContent = "⏳ SPRAWDZAM…";
+  const zBazy = state.uzytkownicy?.[login];
+  const ok = zBazy && await sprawdzHaslo(pass, zBazy);
+  $("loginBtn").textContent = "ZALOGUJ SIĘ";
+  if (ok) {
     localStorage.setItem("lm_logged_user", login);
-    errEl.textContent = "";
-    sprawdzLogowanie();
+    localStorage.setItem("lm_logged_pid", zBazy.pid);
+    errEl.textContent = ""; $("passInput").value = "";
+    sprawdzLogowanie(true);
     toast("✅ Zalogowano pomyślnie!");
+    render(); sprawdzBraki(true);
   } else {
     errEl.textContent = "Nieprawidłowy login lub hasło.";
   }
 }
 
 function wyloguj() {
-  localStorage.removeItem("lm_logged_user");
+  adminSession = false;
+  localStorage.removeItem("lm_logged_user"); localStorage.removeItem("lm_logged_pid");
   $("loginInput").value = "";
   $("passInput").value = "";
   sprawdzLogowanie();
@@ -324,19 +334,35 @@ function wyloguj() {
 $("loginBtn").onclick = zaloguj;
 $("logoutBtn").onclick = wyloguj;
 $("loginForm").onsubmit = (e) => { e.preventDefault(); zaloguj(); };
+$("loginInput").setAttribute("placeholder", "np. maks_rzm");
+// Kierownik wchodzi bez konta zawodnika (np. przy pierwszym uruchomieniu, gdy nikt nie ma jeszcze konta)
+$("loginAdmin").onclick = async () => {
+  const h = $("passInput").value; if (!h) { $("loginErr").textContent = "Wpisz hasło kierownika w polu „Hasło” i kliknij ponownie."; return; }
+  if (!bazaZaladowana && !demo) { $("loginErr").textContent = "Łączę z bazą — spróbuj za sekundę."; return; }
+  const rek = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY;
+  if (!(await sprawdzHaslo(h, rek))) { $("loginErr").textContent = "Błędne hasło kierownika."; return; }
+  adminSession = true; localStorage.setItem("lm_logged_user", "kierownik"); localStorage.removeItem("lm_logged_pid");
+  $("loginOverlay").classList.add("hidden"); $("userBar").textContent = "🔑 kierownik"; $("userBar").classList.remove("hidden"); $("logoutBtn").classList.remove("hidden");
+  $("passInput").value = ""; render(); pokazTab("admin"); toast("🔑 Zalogowano jako kierownik.");
+};
 sprawdzLogowanie();
 
 function dzisNr(){ const t = new Date(); if (t.getFullYear()!==ROK || t.getMonth()!==MIESIAC) return t < new Date(ROK,MIESIAC,1) ? 0 : 31; return t.getDate(); }
 function etykieta(d){ const dn = ["nd","pn","wt","śr","cz","pt","so"][new Date(ROK,MIESIAC,d).getDay()]; return `${String(d).padStart(2,"0")}.09 (${dn})`; }
 function edycjaGlobalna(){ return !!state.admin?.editMode || (state.admin?.unlockUntil||0) > Date.now(); }
-function dzienZablokowany(d){
-  if (DNI_WOLNE.includes(d) || adminSession || edycjaGlobalna()) return false;
+function dzienZamkniety(d){ // czy minął termin 22:00 danego dnia
   const dz = dzisNr(); if (d < dz) return true; if (d > dz) return false;
   return new Date().getHours() >= GODZINA_BLOKADY;
 }
+function dzienZablokowany(d, istniejeWpis = true){
+  if (DNI_WOLNE.includes(d) || adminSession || edycjaGlobalna()) return false;
+  // po terminie: istniejących wpisów nie wolno zmieniać; PUSTE pola (braki) wolno uzupełnić
+  return dzienZamkniety(d) && istniejeWpis;
+}
+const maWpis = (klucz, d, pid) => { const v = state[klucz]?.[d]?.[pid]; return !(v === undefined || v === null || v === ""); };
 function status(v, d){
   const dz = dzisNr();
-  if (v === undefined || v === null || v === "") return d === dz ? {typ:"laska"} : d < dz ? {typ:"x"} : {typ:"przyszly"};
+  if (v === undefined || v === null || v === "") return d === dz ? {typ:"laska"} : d < dz ? {typ:"brak"} : {typ:"przyszly"}; // brak = miniony dzień bez wpisu: liczy się jako 0, dopóki nie zostanie uzupełniony
   if (typeof v === "number") return {typ:"kwota", w:v};
   const s = String(v).trim().toLowerCase();
   if (s === "x") return {typ:"x"}; if (s === "l4") return {typ:"l4"};
@@ -346,17 +372,19 @@ function status(v, d){
 function oblicz(){
   const dz = dzisNr(), wyniki = [];
   for (const p of PLAYERS){
-    let obrot=0, pb=0, otwarte=0, dniAkt=0, sumaP=0, pbP=0, c=0; const dzienneP=[], cum=[];
+    let obrot=0, pb=0, otwarte=0, dniAkt=0, sumaP=0, pbP=0, c=0, godz=0; const dzienneP=[], cum=[];
     for (const d of DNI){
       const so = status(state.obrot?.[d]?.[p.id], d), sp = status(state.podejscia?.[d]?.[p.id], d);
       let o = 0, pp = 0;
-      if (d <= dz && !["l4","laska","przyszly"].includes(so.typ)){
+      // X i L4 = dzień wyłączony ze statystyk (system trzyma je jako 0, ale nie liczy). 0 = był w pracy, liczy się.
+      if (d <= dz && !["l4","x","laska","przyszly"].includes(so.typ)){
         otwarte++; if (so.typ === "kwota"){ dniAkt++; obrot += so.w; pb = Math.max(pb, so.w); o = so.w; }
         if (sp.typ === "kwota"){ sumaP += sp.w; pbP = Math.max(pbP, sp.w); pp = sp.w; }
+        const g = parseFloat(state.godziny?.[d]?.[p.id]); if (!isNaN(g) && g > 0) godz += g;
       }
       c += o; dzienneP.push(pp); cum.push(d <= dz ? c : null);
     }
-    wyniki.push({ ...p, obrot, pb, otwarte, dniAkt, sumaP, pbP, srP: otwarte ? sumaP/otwarte : 0, konw: sumaP ? obrot/sumaP : 0, cum, dzienneP });
+    wyniki.push({ ...p, obrot, pb, otwarte, dniAkt, sumaP, pbP, godz, zlH: godz ? obrot/godz : 0, srP: otwarte ? sumaP/otwarte : 0, konw: sumaP ? obrot/sumaP : 0, cum, dzienneP });
   }
   return wyniki;
 }
@@ -375,9 +403,9 @@ const kom = (w,m) => w.klif ? `<span class="text-klifTxt font-bold text-xs">🔴
 const kartaM = (x, mi, glowna, pod) => `<div class="mk ${klasa(x,mi)}"><div class="m">${x.klif ? "🔴" : (mi===1?"🥇":mi===2?"🥈":mi===3?"🥉":mi+".")}</div><div class="min-w-0"><div class="n truncate">${x.n}</div><div class="l truncate">${x.klif ? "Klif · poza konkursem" : x.lok}</div></div><div><div class="v num ${x.klif?"":"text-zloto"}">${glowna}</div><div class="s num">${pod}</div></div></div>`;
 function renderLiga(w){
   const lista = [...w].sort((a,b)=>b.obrot-a.obrot); let m = 0;
-  let mm = 0; $("cardsLiga").innerHTML = lista.map(x=>{ if(!x.klif) mm++; const mi = x.klif?0:mm; return kartaM(x, mi, zl(x.obrot), `${fmt(x.sumaP)} podejść · ${x.konw?zl(x.konw)+"/podej.":"—"} · PB ${zl(x.pb)}`); }).join("");
+  let mm = 0; $("cardsLiga").innerHTML = lista.map(x=>{ if(!x.klif) mm++; const mi = x.klif?0:mm; return kartaM(x, mi, zl(x.obrot), `${fmt(x.sumaP)} podejść · ${x.konw?zl(x.konw)+"/podej.":"—"} · ${x.godz?x.godz.toFixed(1)+" h · "+zl(x.zlH)+"/h":"— h"}`); }).join("");
   $("tbLiga").innerHTML = lista.map(x=>{ if(!x.klif) m++; const mi = x.klif?0:m; return `<tr class="${klasa(x,mi)}"><td>${kom(x,mi)}</td><td class="nazwa font-semibold">${x.n}</td><td class="text-mut">${x.lok}</td>
-    <td class="text-right num font-bold ${x.klif?"":"text-zloto"}">${zl(x.obrot)}</td><td class="text-right num">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-right num">${zl(x.pb)}</td></tr>`; }).join("");
+    <td class="text-right num font-bold ${x.klif?"":"text-zloto"}">${zl(x.obrot)}</td><td class="text-right num">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-right num">${x.godz?x.godz.toFixed(1)+" h":"—"}</td><td class="text-right num">${x.zlH?zl(x.zlH):"—"}</td><td class="text-right num">${zl(x.pb)}</td></tr>`; }).join("");
   const ucz = lista.filter(x=>!x.klif), siec = w.reduce((s,x)=>s+x.obrot,0), lok = lokacje(w), pbMax = [...w].sort((a,b)=>b.pb-a.pb)[0];
   const pod = (x,i) => x ? `<div class="p p${i}"><div class="text-2xl">${["🥇","🥈","🥉"][i-1]}</div><div class="font-bold text-sm mt-1 truncate">${imie(x.n)}</div><div class="text-[10px] text-mut truncate">${x.lok}</div><div class="font-display font-bold num mt-1 ${i===1?"text-zloto":i===2?"text-slate-200":"text-[#C98A56]"}">${zl(x.obrot)}</div></div>` : `<div class="p p${i} opacity-50"><div class="text-2xl">${["🥇","🥈","🥉"][i-1]}</div><div class="text-xs text-mut mt-2">wolne miejsce</div></div>`;
   $("podium").innerHTML = pod(ucz[1],2) + pod(ucz[0],1) + pod(ucz[2],3);
@@ -409,8 +437,11 @@ function renderDziennik(kind){
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Zawodnik</label>
         <select id="${cfg.id}-gracz" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select>
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">${cfg.pole}</label>
-        <input id="${cfg.id}-wart" type="number" min="0" step="${cfg.krok}" inputmode="numeric" placeholder="${cfg.ph}" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-2xl num font-bold text-zloto">
+        <input id="${cfg.id}-wart" type="number" min="0" step="${cfg.krok}" inputmode="decimal" placeholder="${cfg.ph}" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-2xl num font-bold text-zloto">
+        ${kind==="obrot" ? `<label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Godziny na zmianie <span class="text-zloto">(wymagane)</span></label>
+        <input id="${cfg.id}-godz" type="number" min="0.5" max="16" step="0.5" inputmode="decimal" placeholder="np. 8" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-lg num font-bold">` : ""}
         <div class="seg grid grid-cols-3 gap-2 text-[11px]"><button data-v="0" class="rounded-lg py-2">0 — byłem, zero</button><button data-v="X" class="rounded-lg py-2">X — nieobecny</button><button data-v="L4" class="rounded-lg py-2">L4 — zwolnienie</button></div>
+        <div id="${cfg.id}-trybInfo" class="text-[11px] text-mut min-h-[14px]"></div>
         <div id="${cfg.id}-lock" class="text-xs rounded-xl px-3 py-2 border"></div>
         <button id="${cfg.id}-zapisz" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZAPISZ WYNIK</button>
         <div class="text-[11px] text-mut">W bazie dla tego dnia i gracza: <b id="${cfg.id}-biez" class="text-slate-100">—</b></div>
@@ -421,34 +452,54 @@ function renderDziennik(kind){
         <div><div class="eyebrow mb-2">Ostatnie wpisy · na żywo</div><div id="${cfg.id}-hist" class="divide-y divide-linia text-sm"></div></div>
       </div></div>`;
     el.dataset.built = "1";
+    el._tryb = null; // null = liczba, "X" / "L4" = dzień wyłączony
     el._odswiez = () => {
-      const d = +$(`${cfg.id}-dzien`).value, pid = $(`${cfg.id}-gracz`).value, zab = dzienZablokowany(d), lk = $(`${cfg.id}-lock`);
+      const d = +$(`${cfg.id}-dzien`).value, pid = $(`${cfg.id}-gracz`).value, istnieje = maWpis(cfg.klucz, d, pid), zab = dzienZablokowany(d, istnieje), lk = $(`${cfg.id}-lock`);
       lk.className = "text-xs rounded-xl px-3 py-2 border " + (zab ? "border-red-500/50 text-red-300 bg-red-950/30" : "border-szmaragd/40 text-szmaragd bg-emerald-950/20");
-      lk.textContent = zab ? `🔒 Dzień ${d}.09 jest zamknięty (reguła 22:00). Zmiany wprowadza tylko kierownik.` : DNI_WOLNE.includes(d) ? `✅ ${d}.09 — dzień otwarty dla wszystkich (wyjątek 1–2 września).` : adminSession ? "🔑 Tryb kierownika — edycja bez ograniczeń." : `✅ Otwarte do ${GODZINA_BLOKADY}:00.`;
+      lk.textContent = zab ? `🔒 Dzień ${d}.09 jest zamknięty (po ${GODZINA_BLOKADY}:00) — wpis istnieje i może go zmienić tylko kierownik.` : adminSession ? "🔑 Tryb kierownika — edycja bez ograniczeń." : dzienZamkniety(d) ? `📋 Dzień ${d}.09 minął, ale pole jest puste — możesz uzupełnić brak (jednorazowo).` : `✅ Otwarte do ${GODZINA_BLOKADY}:00.`;
       $(`${cfg.id}-zapisz`).disabled = zab; $(`${cfg.id}-zapisz`).classList.toggle("opacity-40", zab);
       const v = state[cfg.klucz]?.[d]?.[pid]; $(`${cfg.id}-biez`).textContent = v===undefined||v===""?"brak wpisu":String(v);
       const dane = state[cfg.klucz]?.[d] || {}; $(`${cfg.id}-dzienTytul`).textContent = etykieta(d);
       $(`${cfg.id}-dzienPodglad`).innerHTML = PLAYERS.map(p=>`<div class="rounded-lg border ${p.klif?"border-red-900 bg-klif/60":"border-linia bg-noc/60"} px-2 py-1.5 flex justify-between gap-2"><span class="truncate ${p.klif?"text-klifTxt":"text-mut"}">${imie(p.n)}</span><b class="num">${dane[p.id]===undefined||dane[p.id]===""?"—":dane[p.id]}</b></div>`).join("");
     };
     $(`${cfg.id}-dzien`).onchange = el._odswiez; $(`${cfg.id}-gracz`).onchange = el._odswiez;
-    el.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{ $(`${cfg.id}-wart`).value = b.dataset.v; el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); });
-    $(`${cfg.id}-wart`).oninput = ()=>el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on"));
-    $(`${cfg.id}-zapisz`).onclick = () => zapisz(cfg, +$(`${cfg.id}-dzien`).value, $(`${cfg.id}-gracz`).value, $(`${cfg.id}-wart`).value);
+    const ustawTryb = (t) => { el._tryb = t; const w = $(`${cfg.id}-wart`), g = $(`${cfg.id}-godz`); if (t){ w.value = ""; w.disabled = true; if (g){ g.value = ""; g.disabled = true; } } else { w.disabled = false; if (g) g.disabled = false; }
+      $(`${cfg.id}-trybInfo`).textContent = t === "X" ? "X — nieobecność: dzień zapisany jako 0 i WYŁĄCZONY ze statystyk." : t === "L4" ? "L4 — zwolnienie: dzień zapisany jako 0 i WYŁĄCZONY ze statystyk." : ""; };
+    el.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{ el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+      if (b.dataset.v === "0"){ ustawTryb(null); $(`${cfg.id}-wart`).value = "0"; } else ustawTryb(b.dataset.v); });
+    $(`${cfg.id}-wart`).oninput = ()=>{ el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); ustawTryb(null); };
+    $(`${cfg.id}-zapisz`).onclick = () => zapisz(cfg, +$(`${cfg.id}-dzien`).value, $(`${cfg.id}-gracz`).value, el._tryb || $(`${cfg.id}-wart`).value, kind==="obrot" ? $(`${cfg.id}-godz`).value : null, el);
   }
   el._odswiez();
   const hist = state.log.filter(x=>x.typ===cfg.klucz).slice(-12).reverse();
   $(`${cfg.id}-hist`).innerHTML = hist.length ? hist.map(x=>{ const p = PLAYERS.find(q=>q.id===x.pid); return `<div class="py-2 flex items-center justify-between gap-3"><div class="min-w-0"><div class="font-semibold truncate ${p?.klif?"text-klifTxt":""}">${p?.n||x.pid}</div><div class="text-[11px] text-mut">${etykieta(x.d)} · ${new Date(x.t).toLocaleString("pl-PL",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit"})}${x.admin?" · 🔑":""}</div></div><div class="num font-bold ${kind==="obrot"?"text-zloto":"text-neon"}">${typeof x.v==="number"?(kind==="obrot"?zl(x.v):x.v):x.v}</div></div>`; }).join("") : `<div class="py-6 text-center text-mut text-sm">Jeszcze pusto — pierwszy wpis otwiera sezon.</div>`;
 }
-async function zapisz(cfg, d, pid, surowe){
-  if (dzienZablokowany(d)) return toast("🔒 Dzień zamknięty — poproś kierownika.", "err");
-  let v; const s = String(surowe).trim().toUpperCase();
-  if (s === "X" || s === "L4") v = s; else { const n = parseFloat(s.replace(",",".")); if (isNaN(n) || n < 0) return toast("Podaj liczbę, 0, X albo L4.", "err"); v = n; }
-  const wpis = { t: Date.now(), typ: cfg.klucz, d, pid, v, admin: adminSession };
+/** Wspólny zapis jednej wartości (obrót / podejścia / godziny) z logiem. */
+async function zapiszWartosc(klucz, d, pid, v, logTyp){
+  if (demo){ (state[klucz][d] ??= {})[pid] = v; if (logTyp) state.log.push({ t: Date.now(), typ: logTyp, d, pid, v, admin: adminSession }); return; }
+  await fb.set(fb.ref(db, `${klucz}/${d}/${pid}`), v);
+  if (logTyp) await fb.push(fb.ref(db, "log"), { t: Date.now(), typ: logTyp, d, pid, v, admin: adminSession });
+}
+function parsujWpis(surowe){
+  const s = String(surowe ?? "").trim().toUpperCase();
+  if (s === "X" || s === "L4") return s;
+  const n = parseFloat(s.replace(",", ".")); return (isNaN(n) || n < 0) ? null : n;
+}
+async function zapisz(cfg, d, pid, surowe, godzSurowe, el){
+  if (dzienZablokowany(d, maWpis(cfg.klucz, d, pid))) return toast("🔒 Dzień zamknięty — poproś kierownika.", "err");
+  const v = parsujWpis(surowe); if (v === null) return toast("Podaj liczbę, 0, X albo L4.", "err");
+  let g = null;
+  if (cfg.klucz === "obrot"){
+    if (typeof v === "number"){ g = parseFloat(String(godzSurowe ?? "").replace(",", ".")); if (isNaN(g) || g <= 0 || g > 16) return toast("Wpisz liczbę godzin na zmianie (0,5–16) — to pole jest wymagane.", "err"); }
+    else g = 0; // X / L4 → 0 godzin, dzień poza statystykami
+  }
   try {
-    if (demo){ (state[cfg.klucz][d] ??= {})[pid] = v; state.log.push(wpis); render(); }
-    else { await fb.set(fb.ref(db, `${cfg.klucz}/${d}/${pid}`), v); await fb.push(fb.ref(db, "log"), wpis); }
-    toast(`✅ Zapisano: ${PLAYERS.find(p=>p.id===pid).n} · ${etykieta(d)} · ${v}${cfg.jedn?" "+cfg.jedn:""}`);
-    $(`${cfg.id}-wart`).value = "";
+    await zapiszWartosc(cfg.klucz, d, pid, v, cfg.klucz);
+    if (cfg.klucz === "obrot"){ await zapiszWartosc("godziny", d, pid, g, null); if (typeof v === "string" && !maWpis("podejscia", d, pid)) await zapiszWartosc("podejscia", d, pid, v, null); }
+    if (demo) render();
+    toast(`✅ Zapisano: ${PLAYERS.find(p=>p.id===pid).n} · ${etykieta(d)} · ${typeof v === "number" ? v + (cfg.jedn ? " " + cfg.jedn : "") : v}${g ? " · " + g + " h" : ""}`);
+    $(`${cfg.id}-wart`).value = ""; if ($(`${cfg.id}-godz`)) $(`${cfg.id}-godz`).value = "";
+    if (el){ el._tryb = null; el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); $(`${cfg.id}-wart`).disabled = false; if ($(`${cfg.id}-godz`)) $(`${cfg.id}-godz`).disabled = false; $(`${cfg.id}-trybInfo`).textContent = ""; }
   } catch(e){ toast("Błąd zapisu: " + e.message, "err"); }
 }
 
@@ -545,7 +596,7 @@ function analityka(w){
   const dzienneMap = {};
   for (const x of w){
     const dzn = [], praca = [];
-    for (const d of DNI){ if (d>dz) break; const st = status(state.obrot?.[d]?.[x.id], d); if (["l4","laska","przyszly"].includes(st.typ)){ dzn.push(null); praca.push(null); continue; } dzn.push(st.typ==="kwota"?st.w:0); praca.push(st.typ==="kwota"); }
+    for (const d of DNI){ if (d>dz) break; const st = status(state.obrot?.[d]?.[x.id], d); if (["l4","x","laska","przyszly"].includes(st.typ)){ dzn.push(null); praca.push(null); continue; } dzn.push(st.typ==="kwota"?st.w:0); praca.push(st.typ==="kwota"); }
     dzienneMap[x.id] = { dzn, praca };
     lokS[x.lok] = (lokS[x.lok]||0) + x.obrot; lokDni[x.lok] ??= []; dzn.forEach((v,i)=>{ lokDni[x.lok][i] = (lokDni[x.lok][i]||0) + (v||0); });
   }
@@ -576,12 +627,12 @@ function analityka(w){
   }).sort((a,b)=>b.obrot-a.obrot);
 }
 function renderAnalityka(w){
-  const H = ["MIEJSCE","ZAWODNIK","OBRÓT","TWÓJ CEL","% CELU","DNI AKT.","UDZIAŁ PL","UDZIAŁ PUNKT","EFFICIENCY","ŚR. SUROWA","PROGNOZA MC","PODŁOGA","SUFIT","Z-SCORE","SHARPE","KELLY","MVP","SZANSA","KURS BUK","POGOŃ","L. MAGICZNA","PB","CV %","MOMENTUM","EFEKT OBECN.","STATUS","🎯 PODEJŚCIA","ŚR. POD./DZ","ZŁ / POD."];
+  const H = ["MIEJSCE","ZAWODNIK","OBRÓT","TWÓJ CEL","% CELU","DNI AKT.","UDZIAŁ PL","UDZIAŁ PUNKT","EFFICIENCY","ŚR. SUROWA","PROGNOZA MC","PODŁOGA","SUFIT","Z-SCORE","SHARPE","KELLY","MVP","SZANSA","KURS BUK","POGOŃ","L. MAGICZNA","PB","CV %","MOMENTUM","EFEKT OBECN.","STATUS","🎯 PODEJŚCIA","ŚR. POD./DZ","ZŁ / POD.","⏱ GODZINY","ZŁ / H"];
   const rows = analityka(w);
   $("tbAnalityka").innerHTML = `<thead><tr>${H.map((h,i)=>`<th class="${i<2||i===25||i===24||i===19||i===20?"text-left":"text-right"}">${h}</th>`).join("")}</tr></thead><tbody>` + rows.map(x=>{
     const c = x.klif ? "klif" : x.poz===1 ? "zloto" : x.poz===2 ? "srebro" : x.poz===3 ? "braz" : "";
     const R = (v) => `<td class="text-right num">${v}</td>`, L = (v) => `<td class="text-left">${v}</td>`;
-    return `<tr class="${c}">${L(x.klif?'<span class="text-klifTxt font-bold">🔴 KLIF</span>':`<span class="text-zloto font-bold">${x.poz===1?"🥇":x.poz===2?"🥈":x.poz===3?"🥉":""} ${x.poz}.</span>`)}<td class="nazwa font-semibold">${x.n}</td>${R(zl(x.obrot))}${R(zl(x.cel))}${R(x.procCelu+"%")}${R(x.dniAkt+" / "+x.otwarte)}${R(x.udzialPL.toFixed(1)+"%")}${R(x.udzialLok.toFixed(1)+"%")}${R(x.efficiency+" pkt")}${R(zl(x.otwarte?x.obrot/x.otwarte:0))}${R(x.klif?"—":zl(x.prognoza))}${R(x.klif?"—":zl(x.podloga))}${R(x.klif?"—":zl(x.sufit))}${R((x.zscore>=0?"+":"")+x.zscore.toFixed(2)+" σ")}${R(x.sharpe.toFixed(2))}${R(x.kelly)}${R(x.mvp.toFixed(1)+" / 10")}${R(x.szansa>=0?x.szansa.toFixed(1)+"%":"—")}${R(x.kurs)}${L(x.pogon)}${L(x.magiczna)}${R(zl(x.pb))}${R(x.cv.toFixed(1)+"%")}${L((x.momentum>=0?"▲ +":"▼ ")+x.momentum+"%")}${L(x.efekt)}${L(x.status)}${R(fmt(x.sumaP))}${R(x.srP.toFixed(1))}${R(x.konw?zl(x.konw):"—")}</tr>`; }).join("") + "</tbody>";
+    return `<tr class="${c}">${L(x.klif?'<span class="text-klifTxt font-bold">🔴 KLIF</span>':`<span class="text-zloto font-bold">${x.poz===1?"🥇":x.poz===2?"🥈":x.poz===3?"🥉":""} ${x.poz}.</span>`)}<td class="nazwa font-semibold">${x.n}</td>${R(zl(x.obrot))}${R(zl(x.cel))}${R(x.procCelu+"%")}${R(x.dniAkt+" / "+x.otwarte)}${R(x.udzialPL.toFixed(1)+"%")}${R(x.udzialLok.toFixed(1)+"%")}${R(x.efficiency+" pkt")}${R(zl(x.otwarte?x.obrot/x.otwarte:0))}${R(x.klif?"—":zl(x.prognoza))}${R(x.klif?"—":zl(x.podloga))}${R(x.klif?"—":zl(x.sufit))}${R((x.zscore>=0?"+":"")+x.zscore.toFixed(2)+" σ")}${R(x.sharpe.toFixed(2))}${R(x.kelly)}${R(x.mvp.toFixed(1)+" / 10")}${R(x.szansa>=0?x.szansa.toFixed(1)+"%":"—")}${R(x.kurs)}${L(x.pogon)}${L(x.magiczna)}${R(zl(x.pb))}${R(x.cv.toFixed(1)+"%")}${L((x.momentum>=0?"▲ +":"▼ ")+x.momentum+"%")}${L(x.efekt)}${L(x.status)}${R(fmt(x.sumaP))}${R(x.srP.toFixed(1))}${R(x.konw?zl(x.konw):"—")}${R(x.godz?x.godz.toFixed(1)+" h":"—")}${R(x.zlH?zl(x.zlH):"—")}</tr>`; }).join("") + "</tbody>";
 }
 
 // ═══════════════ 🧠 MÓJ RAPORT TRENERA ═══════════════
@@ -615,7 +666,7 @@ function renderRaport(w){
   const strata = lider ? lider.obrot - x.obrot : 0;
   const pogon = x.klif ? "poza konkursem" : miejsce===1 && x.obrot>0 ? "👑 LIDER" : pozostale ? "+" + zl(Math.ceil(strata/pozostale)) + "/dzień" : "—";
   const magiczna = x.klif ? "—" : miejsce===1 && x.obrot>0 ? "👑 prowadzisz" : pozostale===0 ? "koniec sezonu" : strata > pozostale*Math.max(1,x.pb) ? "💀 eliminacja matematyczna" : strata > pozostale*sr*1.2 ? "🪦 poza zasięgiem tempa (+20%)" : "GOŃ: " + zl(strata);
-  const dzienne = []; for (const d of DNI){ if (d>dzisNr()) break; const st = status(state.obrot?.[d]?.[pid], d); if (!["l4","laska","przyszly"].includes(st.typ)) dzienne.push(st.typ==="kwota"?st.w:0); }
+  const dzienne = []; for (const d of DNI){ if (d>dzisNr()) break; const st = status(state.obrot?.[d]?.[pid], d); if (!["l4","x","laska","przyszly"].includes(st.typ)) dzienne.push(st.typ==="kwota"?st.w:0); }
   let momentum = 0; if (dzienne.length>=6){ const o = dzienne.slice(-4), b = dzienne.slice(0,-4); const mo = o.reduce((a,c)=>a+c,0)/o.length, mb = b.reduce((a,c)=>a+c,0)/b.length; momentum = mb ? Math.round(100*(mo/mb-1)) : 0; }
   const master = brak===0 ? `🎯 Cel ${zl(cel)} wykonany (${zl(x.obrot)}). Teraz gra się o rekordy i styl.` : `Do celu ${zl(cel)} brakuje ${zl(brak)}. To: ${Math.ceil(brak/200)}× szyba (200 zł) LUB ${Math.ceil(brak/450)}× ładowarka 3w1 (450 zł) LUB ${Math.ceil(brak/150)}× azotek duo (150 zł) LUB ${Math.ceil(brak/80)}× sznurek (80 zł). Górę rozbija się na sztuki — sztuki się sprzedaje.${pozostale ? ` Tempo potrzebne: ${zl(Math.ceil(brak/pozostale))}/dzień przez ${pozostale} dni.` : ""}`;
   const K = (e,v,c="") => `<div class="panel-box p-3"><div class="eyebrow">${e}</div><div class="font-display font-bold text-sm mt-1 num ${c}">${v}</div></div>`;
@@ -626,17 +677,80 @@ function renderRaport(w){
       ${K("Obrót", zl(x.obrot), "text-zloto")}${K("% celu ("+fmt(cel)+" zł)", proc+"%", proc>=100?"text-szmaragd":"")}${K("Średnia / dzień", zl(sr))}${K("Dni aktywne", x.dniAkt+" / "+x.otwarte)}
       ${K("Rekord dnia", zl(x.pb), "text-zloto")}${K("Prognoza MC", x.klif?"—":zl(sim.prognoza))}${K("Szansa na złoto", x.klif?"—":sim.szansa.toFixed(1)+"%", sim.szansa>=50?"text-szmaragd":"")}${K("Pogoń", pogon)}
       ${K("Momentum", (momentum>=0?"▲ +":"▼ ")+momentum+"%", momentum>=0?"text-szmaragd":"text-red-300")}${K("Liczba magiczna", magiczna)}${K("Podejścia", fmt(x.sumaP)+" (śr. "+x.srP.toFixed(1)+")", "text-neon")}${K("Zł / podejście", x.konw?zl(x.konw):"—")}
+      ${K("⏱ Godziny na zmianach", x.godz?x.godz.toFixed(1)+" h":"—")}${K("Zł / godzinę", x.zlH?zl(x.zlH):"—", "text-zloto")}
     </div>
     <div class="rounded-2xl border border-linia bg-noc/50 p-4 mt-4 text-sm"><b class="text-zloto">🥊 Masterplan:</b> ${master}</div>
     <div class="rounded-2xl border border-zloto/30 bg-gradient-to-br from-panel2 to-panel p-4 mt-3 text-sm"><div class="text-[10px] font-bold tracking-widest uppercase text-zloto mb-1">${rada.d} rada dnia · ${rada.n}</div><p>${rada.fakt} <b>${rada.sens}</b></p><p class="text-mut text-xs mt-2">Więcej w zakładce 🏆 Loża Mistrzów — rady dopasowane do konkretnej sytuacji przy ladzie.</p></div>`;
 }
 
+// ═══════════════ 📋 BRAKI — czego brakuje zalogowanemu ═══════════════
+function policzBraki(pid){
+  const dz = dzisNr(), h = new Date().getHours(), braki = [];
+  for (const d of DNI){
+    if (d > dz) break;
+    if (d === dz && h < GODZINA_PRZYPOMNIENIA) break; // dzisiejszy dzień pytamy od 21:00
+    const o = state.obrot?.[d]?.[pid], sO = status(o, d);
+    if (sO.typ === "x" || sO.typ === "l4") continue;   // dzień wyłączony — nic nie brakuje
+    const brakO = !maWpis("obrot", d, pid), brakP = !maWpis("podejscia", d, pid), brakG = !(parseFloat(state.godziny?.[d]?.[pid]) > 0);
+    if (brakO || brakP || brakG) braki.push({ d, brakO, brakP, brakG });
+  }
+  return braki;
+}
+let brakiPokazane = "";
+function sprawdzBraki(wymus){
+  const pid = zalogowanyPid(); if (!pid) return;
+  if (!$("loginOverlay").classList.contains("hidden")) return;
+  const braki = policzBraki(pid), klucz = pid + "|" + braki.map(b=>b.d).join(",");
+  if (!braki.length){ $("brakiOverlay").classList.add("hidden"); brakiPokazane = ""; return; }
+  if (!wymus && brakiPokazane === klucz) return; // już pokazane w tej sesji dla tego zestawu (użytkownik kliknął „Później”)
+  brakiPokazane = klucz;
+  $("brakiTxt").textContent = `${PLAYERS.find(p=>p.id===pid)?.n || pid}: uzupełnij ${braki.length} ${braki.length===1?"dzień":"dni"}. Wpisz obrót, podejścia i godziny — albo oznacz cały dzień jako X / L4.`;
+  $("brakiLista").innerHTML = braki.map(b => `<div class="rounded-xl border border-linia bg-noc/60 p-3" data-d="${b.d}">
+    <div class="flex items-center justify-between gap-2 mb-2"><b class="text-sm">${etykieta(b.d)}</b><div class="seg flex gap-1 text-[10px]"><button data-t="X" class="rounded px-2 py-1">X — nieobecny</button><button data-t="L4" class="rounded px-2 py-1">L4</button></div></div>
+    <div class="grid grid-cols-3 gap-2">
+      <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Obrót (zł)</div><input data-k="obrot" type="number" min="0" step="10" inputmode="decimal" ${b.brakO?"":'disabled value="'+state.obrot[b.d][pid]+'"'} class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm num ${b.brakO?"":"opacity-50"}"></div>
+      <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Podejścia</div><input data-k="podejscia" type="number" min="0" step="1" inputmode="numeric" ${b.brakP?"":'disabled value="'+state.podejscia[b.d][pid]+'"'} class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm num ${b.brakP?"":"opacity-50"}"></div>
+      <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Godziny</div><input data-k="godziny" type="number" min="0.5" max="16" step="0.5" inputmode="decimal" ${b.brakG?"":'disabled value="'+state.godziny[b.d][pid]+'"'} class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm num ${b.brakG?"":"opacity-50"}"></div>
+    </div></div>`).join("");
+  $("brakiOverlay").querySelectorAll(".seg button").forEach(b => b.onclick = () => { const box = b.closest("[data-d]"); const on = b.classList.contains("on"); box.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); if (!on){ b.classList.add("on"); box.dataset.tryb = b.dataset.t; } else delete box.dataset.tryb; box.querySelectorAll("input").forEach(i => { if (!i.hasAttribute("value")) i.disabled = !on; }); });
+  $("brakiOverlay").classList.remove("hidden");
+}
+$("brakiPozniej").onclick = () => $("brakiOverlay").classList.add("hidden");
+$("brakiZapisz").onclick = async () => {
+  const pid = zalogowanyPid(); if (!pid) return; const err = $("brakiErr"); err.textContent = "";
+  const boxy = [...$("brakiOverlay").querySelectorAll("[data-d]")]; const plan = [];
+  for (const box of boxy){
+    const d = +box.dataset.d, tryb = box.dataset.tryb;
+    if (tryb){ plan.push({ d, obrot: tryb, podejscia: tryb, godziny: 0 }); continue; }
+    const czyt = (k) => { const i = box.querySelector(`input[data-k="${k}"]`); return i.disabled ? undefined : parseFloat(String(i.value).replace(",", ".")); };
+    const o = czyt("obrot"), p = czyt("podejscia"), g = czyt("godziny");
+    if ((o !== undefined && (isNaN(o) || o < 0)) || (p !== undefined && (isNaN(p) || p < 0)) || (g !== undefined && (isNaN(g) || g <= 0 || g > 16))) { err.textContent = `${etykieta(d)}: wypełnij wszystkie pola (godziny 0,5–16) albo oznacz dzień jako X / L4.`; return; }
+    plan.push({ d, obrot: o, podejscia: p, godziny: g });
+  }
+  try {
+    for (const w of plan){
+      if (w.obrot !== undefined && !maWpis("obrot", w.d, pid)) await zapiszWartosc("obrot", w.d, pid, w.obrot, "obrot");
+      if (w.podejscia !== undefined && !maWpis("podejscia", w.d, pid)) await zapiszWartosc("podejscia", w.d, pid, w.podejscia, "podejscia");
+      if (w.godziny !== undefined && !(parseFloat(state.godziny?.[w.d]?.[pid]) > 0)) await zapiszWartosc("godziny", w.d, pid, w.godziny, null);
+    }
+    toast(`✅ Uzupełniono ${plan.length} ${plan.length===1?"dzień":"dni"}. Dzięki!`);
+    $("brakiOverlay").classList.add("hidden"); brakiPokazane = "";
+    if (demo) render();
+  } catch(e){ err.textContent = "Błąd zapisu: " + e.message; }
+};
+setInterval(() => { if (new Date().getHours() >= GODZINA_PRZYPOMNIENIA) sprawdzBraki(false); }, 5*60000);
+
+// ═══════════════ 👥 UŻYTKOWNICY (konta w bazie, generowane z panelu) ═══════════════
+const SLOWA_HASLA = ["Szyba","Piana","Sznurek","Azotek","Mistrz","Podium","Finisz","Rekord","Gol","Serwis","Ekran","Etui","Puchar","Gwiazda","Trofeum","Warroom","Liga","Medal","Bramka","Finał","Kibic","Sezon","Tempo","Klif"];
+function generujHaslo(){ const a = new Uint32Array(3); crypto.getRandomValues(a); return SLOWA_HASLA[a[0] % SLOWA_HASLA.length] + "-" + SLOWA_HASLA[a[1] % SLOWA_HASLA.length] + "-" + (1000 + (a[2] % 9000)); }
+function slug(t){ return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ł/g,"l").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,""); }
+
 function renderAdmin(){
   const el = $("tab-admin");
   if (!adminSession){
-    el.innerHTML = `<div class="max-w-md mx-auto panel-box p-6 space-y-3"><div class="eyebrow">Dostęp chroniony</div><h2 class="font-display font-bold text-zloto text-sm">🔑 Panel kierownika</h2><p class="text-xs text-mut">Podaj PIN, aby edytować dowolny dzień o dowolnej porze, odblokować dni dla zespołu lub zresetować dane.</p>
-      <input id="pin" type="password" inputmode="numeric" placeholder="PIN" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-center text-2xl tracking-[.5em] num"><button id="pinBtn" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ODBLOKUJ</button><div id="pinErr" class="text-xs text-red-300 text-center min-h-[16px]"></div></div>`;
-    const go = () => { if ($("pin").value === ADMIN_PIN){ adminSession = true; toast("🔑 Tryb kierownika aktywny w tej karcie."); render(); } else $("pinErr").textContent = "Błędny PIN."; };
+    el.innerHTML = `<div class="max-w-md mx-auto panel-box p-6 space-y-3"><div class="eyebrow">Dostęp chroniony</div><h2 class="font-display font-bold text-zloto text-sm">🔑 Panel kierownika</h2><p class="text-xs text-mut">Podaj hasło kierownika, aby edytować dowolny dzień, odblokować dni dla zespołu, zarządzać kontami lub zresetować dane.</p>
+      <input id="pin" type="password" autocomplete="current-password" placeholder="hasło kierownika" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-sm"><button id="pinBtn" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ODBLOKUJ</button><div id="pinErr" class="text-xs text-red-300 text-center min-h-[16px]"></div></div>`;
+    const go = async () => { $("pinBtn").textContent = "⏳…"; const rek = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY; const ok = await sprawdzHaslo($("pin").value, rek); $("pinBtn").textContent = "ODBLOKUJ"; if (ok){ adminSession = true; toast("🔑 Tryb kierownika aktywny w tej karcie."); render(); } else $("pinErr").textContent = "Błędne hasło."; };
     $("pinBtn").onclick = go; $("pin").onkeydown = e => { if (e.key === "Enter") go(); };
     return;
   }
@@ -651,15 +765,72 @@ function renderAdmin(){
     <div class="panel-box p-5 space-y-3"><div class="eyebrow">Dane</div><h2 class="font-display font-bold text-zloto text-sm">🧹 Reset i sesja</h2>
       <p class="text-xs text-mut">Reset kasuje WSZYSTKIE wpisy obrotu, podejść i historię — u każdego użytkownika. Nie da się cofnąć.</p>
       <button id="aReset" class="w-full rounded-xl py-2.5 font-bold border border-red-500/50 text-red-300 hover:bg-red-950/40">Zresetuj wszystkie dane września</button>
+      <button id="aHaslo" class="w-full rounded-xl py-2.5 font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">Zmień hasło kierownika</button>
       <button id="aWyloguj" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Wyloguj z trybu kierownika</button>
-      <div class="text-[11px] text-mut pt-2">W tej karcie masz pełną edycję każdego dnia — wpisy oznaczane są 🔑 w historii. PIN zmienia się w pliku index.html (stała ADMIN_PIN).</div>
+      <div class="text-[11px] text-mut pt-2">W tej karcie masz pełną edycję każdego dnia — wpisy oznaczane są 🔑 w historii. W kodzie strony nie ma żadnych haseł — tylko odcisk hasła kierownika.</div>
+    </div>
+    <div class="panel-box p-5 space-y-3 md:col-span-2"><div class="eyebrow">Użytkownicy</div><h2 class="font-display font-bold text-zloto text-sm">👥 Dodawanie użytkowników — login i hasło generowane automatycznie</h2>
+      <div class="grid sm:grid-cols-3 gap-2">
+        <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Zawodnik</div><select id="uPid" class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select></div>
+        <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Login (puste = automatyczny)</div><input id="uLogin" placeholder="np. maks_rzm2" class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm"></div>
+        <div class="flex items-end"><button id="uDodaj" class="w-full rounded-lg py-2 font-bold border border-zloto/50 text-zloto hover:bg-zloto/10 text-sm">➕ Dodaj i wygeneruj hasło</button></div>
+      </div>
+      <details class="rounded-xl border border-linia bg-noc/50 p-3 text-xs"><summary class="cursor-pointer font-bold text-zloto">📋 Wgraj istniejące hasła z listy (login;hasło) — zachowaj dotychczasowe dane logowania zespołu</summary>
+        <p class="text-mut mt-2">Wklej linie w formacie <code>login;hasło</code> (np. z pliku KONTA_DO_WGRANIA.txt). Jawne hasła nie są nigdzie zapisywane — do bazy trafiają wyłącznie ich odciski. Istniejące konto o tym samym loginie zostanie nadpisane tym hasłem.</p>
+        <textarea id="uImport" rows="5" placeholder="maks_rzm;Przyklad-1234&#10;kris_rzm;Przyklad-5678" class="w-full mt-2 bg-noc border border-linia rounded-lg px-2 py-2 text-xs font-mono"></textarea>
+        <button id="uImportBtn" class="mt-2 rounded-lg px-3 py-2 font-bold border border-szmaragd/50 text-szmaragd hover:bg-szmaragd/10 text-xs">Wgraj hasła z listy</button>
+        <div id="uImportWynik" class="mt-2 text-mut whitespace-pre-line"></div>
+      </details>
+      <div class="flex flex-wrap gap-2"><button id="uHurt" class="rounded-lg px-3 py-2 font-bold border border-neon/50 text-neon hover:bg-neon/10 text-xs">⚡ Utwórz konta wszystkim, którzy ich nie mają</button><button id="uPobierz" class="hidden rounded-lg px-3 py-2 font-bold border border-linia text-mut hover:bg-panel2 text-xs">📥 Pobierz wygenerowane hasła (.txt)</button></div>
+      <div id="uWynik" class="hidden rounded-xl border border-szmaragd/50 bg-emerald-950/30 p-3 text-sm whitespace-pre-line font-mono"></div>
+      <div class="overflow-x-auto"><table class="liga text-xs min-w-[560px]"><thead><tr><th class="text-left">Login</th><th class="text-left">Zawodnik</th><th class="text-left">Hasło</th><th class="text-left">Dodano</th><th></th></tr></thead><tbody id="uLista"></tbody></table></div>
+      <div class="text-[11px] text-mut">Hasła są przechowywane wyłącznie jako odciski — jawne hasło widzisz tylko raz, przy utworzeniu (albo po kliknięciu „nowe hasło”). Zapisz je sobie z przycisku 📥.</div>
     </div></div>`;
+  let wygenerowane = [];
+  const pokazWygenerowane = () => { if (!wygenerowane.length) return; $("uWynik").classList.remove("hidden"); $("uWynik").textContent = "✅ Nowe dane logowania (widoczne tylko teraz):\n" + wygenerowane.map(w => `${w.imie.padEnd(26)} login: ${w.login.padEnd(16)} hasło: ${w.haslo}`).join("\n"); $("uPobierz").classList.remove("hidden"); };
+  $("uPobierz").onclick = () => { const tresc = "LIGA MISTRZÓW · ZBITA SZYBKA — dane logowania\nStrona: https://ziebka17.github.io/liga-mistrzow/\n\n" + wygenerowane.map(w => `${w.imie}\n  login: ${w.login}\n  hasło: ${w.haslo}\n`).join("\n"); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([tresc], { type: "text/plain;charset=utf-8" })); a.download = "konta_ligi_" + new Date().toISOString().slice(0,10) + ".txt"; a.click(); };
+  const utworzKonto = async (login, pid) => { const haslo = generujHaslo(), sol = losowaSol(), odcisk = await odciskHasla(haslo, sol), rekord = { sol, odcisk, pid, t: Date.now() }; if (demo){ (state.uzytkownicy ??= {})[login] = rekord; } else await fb.set(fb.ref(db, `uzytkownicy/${login}`), rekord); wygenerowane.push({ imie: PLAYERS.find(p=>p.id===pid)?.n || pid, login, haslo }); return haslo; };
+  const zajety = (l) => !!state.uzytkownicy?.[l];
+  const rysujUzytkownikow = () => {
+    const u = state.uzytkownicy || {};
+    $("uLista").innerHTML = Object.keys(u).sort().map(l => { const p = PLAYERS.find(x=>x.id===u[l].pid); return `<tr><td class="font-mono font-bold">${l}</td><td>${p ? p.n : u[l].pid}</td><td class="text-mut">•••••• <button data-nowe="${l}" class="text-zloto text-[11px] border border-zloto/30 rounded px-2 py-0.5 ml-1">nowe hasło</button></td><td class="text-mut">${u[l].t ? new Date(u[l].t).toLocaleDateString("pl-PL") : "—"}</td><td><button data-usun="${l}" class="text-red-300 text-[11px] border border-red-500/30 rounded px-2 py-0.5">usuń</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak kont — kliknij ⚡, aby utworzyć konta całemu zespołowi.</td></tr>`;
+    $("uLista").querySelectorAll("[data-usun]").forEach(b => b.onclick = async () => { const l = b.dataset.usun; if (!confirm(`Usunąć konto ${l}?`)) return; if (demo){ delete state.uzytkownicy[l]; } else await fb.remove(fb.ref(db, `uzytkownicy/${l}`)); toast(`Usunięto konto ${l}.`); if (demo) render(); });
+    $("uLista").querySelectorAll("[data-nowe]").forEach(b => b.onclick = async () => { const l = b.dataset.nowe, pid = state.uzytkownicy[l].pid; await utworzKonto(l, pid); toast(`🔑 Nowe hasło dla ${l} — widoczne poniżej.`); pokazWygenerowane(); if (demo) render(); });
+  };
+  rysujUzytkownikow();
+  $("uDodaj").onclick = async () => {
+    const pid = $("uPid").value, wlasny = slug($("uLogin").value);
+    let login = wlasny || pid;
+    if (!wlasny){ let n = 2; while (zajety(login)) login = `${pid}_${n++}`; }
+    if (zajety(login)) return toast(`Login „${login}” już istnieje — podaj inny.`, "err");
+    try { await utworzKonto(login, pid); pokazWygenerowane(); $("uLogin").value = ""; toast(`✅ Konto ${login} utworzone.`); if (demo) rysujUzytkownikow(); } catch(e){ toast("Błąd: " + e.message, "err"); }
+  };
+  $("uImportBtn").onclick = async () => {
+    const linie = $("uImport").value.split("\n").map(l=>l.trim()).filter(Boolean); if (!linie.length) return toast("Wklej linie login;hasło.", "err");
+    const w = $("uImportWynik"); w.textContent = "Zapisuję…"; const raport = []; let n = 0;
+    for (const l of linie){
+      const i = l.indexOf(";"); if (i < 0){ raport.push("⚠️ " + l + " — brak średnika"); continue; }
+      const login = slug(l.slice(0, i)), haslo = l.slice(i + 1).trim(); const pid = PLAYERS.some(p=>p.id===login) ? login : (state.uzytkownicy?.[login]?.pid || null);
+      if (!pid){ raport.push("⚠️ " + login + " — nie pasuje do żadnego zawodnika (użyj loginu = id, np. maks_rzm)"); continue; }
+      if (haslo.length < 4){ raport.push("⚠️ " + login + " — hasło za krótkie"); continue; }
+      try { const sol = losowaSol(), odcisk = await odciskHasla(haslo, sol), rekord = { sol, odcisk, pid, t: Date.now() }; if (demo){ (state.uzytkownicy ??= {})[login] = rekord; } else await fb.set(fb.ref(db, `uzytkownicy/${login}`), rekord); n++; raport.push("✅ " + login); }
+      catch(e){ raport.push("❌ " + login + ": " + e.message); }
+    }
+    w.textContent = raport.join("\n"); $("uImport").value = ""; toast(`✅ Wgrano hasła: ${n} kont.`); if (demo) rysujUzytkownikow();
+  };
+  $("uHurt").onclick = async () => {
+    const bez = PLAYERS.filter(p => !Object.values(state.uzytkownicy || {}).some(u => u.pid === p.id));
+    if (!bez.length) return toast("Każdy zawodnik ma już konto.");
+    if (!confirm(`Utworzyć konta dla ${bez.length} zawodników?`)) return;
+    try { for (const p of bez){ let login = p.id, n = 2; while (zajety(login)) login = `${p.id}_${n++}`; await utworzKonto(login, p.id); } pokazWygenerowane(); toast(`✅ Utworzono ${bez.length} kont.`); if (demo) rysujUzytkownikow(); } catch(e){ toast("Błąd: " + e.message, "err"); }
+  };
   const zapiszAdmin = (obj) => demo ? (Object.assign(state.admin, obj), render(), Promise.resolve()) : fb.update(fb.ref(db, "admin"), obj);
   $("aOdbl").onclick = () => zapiszAdmin({ unlockUntil: Date.now() + 30*60000 }).then(()=>toast("🔓 Zespół może edytować przez 30 minut."));
   $("aTryb").onclick = () => zapiszAdmin({ editMode: !state.admin?.editMode });
   $("aZamknij").onclick = () => zapiszAdmin({ unlockUntil: 0, editMode: false });
   $("aReset").onclick = async () => { if (prompt('Wpisz RESET, aby skasować wszystkie dane września:') !== "RESET") return toast("Anulowano."); if (demo){ state.obrot={}; state.podejscia={}; state.log=[]; render(); } else { await fb.remove(fb.ref(db,"obrot")); await fb.remove(fb.ref(db,"podejscia")); await fb.remove(fb.ref(db,"log")); } toast("🧹 Dane wyzerowane."); };
   $("aWyloguj").onclick = () => { adminSession = false; render(); toast("Wylogowano z trybu kierownika."); };
+  $("aHaslo").onclick = async () => { const n = prompt("Nowe hasło kierownika (min. 8 znaków):"); if (!n) return; if (n.length < 8) return toast("Hasło min. 8 znaków.", "err"); const sol = losowaSol(), odcisk = await odciskHasla(n, sol); if (demo){ state.admin.haslo = { sol, odcisk }; } else await fb.update(fb.ref(db, "admin"), { haslo: { sol, odcisk } }); toast("✅ Hasło kierownika zmienione."); };
 }
 
 function renderStatus(){
@@ -699,8 +870,8 @@ function trybPodgladu(powod){
     const app = initializeApp(firebaseConfig); db = dbMod.getDatabase(app);
     fb.onValue(fb.ref(db, "/"), snap => {
       const v = snap.val() || {};
-      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {} };
-      render(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
+      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {} };
+      bazaZaladowana = true; render(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
     }, err => { $("kropka").className = "w-2 h-2 rounded-full bg-red-500"; $("statusTxt").textContent = "błąd bazy"; toast("Firebase: " + err.message + " — sprawdź reguły bazy.", "err"); });
   } catch (e) { trybPodgladu("Nie udało się pobrać biblioteki Firebase (brak sieci albo zamknięty podgląd). Na GitHub Pages połączenie działa normalnie."); }
 })();
