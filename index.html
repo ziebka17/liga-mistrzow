@@ -83,7 +83,6 @@
       <div id="loginErr" class="text-xs text-red-400 font-semibold min-h-[16px] text-center"></div>
       <button id="loginBtn" type="submit" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZALOGUJ SIĘ</button>
     </form>
-    <button id="loginAdmin" class="w-full text-[11px] text-mut hover:text-zloto underline underline-offset-2">🔑 wejście awaryjne kierownika (samym hasłem kierownika)</button>
   </div>
 </div>
 
@@ -284,9 +283,8 @@ function sprawdzLogowanie(poBazie) {
   const userBar = $("userBar");
   const logoutBtn = $("logoutBtn");
 
-  if (loggedUser === "kierownik" && !adminSession) { localStorage.removeItem("lm_logged_user"); } // wejście awaryjne nie przeżywa odświeżenia
   if (loggedUser === ADMIN_LOGIN) adminSession = true; // kierownik = konto antek_klif: uprawnienia wracają po odświeżeniu
-  const kontoOK = loggedUser && loggedUser !== "kierownik" && (state.uzytkownicy?.[loggedUser] || loggedUser === ADMIN_LOGIN || (!poBazie && localStorage.getItem("lm_logged_pid")));
+  const kontoOK = loggedUser && (state.uzytkownicy?.[loggedUser] || loggedUser === ADMIN_LOGIN || (!poBazie && localStorage.getItem("lm_logged_pid")));
   if (kontoOK) {
     overlay.classList.add("hidden");
     const p = PLAYERS.find(x => x.id === zalogowanyPid());
@@ -320,7 +318,7 @@ async function zaloguj() {
   $("loginBtn").textContent = "⏳ SPRAWDZAM…";
   const zBazy = state.uzytkownicy?.[login];
   const hasloKierownika = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY;
-  const ok = (zBazy && await sprawdzHaslo(pass, zBazy)) || (login === ADMIN_LOGIN && await sprawdzHaslo(pass, hasloKierownika));
+  const ok = login === ADMIN_LOGIN ? await sprawdzHaslo(pass, hasloKierownika) : (zBazy && await sprawdzHaslo(pass, zBazy));
   $("loginBtn").textContent = "ZALOGUJ SIĘ";
   if (ok) {
     localStorage.setItem("lm_logged_user", login);
@@ -348,16 +346,6 @@ $("loginBtn").onclick = zaloguj;
 $("logoutBtn").onclick = wyloguj;
 $("loginForm").onsubmit = (e) => { e.preventDefault(); zaloguj(); };
 $("loginInput").setAttribute("placeholder", "np. maks_rzm");
-// Kierownik wchodzi bez konta zawodnika (np. przy pierwszym uruchomieniu, gdy nikt nie ma jeszcze konta)
-$("loginAdmin").onclick = async () => {
-  const h = $("passInput").value; if (!h) { $("loginErr").textContent = "Wpisz hasło kierownika w polu „Hasło” i kliknij ponownie."; return; }
-  if (!bazaZaladowana && !demo) { $("loginErr").textContent = "Łączę z bazą — spróbuj za sekundę."; return; }
-  const rek = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY;
-  if (!(await sprawdzHaslo(h, rek))) { $("loginErr").textContent = "Błędne hasło kierownika."; return; }
-  adminSession = true; localStorage.setItem("lm_logged_user", "kierownik"); localStorage.removeItem("lm_logged_pid");
-  $("loginOverlay").classList.add("hidden"); $("userBar").textContent = "🔑 kierownik"; $("userBar").classList.remove("hidden"); $("logoutBtn").classList.remove("hidden");
-  $("passInput").value = ""; render(); pokazTab("admin"); toast("🔑 Zalogowano jako kierownik.");
-};
 sprawdzLogowanie();
 
 function dzisNr(){ const t = new Date(); if (t.getFullYear()!==ROK || t.getMonth()!==MIESIAC) return t < new Date(ROK,MIESIAC,1) ? 0 : 31; return t.getDate(); }
@@ -871,7 +859,7 @@ function renderAdmin(){
   $("aZamknij").onclick = () => zapiszAdmin({ unlockUntil: 0, editMode: false });
   $("aReset").onclick = async () => { if (prompt('Wpisz RESET, aby skasować wszystkie dane września:') !== "RESET") return toast("Anulowano."); if (demo){ state.obrot={}; state.podejscia={}; state.log=[]; render(); } else { await fb.remove(fb.ref(db,"obrot")); await fb.remove(fb.ref(db,"podejscia")); await fb.remove(fb.ref(db,"log")); } toast("🧹 Dane wyzerowane."); };
   $("aWyloguj").onclick = () => { adminSession = false; render(); toast("Wylogowano z trybu kierownika."); };
-  $("aHaslo").onclick = async () => { const n = prompt("Nowe hasło kierownika (min. 8 znaków):"); if (!n) return; if (n.length < 8) return toast("Hasło min. 8 znaków.", "err"); const sol = losowaSol(), odcisk = await odciskHasla(n, sol); const rek = { sol, odcisk, pid: ADMIN_LOGIN, t: Date.now() }; if (demo){ state.admin.haslo = { sol, odcisk }; (state.uzytkownicy ??= {})[ADMIN_LOGIN] = rek; } else { await fb.update(fb.ref(db, "admin"), { haslo: { sol, odcisk } }); await fb.set(fb.ref(db, `uzytkownicy/${ADMIN_LOGIN}`), rek); } toast("✅ Hasło kierownika zmienione — działa zarówno do logowania, jak i do wejścia awaryjnego."); };
+  $("aHaslo").onclick = async () => { const n = prompt("Nowe hasło kierownika (min. 8 znaków):"); if (!n) return; if (n.length < 8) return toast("Hasło min. 8 znaków.", "err"); const sol = losowaSol(), odcisk = await odciskHasla(n, sol); const rek = { sol, odcisk, pid: ADMIN_LOGIN, t: Date.now() }; if (demo){ state.admin.haslo = { sol, odcisk }; (state.uzytkownicy ??= {})[ADMIN_LOGIN] = rek; } else { await fb.update(fb.ref(db, "admin"), { haslo: { sol, odcisk } }); await fb.set(fb.ref(db, `uzytkownicy/${ADMIN_LOGIN}`), rek); } toast("✅ Hasło kierownika zmienione."); };
 }
 
 function renderStatus(){
