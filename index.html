@@ -113,6 +113,7 @@
 
 <main class="max-w-[1480px] mx-auto px-3 sm:px-4 py-5 space-y-5">
   <div id="bannerConfig" class="hidden panel-box p-4 border-yellow-500/60 text-sm"></div>
+  <div id="bannerPrzyp" class="hidden panel-box p-4 border-red-500/60 bg-red-950/30 text-sm flex flex-wrap items-center justify-between gap-3"><div id="bannerPrzypTxt"></div><button id="bannerPrzypBtn" class="rounded-lg px-3 py-2 text-xs font-bold text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">📋 Uzupełnij teraz</button></div>
 
   <section id="tab-liga" class="tab-panel space-y-4">
     <div class="grid lg:grid-cols-5 gap-4">
@@ -171,7 +172,7 @@
     </div>
     <div class="panel-box p-5 text-sm space-y-3">
       <div><div class="eyebrow mb-1">Podejścia</div><p>Podejście = każda rozpoczęta rozmowa sprzedażowa z klientem, także bez sprzedaży. Wpisujesz liczbę za dzień w Dzienniku podejść. Konwersja zł/podejście = obrót ÷ podejścia — pokazuje, kto strzela celnie, a kto tylko dużo.</p></div>
-      <div><div class="eyebrow mb-1">Reguła 22:00</div><p>Wyniki z <b>dnia bieżącego</b> można wpisywać i poprawiać do <b>22:00</b>. Po tej godzinie dzień jest zamknięty na stałe — istniejący wpis zmienia wyłącznie kierownik (PIN). <b>Puste pola z minionych dni można uzupełnić jednorazowo</b> (system prosi o to od 21:00 i po każdym logowaniu).</p></div>
+      <div><div class="eyebrow mb-1">Reguła 23:00</div><p>Wyniki z <b>dnia bieżącego</b> można wpisywać i poprawiać do <b>23:00</b>. Po tej godzinie dzień jest zamknięty na stałe — istniejący wpis zmienia wyłącznie kierownik (PIN). <b>Puste pola z minionych dni można uzupełnić jednorazowo</b> (system prosi o to od 21:00 i po każdym logowaniu).</p></div>
       <div><div class="eyebrow mb-1">Klif</div><p>Antek, Michał i Szymon z Klifu wpisują dzienniki i mają pełne statystyki, ale w tym miesiącu są <b>poza konkursem</b> — bez miejsc i medali.</p></div>
       <p class="text-zloto font-semibold pt-1">💪 Warroom nie ocenia ludzi — mierzy walkę. Wpisuj uczciwie, walcz codziennie, a tabela odda Ci sprawiedliwość.</p>
     </div>
@@ -190,6 +191,15 @@
 </main>
 
 <footer class="max-w-[1480px] mx-auto px-4 py-6 text-center text-[11px] text-mut">Zbita Szybka Elite · Executive Warroom · wrzesień 2026</footer>
+<div id="telOverlay" class="hidden fixed inset-0 z-[950] bg-[#050A23]/95 backdrop-blur-md flex items-center justify-center p-4">
+  <div class="panel-box w-full max-w-md p-6 space-y-3 border-zloto/40">
+    <div class="eyebrow">Jednorazowo</div><h2 class="font-display font-bold text-zloto text-base">📱 Podaj swój numer telefonu</h2>
+    <p class="text-xs text-mut">Kierownik użyje go tylko do przypomnień o wpisach w lidze (SMS o 21:00, gdy czegoś brakuje). Numer widzi wyłącznie kierownik.</p>
+    <input id="telInput" type="tel" inputmode="tel" autocomplete="tel" placeholder="np. 501 234 567" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-lg num">
+    <div id="telErr" class="text-xs text-red-300 min-h-[16px]"></div>
+    <button id="telZapisz" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ZAPISZ NUMER</button>
+  </div>
+</div>
 <div id="brakiOverlay" class="hidden fixed inset-0 z-[900] bg-[#050A23]/95 backdrop-blur-md overflow-y-auto p-4">
   <div class="panel-box w-full max-w-2xl mx-auto my-6 p-5 sm:p-6 space-y-4 border-zloto/40">
     <div><div class="eyebrow">Uzupełnij braki</div><h2 class="font-display font-bold text-zloto text-base">📋 Brakujące wpisy</h2>
@@ -233,7 +243,7 @@ async function sprawdzHaslo(haslo, rekord){ if (!rekord || !rekord.sol || !rekor
 
 let fb = null, db = null, demo = false;
 
-const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 22, GODZINA_PRZYPOMNIENIA = 21, DNI_WOLNE = []; // dzień zamyka się o 22:00 i zostaje zamknięty
+const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 23, GODZINA_PRZYPOMNIENIA = 21, DNI_WOLNE = []; // dzień zamyka się o 23:00 i zostaje zamknięty
 const DNI = [1,2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30];
 const PLAYERS_BAZOWI = [
   { id:"antek_klif", n:"Antek (Klif)", lok:"Klif", klif:true },
@@ -267,7 +277,7 @@ function scalZawodnikow(){
 const KOLORY = ["#E8B84B","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#8FA3D9","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
 const TABS = [["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],["analityka","📈 Analityka"],["raport","🧠 Mój raport"],["loza","🏆 Loża Mistrzów"],["legenda","📖 Legenda"],["admin","🔑 Kierownik"]];
 
-let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{}, zawodnicy:{} };
+let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{}, zawodnicy:{}, logowania:[], przypomnienia:{}, telefony:{} };
 const CEL_DOMYSLNY = 70000;
 let adminSession = false;
 const $ = (id) => document.getElementById(id);
@@ -325,8 +335,10 @@ async function zaloguj() {
     localStorage.setItem("lm_logged_pid", zBazy?.pid || login);
     adminSession = (login === ADMIN_LOGIN);
     errEl.textContent = ""; $("passInput").value = "";
+    const wpisLog = { t: Date.now(), login, pid: zBazy?.pid || login, admin: adminSession, urz: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? "📱" : "💻" };
+    if (demo) state.logowania.push(wpisLog); else fb.push(fb.ref(db, "logowania"), wpisLog).catch(()=>{});
     sprawdzLogowanie(true);
-    toast("✅ Zalogowano pomyślnie!");
+    toast("✅ Zalogowano pomyślnie!"); pokazPrzypomnienie(); sprawdzTelefon();
     render(); sprawdzBraki(true);
   } else {
     errEl.textContent = "Nieprawidłowy login lub hasło.";
@@ -351,7 +363,7 @@ sprawdzLogowanie();
 function dzisNr(){ const t = new Date(); if (t.getFullYear()!==ROK || t.getMonth()!==MIESIAC) return t < new Date(ROK,MIESIAC,1) ? 0 : 31; return t.getDate(); }
 function etykieta(d){ const dn = ["nd","pn","wt","śr","cz","pt","so"][new Date(ROK,MIESIAC,d).getDay()]; return `${String(d).padStart(2,"0")}.09 (${dn})`; }
 function edycjaGlobalna(){ return !!state.admin?.editMode || (state.admin?.unlockUntil||0) > Date.now(); }
-function dzienZamkniety(d){ // czy minął termin 22:00 danego dnia
+function dzienZamkniety(d){ // czy minął termin 23:00 danego dnia
   const dz = dzisNr(); if (d < dz) return true; if (d > dz) return false;
   return new Date().getHours() >= GODZINA_BLOKADY;
 }
@@ -654,10 +666,11 @@ function renderRaport(w){
   if (!el.dataset.built){
     el.innerHTML = `<div class="panel-box p-4 sm:p-5 space-y-4">
       <div class="flex flex-wrap items-end justify-between gap-3"><div><div class="eyebrow">Osobista analityka</div><h2 class="font-display font-bold text-sm text-zloto">🧠 Mój raport trenera</h2></div>
-        <div class="flex gap-2 items-center"><select id="rapKto" class="bg-noc border border-linia rounded-xl px-3 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select><button id="rapCel" class="rounded-xl px-3 py-2 text-xs font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">✏️ mój cel</button></div></div>
+        <div class="flex gap-2 items-center"><select id="rapKto" class="bg-noc border border-linia rounded-xl px-3 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select><button id="rapCel" class="rounded-xl px-3 py-2 text-xs font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">✏️ mój cel</button><button id="rapTel" class="rounded-xl px-3 py-2 text-xs font-bold border border-linia text-mut hover:bg-panel2">📱 mój numer</button></div></div>
       <div id="rapTresc"></div></div>`;
     el.dataset.built = "1";
     $("rapKto").onchange = () => renderRaport(oblicz());
+    $("rapTel").onclick = async () => { const pid = zalogowanyPid() || $("rapKto").value; const n = prompt("Twój numer telefonu (do przypomnień SMS):", state.telefony?.[pid] || ""); if (n === null) return; const t = await zapiszTelefon(pid, n); if (t){ toast("📱 Numer zapisany: " + t); if (demo) render(); } };
     $("rapCel").onclick = async () => { const pid = $("rapKto").value; const nowy = parseInt(prompt("Twój indywidualny cel na wrzesień (zł):", state.cele?.[pid] || CEL_DOMYSLNY), 10); if (isNaN(nowy) || nowy < 1000) return; if (demo){ (state.cele ??= {})[pid] = nowy; render(); } else await fb.set(fb.ref(db, `cele/${pid}`), nowy); toast(`🎯 Cel ustawiony: ${zl(nowy)}`); };
   }
   const pid = $("rapKto").value, x = w.find(q=>q.id===pid); if (!x) return;
@@ -685,6 +698,28 @@ function renderRaport(w){
 }
 
 // ═══════════════ 📋 BRAKI — czego brakuje zalogowanemu ═══════════════
+// ═══════════════ 📱 NUMERY TELEFONÓW ═══════════════
+function normalizujTel(t){ let c = String(t||"").replace(/[\s\-()]/g, ""); if (/^0048/.test(c)) c = "+" + c.slice(2); if (/^48\d{9}$/.test(c)) c = "+" + c; if (/^\d{9}$/.test(c)) c = "+48" + c; return /^\+\d{9,15}$/.test(c) ? c : null; }
+function sprawdzTelefon(){
+  const pid = zalogowanyPid(); if (!pid) return;
+  if ($("loginOverlay").classList.contains("hidden") && !state.telefony?.[pid]) $("telOverlay").classList.remove("hidden"); else $("telOverlay").classList.add("hidden");
+}
+async function zapiszTelefon(pid, surowy){
+  const tel = normalizujTel(surowy); if (!tel) return toast("Podaj poprawny numer, np. 501 234 567 albo +48 501 234 567.", "err"), false;
+  if (demo){ (state.telefony ??= {})[pid] = tel; } else await fb.set(fb.ref(db, `telefony/${pid}`), tel);
+  return tel;
+}
+$("telZapisz").onclick = async () => { const pid = zalogowanyPid(); if (!pid) return; $("telErr").textContent = ""; const t = await zapiszTelefon(pid, $("telInput").value); if (!t){ $("telErr").textContent = "Nieprawidłowy numer."; return; } $("telOverlay").classList.add("hidden"); toast("📱 Numer zapisany: " + t); if (demo) render(); };
+$("telInput").onkeydown = e => { if (e.key === "Enter") $("telZapisz").onclick(); };
+function opisBrakow(braki){ return braki.map(b => `${b.d}.09: ${[b.brakO&&"obrót", b.brakP&&"podejścia", b.brakG&&"godziny"].filter(Boolean).join(", ")}`).join(" · "); }
+function pokazPrzypomnienie(){
+  const pid = zalogowanyPid(), el = $("bannerPrzyp"); if (!el) return;
+  const p = pid && state.przypomnienia?.[pid], braki = pid ? policzBraki(pid) : [];
+  if (!p || !braki.length){ el.classList.add("hidden"); return; }
+  $("bannerPrzypTxt").innerHTML = `<b class="text-red-200">🔔 Przypomnienie od kierownika (${new Date(p.t).toLocaleString("pl-PL",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}):</b> ${p.tresc || "uzupełnij zaległe wpisy."}<div class="text-xs text-mut mt-1">Brakuje: ${opisBrakow(braki)}</div>`;
+  el.classList.remove("hidden");
+  $("bannerPrzypBtn").onclick = () => sprawdzBraki(true);
+}
 function policzBraki(pid){
   const dz = dzisNr(), h = new Date().getHours(), braki = [];
   for (const d of DNI){
@@ -734,7 +769,7 @@ $("brakiZapisz").onclick = async () => {
       if (w.podejscia !== undefined && !maWpis("podejscia", w.d, pid)) await zapiszWartosc("podejscia", w.d, pid, w.podejscia, "podejscia");
       if (w.godziny !== undefined && !(parseFloat(state.godziny?.[w.d]?.[pid]) > 0)) await zapiszWartosc("godziny", w.d, pid, w.godziny, null);
     }
-    toast(`✅ Uzupełniono ${plan.length} ${plan.length===1?"dzień":"dni"}. Dzięki!`);
+    toast(`✅ Uzupełniono ${plan.length} ${plan.length===1?"dzień":"dni"}. Dzięki!`); $("bannerPrzyp").classList.add("hidden");
     $("brakiOverlay").classList.add("hidden"); brakiPokazane = "";
     if (demo) render();
   } catch(e){ err.textContent = "Błąd zapisu: " + e.message; }
@@ -746,6 +781,7 @@ const SLOWA_HASLA = ["Szyba","Piana","Sznurek","Azotek","Mistrz","Podium","Finis
 function generujHaslo(){ const a = new Uint32Array(3); crypto.getRandomValues(a); return SLOWA_HASLA[a[0] % SLOWA_HASLA.length] + "-" + SLOWA_HASLA[a[1] % SLOWA_HASLA.length] + "-" + (1000 + (a[2] % 9000)); }
 function slug(t){ return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ł/g,"l").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,""); }
 
+let admTab = "przeglad";
 function renderAdmin(){
   const el = $("tab-admin");
   if (!adminSession){
@@ -756,21 +792,18 @@ function renderAdmin(){
     return;
   }
   const odbl = (state.admin?.unlockUntil||0) > Date.now();
-  el.innerHTML = `<div class="grid md:grid-cols-2 gap-4">
-    <div class="panel-box p-5 space-y-3"><div class="eyebrow">Blokada 22:00</div><h2 class="font-display font-bold text-zloto text-sm">🔓 Sterowanie dla całego zespołu</h2>
-      <div class="text-sm">Stan: <b class="${state.admin?.editMode?"text-szmaragd":odbl?"text-neon":"text-mut"}">${state.admin?.editMode ? "TRYB EDYCJI WŁĄCZONY (wszystkie dni otwarte dla wszystkich)" : odbl ? "odblokowane do " + new Date(state.admin.unlockUntil).toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"}) : "blokada aktywna (standard)"}</b></div>
-      <button id="aOdbl" class="w-full rounded-xl py-2.5 font-bold border border-neon/50 text-neon hover:bg-neon/10">Odblokuj zamknięte dni na 30 min</button>
-      <button id="aTryb" class="w-full rounded-xl py-2.5 font-bold border border-szmaragd/50 text-szmaragd hover:bg-szmaragd/10">${state.admin?.editMode?"Wyłącz tryb edycji":"Włącz stały tryb edycji"}</button>
-      <button id="aZamknij" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Przywróć blokadę natychmiast</button>
+  el.innerHTML = `<div class="space-y-4">
+    <div class="flex flex-wrap gap-1 border-b border-linia pb-2" id="admNav">${[["przeglad","📊 Przegląd i zaległości"],["aktywnosc","🕒 Aktywność"],["konta","👥 Konta"],["dane","⚙️ Blokada i dane"]].map(([k,n])=>`<button data-adm="${k}" class="adm-btn text-xs font-bold px-3 py-2 rounded-lg ${admTab===k?"bg-zloto/15 text-zloto border border-zloto/40":"text-mut border border-transparent hover:text-slate-100"}">${n}</button>`).join("")}</div>
+    <div id="adm-przeglad" class="${admTab==="przeglad"?"":"hidden"} space-y-4">
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3" id="admKpi"></div>
+      <div class="panel-box overflow-hidden"><div class="panel-hd"><div><div class="eyebrow">Zaległości zespołu</div><h2 class="font-display font-bold text-zloto text-sm">📋 Kto czego nie uzupełnił</h2></div><div class="flex gap-2 flex-wrap"><button id="admPrzypWszyscy" class="rounded-lg px-3 py-1.5 text-xs font-bold border border-red-500/50 text-red-300 hover:bg-red-950/40">🔔 Przypomnij wszystkim z zaległościami</button><button id="admKopiujWszyscy" class="rounded-lg px-3 py-1.5 text-xs font-bold border border-linia text-mut hover:bg-panel2">📋 Kopiuj zbiorczą wiadomość</button><button id="admKopiujTel" class="rounded-lg px-3 py-1.5 text-xs font-bold border border-linia text-mut hover:bg-panel2">📱 Kopiuj wszystkie numery</button></div></div><div class="overflow-x-auto"><table class="liga text-xs min-w-[760px]"><thead><tr><th class="text-left">Zawodnik</th><th class="text-left">📱 Telefon</th><th class="text-left">Brakuje</th><th class="text-left">Ostatnie logowanie</th><th class="text-left">Ostatni wpis</th><th class="text-left">Przypomnienie</th><th></th></tr></thead><tbody id="admBraki"></tbody></table></div></div>
     </div>
-    <div class="panel-box p-5 space-y-3"><div class="eyebrow">Dane</div><h2 class="font-display font-bold text-zloto text-sm">🧹 Reset i sesja</h2>
-      <p class="text-xs text-mut">Reset kasuje WSZYSTKIE wpisy obrotu, podejść i historię — u każdego użytkownika. Nie da się cofnąć.</p>
-      <button id="aReset" class="w-full rounded-xl py-2.5 font-bold border border-red-500/50 text-red-300 hover:bg-red-950/40">Zresetuj wszystkie dane września</button>
-      <button id="aHaslo" class="w-full rounded-xl py-2.5 font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">Zmień hasło kierownika</button>
-      <button id="aWyloguj" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Wyloguj z trybu kierownika</button>
-      <div class="text-[11px] text-mut pt-2">W tej karcie masz pełną edycję każdego dnia — wpisy oznaczane są 🔑 w historii. W kodzie strony nie ma żadnych haseł — tylko odcisk hasła kierownika.</div>
+    <div id="adm-aktywnosc" class="${admTab==="aktywnosc"?"":"hidden"} grid lg:grid-cols-5 gap-4">
+      <div class="panel-box overflow-hidden lg:col-span-2"><div class="panel-hd"><div><div class="eyebrow">Logowania</div><h2 class="font-display font-bold text-zloto text-sm">🔐 Kto i kiedy się logował</h2></div></div><div id="admLogowania" class="divide-y divide-linia text-xs max-h-[520px] overflow-y-auto"></div></div>
+      <div class="panel-box overflow-hidden lg:col-span-3"><div class="panel-hd"><div><div class="eyebrow">Wpisy</div><h2 class="font-display font-bold text-zloto text-sm">✍️ Kto, co i kiedy uzupełnił</h2></div><select id="admLogFiltr" class="bg-noc border border-linia rounded-lg px-2 py-1 text-xs"><option value="">wszyscy</option>${PLAYERS.map(p=>`<option value="${p.id}">${p.n}</option>`).join("")}</select></div><div class="overflow-x-auto"><table class="liga text-xs min-w-[560px]"><thead><tr><th class="text-left">Kiedy</th><th class="text-left">Kto</th><th class="text-left">Co</th><th class="text-left">Dzień</th><th class="text-right">Wartość</th></tr></thead><tbody id="admLog"></tbody></table></div></div>
     </div>
-    <div class="panel-box p-5 space-y-3 md:col-span-2"><div class="eyebrow">Użytkownicy</div><h2 class="font-display font-bold text-zloto text-sm">👥 Dodawanie użytkowników — login i hasło generowane automatycznie</h2>
+    <div id="adm-konta" class="${admTab==="konta"?"":"hidden"}">
+    <div class="panel-box p-5 space-y-3"><div class="eyebrow">Użytkownicy</div><h2 class="font-display font-bold text-zloto text-sm">👥 Dodawanie użytkowników — login i hasło generowane automatycznie</h2>
       <div class="grid sm:grid-cols-3 gap-2">
         <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Zawodnik</div><select id="uPid" class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select></div>
         <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Login (puste = automatyczny)</div><input id="uLogin" placeholder="np. maks_rzm2" class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm"></div>
@@ -795,7 +828,24 @@ function renderAdmin(){
       <div id="uWynik" class="hidden rounded-xl border border-szmaragd/50 bg-emerald-950/30 p-3 text-sm whitespace-pre-line font-mono"></div>
       <div class="overflow-x-auto"><table class="liga text-xs min-w-[560px]"><thead><tr><th class="text-left">Login</th><th class="text-left">Zawodnik</th><th class="text-left">Hasło</th><th class="text-left">Dodano</th><th></th></tr></thead><tbody id="uLista"></tbody></table></div>
       <div class="text-[11px] text-mut">Hasła są przechowywane wyłącznie jako odciski — jawne hasło widzisz tylko raz, przy utworzeniu (albo po kliknięciu „nowe hasło”). Zapisz je sobie z przycisku 📥.</div>
-    </div></div>`;
+    </div>
+    </div>
+    <div id="adm-dane" class="${admTab==="dane"?"":"hidden"} grid md:grid-cols-2 gap-4">
+    <div class="panel-box p-5 space-y-3"><div class="eyebrow">Blokada 23:00</div><h2 class="font-display font-bold text-zloto text-sm">🔓 Sterowanie dla całego zespołu</h2>
+      <div class="text-sm">Stan: <b class="${state.admin?.editMode?"text-szmaragd":odbl?"text-neon":"text-mut"}">${state.admin?.editMode ? "TRYB EDYCJI WŁĄCZONY (wszystkie dni otwarte dla wszystkich)" : odbl ? "odblokowane do " + new Date(state.admin.unlockUntil).toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"}) : "blokada aktywna (standard)"}</b></div>
+      <button id="aOdbl" class="w-full rounded-xl py-2.5 font-bold border border-neon/50 text-neon hover:bg-neon/10">Odblokuj zamknięte dni na 30 min</button>
+      <button id="aTryb" class="w-full rounded-xl py-2.5 font-bold border border-szmaragd/50 text-szmaragd hover:bg-szmaragd/10">${state.admin?.editMode?"Wyłącz tryb edycji":"Włącz stały tryb edycji"}</button>
+      <button id="aZamknij" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Przywróć blokadę natychmiast</button>
+    </div>
+    <div class="panel-box p-5 space-y-3"><div class="eyebrow">Dane</div><h2 class="font-display font-bold text-zloto text-sm">🧹 Reset i sesja</h2>
+      <p class="text-xs text-mut">Reset kasuje WSZYSTKIE wpisy obrotu, podejść i historię — u każdego użytkownika. Nie da się cofnąć.</p>
+      <button id="aReset" class="w-full rounded-xl py-2.5 font-bold border border-red-500/50 text-red-300 hover:bg-red-950/40">Zresetuj wszystkie dane września</button>
+      <button id="aHaslo" class="w-full rounded-xl py-2.5 font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">Zmień hasło kierownika</button>
+      <button id="aWyloguj" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Wyloguj z trybu kierownika</button>
+      <div class="text-[11px] text-mut pt-2">W tej karcie masz pełną edycję każdego dnia — wpisy oznaczane są 🔑 w historii. W kodzie strony nie ma żadnych haseł — tylko odcisk hasła kierownika.</div>
+    </div>
+    </div>
+  </div>`;
   let wygenerowane = [];
   const pokazWygenerowane = () => { if (!wygenerowane.length) return; $("uWynik").classList.remove("hidden"); $("uWynik").textContent = "✅ Nowe dane logowania (widoczne tylko teraz):\n" + wygenerowane.map(w => `${w.imie.padEnd(26)} login: ${w.login.padEnd(16)} hasło: ${w.haslo}`).join("\n"); $("uPobierz").classList.remove("hidden"); };
   $("uPobierz").onclick = () => { const tresc = "LIGA MISTRZÓW · ZBITA SZYBKA — dane logowania\nStrona: https://ziebka17.github.io/liga-mistrzow/\n\n" + wygenerowane.map(w => `${w.imie}\n  login: ${w.login}\n  hasło: ${w.haslo}\n`).join("\n"); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([tresc], { type: "text/plain;charset=utf-8" })); a.download = "konta_ligi_" + new Date().toISOString().slice(0,10) + ".txt"; a.click(); };
@@ -803,7 +853,7 @@ function renderAdmin(){
   const zajety = (l) => !!state.uzytkownicy?.[l];
   const rysujUzytkownikow = () => {
     const u = state.uzytkownicy || {};
-    $("uLista").innerHTML = Object.keys(u).sort().map(l => { const p = PLAYERS.find(x=>x.id===u[l].pid); return `<tr><td class="font-mono font-bold">${l}</td><td>${p ? p.n : u[l].pid}</td><td class="text-mut">•••••• <button data-nowe="${l}" class="text-zloto text-[11px] border border-zloto/30 rounded px-2 py-0.5 ml-1">nowe hasło</button></td><td class="text-mut">${u[l].t ? new Date(u[l].t).toLocaleDateString("pl-PL") : "—"}</td><td><button data-usun="${l}" class="text-red-300 text-[11px] border border-red-500/30 rounded px-2 py-0.5">usuń</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak kont — kliknij ⚡, aby utworzyć konta całemu zespołowi.</td></tr>`;
+    $("uLista").innerHTML = Object.keys(u).sort().map(l => { const p = PLAYERS.find(x=>x.id===u[l].pid); return `<tr><td class="font-mono font-bold">${l}</td><td>${p ? p.n : u[l].pid}<div class="text-[10px] text-mut num">${state.telefony?.[u[l].pid] || "📱 brak numeru"}</div></td><td class="text-mut">•••••• <button data-nowe="${l}" class="text-zloto text-[11px] border border-zloto/30 rounded px-2 py-0.5 ml-1">nowe hasło</button></td><td class="text-mut">${u[l].t ? new Date(u[l].t).toLocaleDateString("pl-PL") : "—"}</td><td><button data-usun="${l}" class="text-red-300 text-[11px] border border-red-500/30 rounded px-2 py-0.5">usuń</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak kont — kliknij ⚡, aby utworzyć konta całemu zespołowi.</td></tr>`;
     $("uLista").querySelectorAll("[data-usun]").forEach(b => b.onclick = async () => { const l = b.dataset.usun; if (!confirm(`Usunąć konto ${l}?`)) return; if (demo){ delete state.uzytkownicy[l]; } else await fb.remove(fb.ref(db, `uzytkownicy/${l}`)); toast(`Usunięto konto ${l}.`); if (demo) render(); });
     $("uLista").querySelectorAll("[data-nowe]").forEach(b => b.onclick = async () => { const l = b.dataset.nowe, pid = state.uzytkownicy[l].pid; if (!confirm(`Wygenerować NOWE hasło dla „${l}”? Dotychczasowe hasło tej osoby przestanie działać.`)) return; await utworzKonto(l, pid); toast(`🔑 Nowe hasło dla ${l} — widoczne poniżej.`); pokazWygenerowane(); if (demo) render(); });
   };
@@ -847,6 +897,32 @@ function renderAdmin(){
       $("zImie").value = ""; $("zLokNowa").value = ""; $("zKlif").checked = false; if (demo) render();
     } catch(e){ toast("Błąd: " + e.message, "err"); }
   };
+  // ── nawigacja panelu ──
+  el.querySelectorAll("[data-adm]").forEach(b => b.onclick = () => { admTab = b.dataset.adm; renderAdmin(); });
+  const kiedy = (t) => t ? new Date(t).toLocaleString("pl-PL", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" }) : "—";
+  const ostatnieLog = (pid) => [...state.logowania].reverse().find(l => l.pid === pid);
+  const ostatniWpis = (pid) => [...state.log].reverse().find(l => l.pid === pid);
+  // ── PRZEGLĄD: zaległości ──
+  const wiersze = PLAYERS.map(p => ({ p, braki: policzBraki(p.id), log: ostatnieLog(p.id), wpis: ostatniWpis(p.id), przyp: state.przypomnienia?.[p.id] })).sort((a,b) => b.braki.length - a.braki.length || a.p.n.localeCompare(b.p.n));
+  const zZal = wiersze.filter(w => w.braki.length);
+  const dz = dzisNr(), nieLog = PLAYERS.filter(p => !state.logowania.some(l => l.pid === p.id && Date.now() - l.t < 3*86400000)).length;
+  $("admKpi").innerHTML = [["Z zaległościami", `${zZal.length} / ${PLAYERS.length}`, zZal.length ? "text-red-300" : "text-szmaragd"], ["Brakujących dni łącznie", zZal.reduce((s,w)=>s+w.braki.length,0), "text-zloto"], ["Bez logowania od 3 dni", nieLog, nieLog ? "text-red-300" : "text-szmaragd"], ["Wpisów dziś", state.log.filter(l => new Date(l.t).getDate() === dz && new Date(l.t).getMonth() === MIESIAC).length, "text-neon"], ["📱 Numery telefonów", `${PLAYERS.filter(p => state.telefony?.[p.id]).length} / ${PLAYERS.length}`, PLAYERS.every(p => state.telefony?.[p.id]) ? "text-szmaragd" : "text-yellow-300"]]
+    .map(([e,v,c]) => `<div class="panel-box p-3"><div class="eyebrow">${e}</div><div class="font-display font-bold text-base mt-1 num ${c}">${v}</div></div>`).join("");
+  const tresc = (w) => `Cześć ${imie(w.p.n)}! Kierownik prosi o uzupełnienie ligi: ${opisBrakow(w.braki)}. Wejdź na https://ziebka17.github.io/liga-mistrzow/ i uzupełnij dziś — dzięki!`;
+  const telOf = (pid) => state.telefony?.[pid] || "";
+  $("admBraki").innerHTML = wiersze.map(w => `<tr class="${w.p.klif?"klif":""}"><td class="nazwa font-semibold">${w.p.n}</td><td class="num whitespace-nowrap">${telOf(w.p.id) ? `<a href="tel:${telOf(w.p.id)}" class="text-neon">${telOf(w.p.id)}</a> <button data-tel="${w.p.id}" class="text-[10px] text-mut border border-linia rounded px-1">✏️</button>` : `<button data-tel="${w.p.id}" class="text-[11px] border border-yellow-500/50 text-yellow-300 rounded px-2 py-0.5">brak — wpisz</button>`}</td><td>${w.braki.length ? `<span class="text-red-300">${opisBrakow(w.braki)}</span>` : `<span class="text-szmaragd">✅ komplet</span>`}</td><td class="text-mut">${w.log ? kiedy(w.log.t) + " " + (w.log.urz||"") : "nigdy"}</td><td class="text-mut">${w.wpis ? kiedy(w.wpis.t) : "—"}</td><td class="text-mut">${w.przyp ? "🔔 " + kiedy(w.przyp.t) : "—"}</td><td class="whitespace-nowrap">${w.braki.length ? `<button data-przyp="${w.p.id}" class="text-[11px] border border-red-500/40 text-red-300 rounded px-2 py-0.5 mr-1">🔔 przypomnij</button><button data-kopiuj="${w.p.id}" class="text-[11px] border border-linia text-mut rounded px-2 py-0.5">📋 kopiuj</button>` : ""}</td></tr>`).join("");
+  const wyslij = async (lista) => { for (const w of lista){ const rek = { t: Date.now(), tresc: `Uzupełnij proszę: ${opisBrakow(w.braki)}.`, od: ADMIN_LOGIN }; if (demo){ (state.przypomnienia ??= {})[w.p.id] = rek; } else await fb.set(fb.ref(db, `przypomnienia/${w.p.id}`), rek); } toast(`🔔 Przypomnienie ustawione dla ${lista.length} ${lista.length===1?"osoby":"osób"} — zobaczą je po wejściu do aplikacji.`); if (demo) render(); };
+  const kopiuj = async (txt, ile) => { try { await navigator.clipboard.writeText(txt); toast(`📋 Skopiowano wiadomość (${ile}) — wklej na Messengerze / WhatsAppie.`); } catch(e){ prompt("Skopiuj tekst:", txt); } };
+  el.querySelectorAll("[data-przyp]").forEach(b => b.onclick = () => wyslij(wiersze.filter(w => w.p.id === b.dataset.przyp)));
+  el.querySelectorAll("[data-tel]").forEach(b => b.onclick = async () => { const pid = b.dataset.tel; const n = prompt(`Numer telefonu — ${PLAYERS.find(p=>p.id===pid)?.n}:`, telOf(pid)); if (n === null) return; const t = await zapiszTelefon(pid, n); if (t){ toast("📱 Zapisano " + t); if (demo) render(); } });
+  $("admKopiujTel").onclick = () => { const l = PLAYERS.filter(p => telOf(p.id)).map(p => `${p.n}: ${telOf(p.id)}`); const brak = PLAYERS.filter(p => !telOf(p.id)).map(p => imie(p.n)); kopiuj(l.join("\n") + (brak.length ? "\n\nBEZ NUMERU: " + brak.join(", ") : ""), l.length + " numerów"); };
+  el.querySelectorAll("[data-kopiuj]").forEach(b => b.onclick = () => { const w = wiersze.find(x => x.p.id === b.dataset.kopiuj); kopiuj(tresc(w), imie(w.p.n)); });
+  $("admPrzypWszyscy").onclick = () => zZal.length ? wyslij(zZal) : toast("Nikt nie ma zaległości. 🎉");
+  $("admKopiujWszyscy").onclick = () => kopiuj(zZal.length ? "Liga Mistrzów — zaległości do uzupełnienia:\n" + zZal.map(w => `• ${imie(w.p.n)}: ${opisBrakow(w.braki)}`).join("\n") + "\nWejdźcie na https://ziebka17.github.io/liga-mistrzow/ i uzupełnijcie dziś. Dzięki!" : "Wszyscy mają komplet wpisów. 🎉", zZal.length + " os.");
+  // ── AKTYWNOŚĆ ──
+  $("admLogowania").innerHTML = [...state.logowania].reverse().slice(0, 150).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<div class="py-2 px-3 flex justify-between gap-2"><span class="${p?.klif?"text-klifTxt":""} font-semibold truncate">${l.urz||""} ${p ? p.n : l.login}${l.admin?" 🔑":""}</span><span class="text-mut whitespace-nowrap">${kiedy(l.t)}</span></div>`; }).join("") || `<div class="p-4 text-mut">Brak logowań (log zbierany od tej wersji).</div>`;
+  const rysujLog = () => { const f = $("admLogFiltr").value; $("admLog").innerHTML = [...state.log].reverse().filter(l => !f || l.pid === f).slice(0, 200).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<tr><td class="text-mut whitespace-nowrap">${kiedy(l.t)}</td><td class="${p?.klif?"text-klifTxt":""} font-semibold">${p ? p.n : l.pid}${l.admin?" 🔑":""}</td><td>${l.typ === "obrot" ? "💰 obrót" : "🎯 podejścia"}</td><td class="text-mut">${etykieta(l.d)}</td><td class="text-right num font-bold">${typeof l.v === "number" ? (l.typ === "obrot" ? zl(l.v) : l.v) : l.v}</td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak wpisów.</td></tr>`; };
+  rysujLog(); $("admLogFiltr").onchange = rysujLog;
   $("uHurt").onclick = async () => {
     const bez = PLAYERS.filter(p => !Object.values(state.uzytkownicy || {}).some(u => u.pid === p.id));
     if (!bez.length) return toast("Każdy zawodnik ma już konto.");
@@ -904,8 +980,8 @@ function trybPodgladu(powod){
     const app = initializeApp(firebaseConfig); db = dbMod.getDatabase(app);
     fb.onValue(fb.ref(db, "/"), snap => {
       const v = snap.val() || {};
-      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {}, zawodnicy: v.zawodnicy || {} };
-      bazaZaladowana = true; scalZawodnikow(); render(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
+      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {}, zawodnicy: v.zawodnicy || {}, logowania: Object.values(v.logowania || {}).sort((a,b)=>a.t-b.t).slice(-300), przypomnienia: v.przypomnienia || {}, telefony: v.telefony || {} };
+      bazaZaladowana = true; scalZawodnikow(); render(); pokazPrzypomnienie(); sprawdzTelefon(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
     }, err => { $("kropka").className = "w-2 h-2 rounded-full bg-red-500"; $("statusTxt").textContent = "błąd bazy"; toast("Firebase: " + err.message + " — sprawdź reguły bazy.", "err"); });
   } catch (e) { trybPodgladu("Nie udało się pobrać biblioteki Firebase (brak sieci albo zamknięty podgląd). Na GitHub Pages połączenie działa normalnie."); }
 })();
