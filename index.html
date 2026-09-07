@@ -113,6 +113,7 @@
 
 <main class="max-w-[1480px] mx-auto px-3 sm:px-4 py-5 space-y-5">
   <div id="bannerConfig" class="hidden panel-box p-4 border-yellow-500/60 text-sm"></div>
+  <div id="bannerLok" class="hidden panel-box p-4 border-neon/50 bg-neon/5 text-sm flex flex-wrap items-center justify-between gap-3"><div id="bannerLokTxt"></div><button id="bannerLokBtn" class="rounded-lg px-3 py-2 text-xs font-bold border border-neon/50 text-neon">Rozumiem</button></div>
   <div id="bannerPrzyp" class="hidden panel-box p-4 border-red-500/60 bg-red-950/30 text-sm flex flex-wrap items-center justify-between gap-3"><div id="bannerPrzypTxt"></div><button id="bannerPrzypBtn" class="rounded-lg px-3 py-2 text-xs font-bold text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">📋 Uzupełnij teraz</button></div>
 
   <section id="tab-liga" class="tab-panel space-y-4">
@@ -277,7 +278,8 @@ function scalZawodnikow(){
 const KOLORY = ["#E8B84B","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#8FA3D9","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
 const TABS = [["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],["analityka","📈 Analityka"],["raport","🧠 Mój raport"],["loza","🏆 Loża Mistrzów"],["legenda","📖 Legenda"],["admin","🔑 Kierownik"]];
 
-let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{}, zawodnicy:{}, logowania:[], przypomnienia:{}, telefony:{}, wykluczenia:{} };
+let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{}, zawodnicy:{}, logowania:[], przypomnienia:{}, telefony:{}, wykluczenia:{}, podejscia_lok:{} };
+const LOK_LACZNE = ["Szczecin Outlet"]; // wyspy, które mogą wpisywać podejścia łącznie
 const CEL_DOMYSLNY = 70000;
 let adminSession = false;
 const $ = (id) => document.getElementById(id);
@@ -338,7 +340,7 @@ async function zaloguj() {
     const wpisLog = { t: Date.now(), login, pid: zBazy?.pid || login, admin: adminSession, urz: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? "📱" : "💻" };
     if (demo) state.logowania.push(wpisLog); else fb.push(fb.ref(db, "logowania"), wpisLog).catch(()=>{});
     sprawdzLogowanie(true);
-    toast("✅ Zalogowano pomyślnie!"); pokazPrzypomnienie(); sprawdzTelefon();
+    toast("✅ Zalogowano pomyślnie!"); pokazPrzypomnienie(); sprawdzTelefon(); pokazInfoLok();
     render(); sprawdzBraki(true);
   } else {
     errEl.textContent = "Nieprawidłowy login lub hasło.";
@@ -382,12 +384,25 @@ function status(v, d){
   const n = parseFloat(s.replace(/\s/g,"").replace(",",".")); return isNaN(n) ? {typ:"laska"} : {typ:"kwota", w:n};
 }
 
+/** Podejścia gracza za dzień d: własny wpis albo udział z łącznej liczby wyspy (dzielonej po równo między pracujących tego dnia). */
+function podejsciaDnia(p, d){
+  const wl = state.podejscia?.[d]?.[p.id];
+  if (wl !== undefined && wl !== null && wl !== "") return wl;
+  if (!LOK_LACZNE.includes(p.lok)) return wl;
+  const razem = parseFloat(state.podejscia_lok?.[d]?.[p.lok]);
+  if (isNaN(razem)) return wl;
+  const zaloga = PLAYERS.filter(q => q.lok === p.lok);
+  const pracujacy = zaloga.filter(q => status(state.obrot?.[d]?.[q.id], d).typ === "kwota");
+  const n = pracujacy.length || zaloga.length;
+  if (pracujacy.length && !pracujacy.some(q => q.id === p.id)) return wl; // nie pracował → nie dostaje udziału
+  return Math.round((razem / n) * 10) / 10;
+}
 function oblicz(){
   const dz = dzisNr(), wyniki = [];
   for (const p of PLAYERS){
     let obrot=0, pb=0, otwarte=0, dniAkt=0, sumaP=0, pbP=0, c=0, godz=0; const dzienneP=[], cum=[];
     for (const d of DNI){
-      const so = status(state.obrot?.[d]?.[p.id], d), sp = status(state.podejscia?.[d]?.[p.id], d);
+      const so = status(state.obrot?.[d]?.[p.id], d), sp = status(podejsciaDnia(p, d), d);
       let o = 0, pp = 0;
       // X i L4 = dzień wyłączony ze statystyk (system trzyma je jako 0, ale nie liczy). 0 = był w pracy, liczy się.
       if (d <= dz && !["l4","x","laska","przyszly"].includes(so.typ)){
@@ -449,6 +464,7 @@ function renderDziennik(kind){
         <select id="${cfg.id}-dzien" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${DNI.map(d=>`<option value="${d}" ${d===domyslny?"selected":""}>${etykieta(d)}</option>`).join("")}</select>
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Zawodnik</label>
         <select id="${cfg.id}-gracz" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select>
+        ${kind==="podejscia" ? `<div id="${cfg.id}-lokBox" class="hidden rounded-xl border border-neon/40 bg-neon/5 p-3 text-xs"><label class="flex items-center gap-2 cursor-pointer"><input id="${cfg.id}-lokTryb" type="checkbox"> <span><b class="text-neon">🏢 Wpisuję ŁĄCZNE podejścia całej wyspy</b> <span id="${cfg.id}-lokNazwa"></span><br><span class="text-mut">System podzieli je po równo między osoby, które tego dnia pracowały (mają wpisany obrót).</span></span></label><div class="text-[11px] text-mut mt-1">Łącznie w bazie za ten dzień: <b id="${cfg.id}-lokBiez" class="text-slate-100">—</b></div></div>` : ""}
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">${cfg.pole}</label>
         <input id="${cfg.id}-wart" type="number" min="0" step="${cfg.krok}" inputmode="decimal" placeholder="${cfg.ph}" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-2xl num font-bold text-zloto">
         ${kind==="obrot" ? `<label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Godziny na zmianie <span class="text-zloto">(wymagane)</span></label>
@@ -472,6 +488,7 @@ function renderDziennik(kind){
       lk.textContent = zab ? `🔒 Dzień ${d}.09 jest zamknięty (po ${GODZINA_BLOKADY}:00) — wpis istnieje i może go zmienić tylko kierownik.` : adminSession ? "🔑 Tryb kierownika — edycja bez ograniczeń." : dzienZamkniety(d) ? `📋 Dzień ${d}.09 minął, ale pole jest puste — możesz uzupełnić brak (jednorazowo).` : `✅ Otwarte do ${GODZINA_BLOKADY}:00.`;
       $(`${cfg.id}-zapisz`).disabled = zab; $(`${cfg.id}-zapisz`).classList.toggle("opacity-40", zab);
       const v = state[cfg.klucz]?.[d]?.[pid]; $(`${cfg.id}-biez`).textContent = v===undefined||v===""?"brak wpisu":String(v);
+      if (kind === "podejscia"){ const pl = PLAYERS.find(q=>q.id===pid), lacz = pl && LOK_LACZNE.includes(pl.lok); $(`${cfg.id}-lokBox`).classList.toggle("hidden", !lacz); if (lacz){ $(`${cfg.id}-lokNazwa`).textContent = "(" + pl.lok + ")"; const r = state.podejscia_lok?.[d]?.[pl.lok]; $(`${cfg.id}-lokBiez`).textContent = r===undefined||r===""?"brak":String(r); } else $(`${cfg.id}-lokTryb`).checked = false; }
       const dane = state[cfg.klucz]?.[d] || {}; $(`${cfg.id}-dzienTytul`).textContent = etykieta(d);
       $(`${cfg.id}-dzienPodglad`).innerHTML = PLAYERS.map(p=>`<div class="rounded-lg border ${p.klif?"border-red-900 bg-klif/60":"border-linia bg-noc/60"} px-2 py-1.5 flex justify-between gap-2"><span class="truncate ${p.klif?"text-klifTxt":"text-mut"}">${imie(p.n)}</span><b class="num">${dane[p.id]===undefined||dane[p.id]===""?"—":dane[p.id]}</b></div>`).join("");
     };
@@ -481,7 +498,10 @@ function renderDziennik(kind){
     el.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{ el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
       if (b.dataset.v === "0"){ ustawTryb(null); $(`${cfg.id}-wart`).value = "0"; } else ustawTryb(b.dataset.v); });
     $(`${cfg.id}-wart`).oninput = ()=>{ el.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on")); ustawTryb(null); };
-    $(`${cfg.id}-zapisz`).onclick = () => zapisz(cfg, +$(`${cfg.id}-dzien`).value, $(`${cfg.id}-gracz`).value, el._tryb || $(`${cfg.id}-wart`).value, kind==="obrot" ? $(`${cfg.id}-godz`).value : null, el);
+    $(`${cfg.id}-zapisz`).onclick = () => {
+      if (kind === "podejscia" && $(`${cfg.id}-lokTryb`)?.checked) return zapiszLok(cfg, +$(`${cfg.id}-dzien`).value, $(`${cfg.id}-gracz`).value, $(`${cfg.id}-wart`).value, el);
+      zapisz(cfg, +$(`${cfg.id}-dzien`).value, $(`${cfg.id}-gracz`).value, el._tryb || $(`${cfg.id}-wart`).value, kind==="obrot" ? $(`${cfg.id}-godz`).value : null, el);
+    };
   }
   el._odswiez();
   const hist = state.log.filter(x=>x.typ===cfg.klucz).slice(-12).reverse();
@@ -497,6 +517,19 @@ function parsujWpis(surowe){
   const s = String(surowe ?? "").trim().toUpperCase();
   if (s === "X" || s === "L4") return s;
   const n = parseFloat(s.replace(",", ".")); return (isNaN(n) || n < 0) ? null : n;
+}
+/** Łączne podejścia wyspy (np. Szczecin) za dzień. */
+async function zapiszLok(cfg, d, pid, surowe, el){
+  const pl = PLAYERS.find(q=>q.id===pid); if (!pl || !LOK_LACZNE.includes(pl.lok)) return toast("Ta wyspa wpisuje podejścia indywidualnie.", "err");
+  const istnieje = !(state.podejscia_lok?.[d]?.[pl.lok] === undefined || state.podejscia_lok?.[d]?.[pl.lok] === "");
+  if (dzienZablokowany(d, istnieje)) return toast("🔒 Dzień zamknięty — poproś kierownika.", "err");
+  const n = parseFloat(String(surowe ?? "").replace(",", ".")); if (isNaN(n) || n < 0) return toast("Podaj łączną liczbę podejść wyspy.", "err");
+  try {
+    if (demo){ (state.podejscia_lok[d] ??= {})[pl.lok] = n; state.log.push({ t: Date.now(), typ: "podejscia", d, pid, v: n, admin: adminSession, lok: pl.lok }); render(); }
+    else { await fb.set(fb.ref(db, `podejscia_lok/${d}/${pl.lok}`), n); await fb.push(fb.ref(db, "log"), { t: Date.now(), typ: "podejscia", d, pid, v: n, admin: adminSession, lok: pl.lok }); }
+    toast(`✅ ${pl.lok} · ${etykieta(d)}: łącznie ${n} podejść (podzielone między pracujących).`);
+    $(`${cfg.id}-wart`).value = "";
+  } catch(e){ toast("Błąd zapisu: " + e.message, "err"); }
 }
 async function zapisz(cfg, d, pid, surowe, godzSurowe, el){
   if (dzienZablokowany(d, maWpis(cfg.klucz, d, pid))) return toast("🔒 Dzień zamknięty — poproś kierownika.", "err");
@@ -711,6 +744,14 @@ async function zapiszTelefon(pid, surowy){
 }
 $("telZapisz").onclick = async () => { const pid = zalogowanyPid(); if (!pid) return; $("telErr").textContent = ""; const t = await zapiszTelefon(pid, $("telInput").value); if (!t){ $("telErr").textContent = "Nieprawidłowy numer."; return; } $("telOverlay").classList.add("hidden"); toast("📱 Numer zapisany: " + t); if (demo) render(); };
 $("telInput").onkeydown = e => { if (e.key === "Enter") $("telZapisz").onclick(); };
+function pokazInfoLok(){
+  const pid = zalogowanyPid(), pl = PLAYERS.find(q=>q.id===pid), el = $("bannerLok"); if (!el) return;
+  const klucz = "lm_info_lok_" + (pid||"") + "_" + new Date().toISOString().slice(0,10);
+  if (!pl || !LOK_LACZNE.includes(pl.lok) || localStorage.getItem(klucz) || !$("loginOverlay").classList.contains("hidden")){ el.classList.add("hidden"); return; }
+  $("bannerLokTxt").innerHTML = `<b class="text-neon">🏢 ${pl.lok}:</b> Twoja wyspa może wpisywać podejścia <b>łącznie dla całej wyspy</b>. W zakładce 🎯 Dziennik podejść zaznacz „Wpisuję ŁĄCZNE podejścia całej wyspy” i podaj sumę za dzień — system podzieli ją po równo między tych, którzy tego dnia pracowali. Własny wpis ma pierwszeństwo, jeśli wolisz wpisać swoje osobno.`;
+  el.classList.remove("hidden");
+  $("bannerLokBtn").onclick = () => { localStorage.setItem(klucz, "1"); el.classList.add("hidden"); };
+}
 function opisBrakow(braki){ return braki.map(b => `${b.d}.09: ${[b.brakO&&"obrót", b.brakP&&"podejścia", b.brakG&&"godziny"].filter(Boolean).join(", ")}`).join(" · "); }
 function pokazPrzypomnienie(){
   const pid = zalogowanyPid(), el = $("bannerPrzyp"); if (!el) return;
@@ -729,7 +770,8 @@ function policzBraki(pid){
     if (d === dz && h < GODZINA_PRZYPOMNIENIA) break; // dzisiejszy dzień pytamy od 21:00
     const o = state.obrot?.[d]?.[pid], sO = status(o, d);
     if (sO.typ === "x" || sO.typ === "l4") continue;   // dzień wyłączony — nic nie brakuje
-    const brakO = !maWpis("obrot", d, pid), brakP = !maWpis("podejscia", d, pid), brakG = !(parseFloat(state.godziny?.[d]?.[pid]) > 0);
+    const pl = PLAYERS.find(q => q.id === pid);
+    const brakO = !maWpis("obrot", d, pid), brakP = !maWpis("podejscia", d, pid) && !(pl && LOK_LACZNE.includes(pl.lok) && !isNaN(parseFloat(state.podejscia_lok?.[d]?.[pl.lok]))), brakG = !(parseFloat(state.godziny?.[d]?.[pid]) > 0);
     if (brakO || brakP || brakG) braki.push({ d, brakO, brakP, brakG });
   }
   return braki;
@@ -941,7 +983,7 @@ function renderAdmin(){
   $("admKopiujWszyscy").onclick = () => kopiuj(zZal.length ? "Liga Mistrzów — zaległości do uzupełnienia:\n" + zZal.map(w => `• ${imie(w.p.n)}: ${opisBrakow(w.braki)}`).join("\n") + "\nWejdźcie na https://ziebka17.github.io/liga-mistrzow/ i uzupełnijcie dziś. Dzięki!" : "Wszyscy mają komplet wpisów. 🎉", zZal.length + " os.");
   // ── AKTYWNOŚĆ ──
   $("admLogowania").innerHTML = [...state.logowania].reverse().slice(0, 150).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<div class="py-2 px-3 flex justify-between gap-2"><span class="${p?.klif?"text-klifTxt":""} font-semibold truncate">${l.urz||""} ${p ? p.n : l.login}${l.admin?" 🔑":""}</span><span class="text-mut whitespace-nowrap">${kiedy(l.t)}</span></div>`; }).join("") || `<div class="p-4 text-mut">Brak logowań (log zbierany od tej wersji).</div>`;
-  const rysujLog = () => { const f = $("admLogFiltr").value; $("admLog").innerHTML = [...state.log].reverse().filter(l => !f || l.pid === f).slice(0, 200).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<tr><td class="text-mut whitespace-nowrap">${kiedy(l.t)}</td><td class="${p?.klif?"text-klifTxt":""} font-semibold">${p ? p.n : l.pid}${l.admin?" 🔑":""}</td><td>${l.typ === "obrot" ? "💰 obrót" : "🎯 podejścia"}</td><td class="text-mut">${etykieta(l.d)}</td><td class="text-right num font-bold">${typeof l.v === "number" ? (l.typ === "obrot" ? zl(l.v) : l.v) : l.v}</td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak wpisów.</td></tr>`; };
+  const rysujLog = () => { const f = $("admLogFiltr").value; $("admLog").innerHTML = [...state.log].reverse().filter(l => !f || l.pid === f).slice(0, 200).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<tr><td class="text-mut whitespace-nowrap">${kiedy(l.t)}</td><td class="${p?.klif?"text-klifTxt":""} font-semibold">${p ? p.n : l.pid}${l.admin?" 🔑":""}</td><td>${l.typ === "obrot" ? "💰 obrót" : l.lok ? "🏢 podejścia wyspy " + l.lok : "🎯 podejścia"}</td><td class="text-mut">${etykieta(l.d)}</td><td class="text-right num font-bold">${typeof l.v === "number" ? (l.typ === "obrot" ? zl(l.v) : l.v) : l.v}</td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak wpisów.</td></tr>`; };
   rysujLog(); $("admLogFiltr").onchange = rysujLog;
   $("uHurt").onclick = async () => {
     const bez = PLAYERS.filter(p => !Object.values(state.uzytkownicy || {}).some(u => u.pid === p.id));
@@ -1000,8 +1042,8 @@ function trybPodgladu(powod){
     const app = initializeApp(firebaseConfig); db = dbMod.getDatabase(app);
     fb.onValue(fb.ref(db, "/"), snap => {
       const v = snap.val() || {};
-      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {}, zawodnicy: v.zawodnicy || {}, logowania: Object.values(v.logowania || {}).sort((a,b)=>a.t-b.t).slice(-300), przypomnienia: v.przypomnienia || {}, telefony: v.telefony || {}, wykluczenia: v.wykluczenia || {} };
-      bazaZaladowana = true; scalZawodnikow(); render(); pokazPrzypomnienie(); sprawdzTelefon(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
+      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {}, zawodnicy: v.zawodnicy || {}, logowania: Object.values(v.logowania || {}).sort((a,b)=>a.t-b.t).slice(-300), przypomnienia: v.przypomnienia || {}, telefony: v.telefony || {}, wykluczenia: v.wykluczenia || {}, podejscia_lok: v.podejscia_lok || {} };
+      bazaZaladowana = true; scalZawodnikow(); render(); pokazPrzypomnienie(); sprawdzTelefon(); pokazInfoLok(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
     }, err => { $("kropka").className = "w-2 h-2 rounded-full bg-red-500"; $("statusTxt").textContent = "błąd bazy"; toast("Firebase: " + err.message + " — sprawdź reguły bazy.", "err"); });
   } catch (e) { trybPodgladu("Nie udało się pobrać biblioteki Firebase (brak sieci albo zamknięty podgląd). Na GitHub Pages połączenie działa normalnie."); }
 })();
