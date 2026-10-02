@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#050A23">
+<meta name="theme-color" content="#0d1727">
 <title>Liga Mistrzów · Zbita Szybka — Wrzesień 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Unbounded:wght@500;700;900&display=swap" rel="stylesheet">
@@ -11,82 +11,91 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
   tailwind.config = { theme: { extend: {
-    colors: { noc:'#050A23', panel:'#0B1440', panel2:'#101B52', linia:'#1E2B66', zloto:'#E8B84B', szmaragd:'#10B981', neon:'#38BDF8', mut:'#8FA3D9', klif:'#3A1418', klifTxt:'#FF8A8A' },
-    fontFamily: { display:['Unbounded','sans-serif'], body:['Manrope','system-ui','sans-serif'] }
+    colors: { noc:'#0d1727', panel:'#16263a', panel2:'#1d334a', linia:'#365471', zloto:'#83caff', szmaragd:'#10B981', neon:'#38BDF8', mut:'#aab9ca', klif:'#3A1418', klifTxt:'#FF8A8A' },
+    fontFamily: { display:['Manrope','sans-serif'], body:['Manrope','system-ui','sans-serif'] }
   } } };
 </script>
 <style>
   html{ scroll-behavior:smooth; font-size:clamp(14px, 0.42vw + 12.3px, 19px); }
   @media (min-width:2200px){ html{ font-size:21px; } }
-  body{ background:#050A23; }
+  body{ background:#0d1727; }
   .num{ font-variant-numeric:tabular-nums; }
-  .hero{ position:relative; overflow:hidden; background:radial-gradient(1200px 520px at 50% -240px, rgba(232,184,75,.16), transparent 70%), linear-gradient(180deg,#0B1440 0%,#050A23 100%); }
-  .hero::before{ content:""; position:absolute; inset:0; pointer-events:none; opacity:.35;
-    background-image: radial-gradient(1.4px 1.4px at 12% 30%, #E8B84B 50%, transparent 52%), radial-gradient(1px 1px at 28% 70%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 44% 22%, #fff 50%, transparent 52%), radial-gradient(1.6px 1.6px at 61% 64%, #E8B84B 50%, transparent 52%), radial-gradient(1px 1px at 76% 34%, #fff 50%, transparent 52%), radial-gradient(1.3px 1.3px at 89% 72%, #E8B84B 50%, transparent 52%), radial-gradient(1px 1px at 8% 82%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 95% 18%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 52% 88%, #fff 50%, transparent 52%), radial-gradient(1.5px 1.5px at 35% 48%, #E8B84B 50%, transparent 52%), radial-gradient(1px 1px at 68% 12%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 82% 52%, #fff 50%, transparent 52%); }
-  .pierscien{ position:absolute; left:50%; top:-260px; width:720px; height:720px; margin-left:-360px; border-radius:50%; border:1px solid rgba(232,184,75,.14); pointer-events:none; }
-  .pierscien::after{ content:""; position:absolute; inset:60px; border-radius:50%; border:1px dashed rgba(232,184,75,.12); }
+  .hero{ position:relative; overflow:hidden; background:radial-gradient(1200px 520px at 50% -240px, rgba(131,202,255,.16), transparent 70%), linear-gradient(180deg,#16263a 0%,#0d1727 100%); }
+  .hero::before{ display:none; content:""; position:absolute; inset:0; pointer-events:none; opacity:.35;
+    background-image: radial-gradient(1.4px 1.4px at 12% 30%, #83caff 50%, transparent 52%), radial-gradient(1px 1px at 28% 70%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 44% 22%, #fff 50%, transparent 52%), radial-gradient(1.6px 1.6px at 61% 64%, #83caff 50%, transparent 52%), radial-gradient(1px 1px at 76% 34%, #fff 50%, transparent 52%), radial-gradient(1.3px 1.3px at 89% 72%, #83caff 50%, transparent 52%), radial-gradient(1px 1px at 8% 82%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 95% 18%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 52% 88%, #fff 50%, transparent 52%), radial-gradient(1.5px 1.5px at 35% 48%, #83caff 50%, transparent 52%), radial-gradient(1px 1px at 68% 12%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 82% 52%, #fff 50%, transparent 52%); }
+  .pierscien{ position:absolute; left:50%; top:-260px; width:720px; height:720px; margin-left:-360px; border-radius:50%; border:1px solid rgba(131,202,255,.14); pointer-events:none; }
+  .pierscien::after{ content:""; position:absolute; inset:60px; border-radius:50%; border:1px dashed rgba(131,202,255,.12); }
   .nav-btn{ position:relative; white-space:nowrap; transition:color .15s; }
-  .nav-btn::after{ content:""; position:absolute; left:14px; right:14px; bottom:-1px; height:2px; background:#E8B84B; transform:scaleX(0); transition:transform .2s; border-radius:2px; }
-  .nav-btn.active{ color:#E8B84B; } .nav-btn.active::after{ transform:scaleX(1); }
+  .nav-btn::after{ content:""; position:absolute; left:14px; right:14px; bottom:-1px; height:2px; background:#83caff; transform:scaleX(0); transition:transform .2s; border-radius:2px; }
+  .nav-btn.active{ color:#83caff; } .nav-btn.active::after{ transform:scaleX(1); }
   .tab-panel{ display:none; animation:wjazd .28s cubic-bezier(.2,.9,.25,1); } .tab-panel.active{ display:block; }
   @keyframes wjazd{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none;} }
-  .panel-box{ background:linear-gradient(160deg,#0F1A50,#0B1440); border:1px solid #1E2B66; border-radius:1rem; transition:border-color .18s, box-shadow .18s; }
-  .panel-box:hover{ border-color:rgba(232,184,75,.35); box-shadow:0 18px 44px rgba(0,0,0,.45); }
-  .panel-hd{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.85rem 1rem; border-bottom:1px solid #1E2B66; }
-  .eyebrow{ font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#8FA3D9; }
+  .panel-box{ background:linear-gradient(160deg,#16263a,#16263a); border:1px solid #365471; border-radius:1rem; transition:border-color .18s, box-shadow .18s; }
+  .panel-box:hover{ border-color:rgba(131,202,255,.35); box-shadow:0 18px 44px rgba(0,0,0,.45); }
+  .panel-hd{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.85rem 1rem; border-bottom:1px solid #365471; }
+  .eyebrow{ font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#aab9ca; }
   table.liga{ width:100%; border-collapse:separate; border-spacing:0; }
-  table.liga th{ position:sticky; top:0; background:#0B1440; z-index:2; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#8FA3D9; padding:.7rem .75rem; border-bottom:1px solid #1E2B66; }
+  table.liga th{ position:sticky; top:0; background:#16263a; z-index:2; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#aab9ca; padding:.7rem .75rem; border-bottom:1px solid #365471; }
   table.liga td{ padding:.7rem .75rem; border-bottom:1px solid rgba(30,43,102,.7); }
   table.liga tbody tr{ transition:background-color .15s; } table.liga tbody tr:hover td{ background:rgba(143,163,217,.07); }
-  table.liga th:first-child, table.liga td:first-child{ position:sticky; left:0; background:#0B1440; z-index:1; }
-  tr.klif td{ background:#3A1418 !important; color:#F2C4C4; } tr.klif td.nazwa{ color:#FF8A8A; font-weight:700; }
-  tr.zloto td{ background:#3A2F14; } tr.srebro td{ background:#232B44; } tr.braz td{ background:#33241B; }
+  table.liga th:first-child, table.liga td:first-child{ position:sticky; left:0; background:#16263a; z-index:1; }
+  tr.pozaKonkursem td{ background:#3A1418 !important; color:#F2C4C4; } tr.pozaKonkursem td.nazwa{ color:#FF8A8A; font-weight:700; }
+  tr.zloto td{ background:#203e58; } tr.srebro td{ background:#232B44; } tr.braz td{ background:#33241B; }
   .podium{ display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; align-items:end; }
-  .podium .p{ border-radius:.9rem; padding:.8rem .45rem; min-width:0; text-align:center; border:1px solid #1E2B66; background:linear-gradient(160deg,#101B52,#0B1440); }
+  .podium .p{ border-radius:.9rem; padding:.8rem .45rem; min-width:0; text-align:center; border:1px solid #365471; background:linear-gradient(160deg,#1d334a,#16263a); }
   .podium .p .truncate{ max-width:100%; }
-  .podium .p1{ border-color:rgba(232,184,75,.55); background:linear-gradient(160deg,#3A2F14,#0B1440); transform:translateY(-6px); }
+  .podium .p1{ border-color:rgba(131,202,255,.55); background:linear-gradient(160deg,#203e58,#16263a); transform:translateY(-6px); }
   .mk{ display:grid; grid-template-columns:52px 1fr auto; gap:.6rem; align-items:center; padding:.75rem .9rem; }
-  .mk.klif{ background:#3A1418; } .mk.zloto{ background:#3A2F14; } .mk.srebro{ background:#232B44; } .mk.braz{ background:#33241B; }
+  .mk.pozaKonkursem{ background:#3A1418; } .mk.zloto{ background:#203e58; } .mk.srebro{ background:#232B44; } .mk.braz{ background:#33241B; }
   .mk .m{ font-weight:800; text-align:center; font-size:.95rem; }
-  .mk .n{ font-weight:700; font-size:.9rem; line-height:1.2; } .mk .l{ font-size:.68rem; color:#8FA3D9; }
-  .mk .v{ text-align:right; font-weight:800; font-size:.95rem; } .mk .s{ text-align:right; font-size:.68rem; color:#8FA3D9; }
-  .mk.klif .n, .mk.klif .m{ color:#FF8A8A; }
+  .mk .n{ font-weight:700; font-size:.9rem; line-height:1.2; } .mk .l{ font-size:.68rem; color:#aab9ca; }
+  .mk .v{ text-align:right; font-weight:800; font-size:.95rem; } .mk .s{ text-align:right; font-size:.68rem; color:#aab9ca; }
+  .mk.pozaKonkursem .n, .mk.pozaKonkursem .m{ color:#FF8A8A; }
   table.analit th, table.analit td{ white-space:nowrap; padding:.55rem .6rem; }
-  table.analit th:nth-child(2), table.analit td:nth-child(2){ position:sticky; left:52px; background:#0B1440; z-index:1; }
+  table.analit th:nth-child(2), table.analit td:nth-child(2){ position:sticky; left:52px; background:#16263a; z-index:1; }
   table.analit th:first-child, table.analit td:first-child{ min-width:52px; }
-  .seg button{ border:1px solid #1E2B66; } .seg button.on{ background:rgba(232,184,75,.15); border-color:#E8B84B; color:#E8B84B; }
+  .seg button{ border:1px solid #365471; } .seg button.on{ background:rgba(131,202,255,.15); border-color:#83caff; color:#83caff; }
   input,select{ color-scheme:dark; }
-  ::-webkit-scrollbar{ height:8px; width:8px; } ::-webkit-scrollbar-thumb{ background:#1E2B66; border-radius:8px; }
+  ::-webkit-scrollbar{ height:8px; width:8px; } ::-webkit-scrollbar-thumb{ background:#365471; border-radius:8px; }
   .toast{ animation:tIn .25s ease, tOut .3s ease 3.2s forwards; }
   @keyframes tIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} } @keyframes tOut{ to{opacity:0; transform:translateY(12px);} }
+  .month-tabs{display:flex;justify-content:center;gap:10px;padding:14px;flex-wrap:wrap;background:#0d1727;border-bottom:1px solid #365471}
+  .month-tabs a{padding:10px 16px;border:1px solid #365471;border-radius:12px;font-size:13px;font-weight:700;color:#eef3f9}
+  .month-tabs a[aria-current],.month-tabs a:hover{background:#203e58;border-color:#83caff}
+  .month-tabs small{display:block;font-size:10px;font-weight:400;color:#aab9ca;margin-top:3px}
+  #loginOverlay .month-tabs{padding:0 0 20px;margin-bottom:24px}
+  .hero{background:#0d1727}.panel-box{background:#16263a;box-shadow:0 6px 24px #0002}.panel-box:hover{box-shadow:0 6px 24px #0002}
+  button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #83caff;outline-offset:3px}
 </style>
 </head>
 <body class="font-body text-slate-100 antialiased">
+<nav aria-label="Miesiąc ligi" class="month-tabs"><a href="?month=2026-09" data-month="2026-09">Wrzesień 2026 <small>Archiwum</small></a><a href="?month=2026-10" data-month="2026-10">Październik 2026 <small>Riviera z Systems</small></a></nav>
 
 <!-- EKRAN LOGOWANIA -->
-<div id="loginOverlay" class="fixed inset-0 z-[999] bg-[#050A23]/98 backdrop-blur-md flex items-center justify-center p-4">
+<div id="loginOverlay" class="fixed inset-0 z-[999] bg-[#0d1727]/98 backdrop-blur-md flex items-center justify-center p-4">
   <div class="panel-box p-6 sm:p-8 w-full max-w-md space-y-5 shadow-2xl border-zloto/30">
     <div class="text-center">
-      <div class="text-zloto tracking-[.4em] text-xs">★ ★ ★ ★ ★</div>
+      <nav aria-label="Miesiąc ligi" class="month-tabs"><a href="?month=2026-09" data-month="2026-09">Wrzesień 2026 <small>Archiwum</small></a><a href="?month=2026-10" data-month="2026-10">Październik 2026 <small>Riviera z Systems</small></a></nav>
+      <div class="text-mut tracking-[.3em] text-xs">ZBITASZYBKA SYSTEMS</div>
       <h2 class="font-display font-black text-xl sm:text-2xl mt-2 text-zloto">Liga Mistrzów</h2>
       <p class="text-xs text-mut mt-1">Zbita Szybka · Zaloguj się do systemu</p>
     </div>
     <form id="loginForm" class="space-y-4" onsubmit="return false;">
       <div>
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest mb-1.5">Login</label>
-        <input id="loginInput" type="text" placeholder="np. antek_klif" class="w-full bg-[#050A23] border border-linia rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-zloto focus:outline-none transition">
+        <input id="loginInput" type="text" placeholder="np. antek_klif" class="w-full bg-[#0d1727] border border-linia rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-zloto focus:outline-none transition">
       </div>
       <div>
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest mb-1.5">Hasło</label>
-        <input id="passInput" type="password" placeholder="••••••••••••" class="w-full bg-[#050A23] border border-linia rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-zloto focus:outline-none transition">
+        <input id="passInput" type="password" placeholder="••••••••••••" class="w-full bg-[#0d1727] border border-linia rounded-xl px-4 py-3 text-sm text-slate-100 focus:border-zloto focus:outline-none transition">
       </div>
       <div id="loginErr" class="text-xs text-red-400 font-semibold min-h-[16px] text-center"></div>
-      <button id="loginBtn" type="submit" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZALOGUJ SIĘ</button>
+      <button id="loginBtn" type="submit" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#092841] bg-gradient-to-br from-[#a6daff] via-zloto to-[#83caff] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZALOGUJ SIĘ</button>
     </form>
   </div>
 </div>
 
-<div class="bg-[#03061A] border-b border-linia/60 text-[11px]">
+<div class="bg-[#0d1727] border-b border-linia/60 text-[11px]">
   <div class="max-w-[1480px] mx-auto px-4 py-1.5 flex items-center justify-between gap-3">
     <div class="text-mut num" id="matchday">—</div>
     <div class="flex items-center gap-2">
@@ -101,20 +110,21 @@
 </div>
 
 <header class="hero border-b border-linia/70">
-  <div class="pierscien"></div>
+
   <div class="relative max-w-[1480px] mx-auto px-4 pt-7 pb-4 text-center">
-    <div class="text-zloto tracking-[.4em] text-xs">★ ★ ★ ★ ★</div>
-    <h1 id="tytulLiga" title="Wróć do tabeli Ligi Mistrzów" class="font-display font-black text-[1.6rem] sm:text-4xl mt-2 bg-gradient-to-br from-[#FFF3D6] via-zloto to-[#9C6B1D] bg-clip-text text-transparent cursor-pointer select-none hover:opacity-90 active:scale-[.98] transition">Liga Mistrzów</h1>
-    <div class="font-display font-bold text-xs sm:text-sm tracking-[.25em] text-slate-200 mt-1">ZBITA SZYBKA · WRZESIEŃ 2026</div>
+    <div class="text-mut tracking-[.3em] text-xs">ZBITASZYBKA SYSTEMS</div>
+    <h1 id="tytulLiga" title="Wróć do tabeli Ligi Mistrzów" class="font-display font-black text-[1.6rem] sm:text-4xl mt-2 bg-gradient-to-br from-[#eef3f9] via-zloto to-[#83caff] bg-clip-text text-transparent cursor-pointer select-none hover:opacity-90 active:scale-[.98] transition">Liga Mistrzów</h1>
+    <div class="font-display font-bold text-xs sm:text-sm tracking-[.25em] text-slate-200 mt-1"><span id="seasonLabel"></span></div>
     <div id="heroInfo" class="text-[11px] text-mut mt-2">26 dni handlowych · 18 zawodników · 6 wysp w Polsce</div>
   </div>
   <nav class="relative max-w-[1480px] mx-auto px-2 flex flex-wrap gap-0.5 justify-center border-t border-linia/60" id="nav"></nav>
 </header>
 
 <main class="max-w-[1480px] mx-auto px-3 sm:px-4 py-5 space-y-5">
+  <div id="systemsInfo" class="hidden panel-box p-4 text-sm"><strong class="text-neon">Riviera × Systems</strong><p id="systemsStatus" class="text-xs text-mut mt-1"></p><a href="https://zbitaszybkasystems.pl/" target="_blank" rel="noopener" class="inline-block mt-3 text-neon font-bold text-xs">Otwórz Systems ↗</a></div>
   <div id="bannerConfig" class="hidden panel-box p-4 border-yellow-500/60 text-sm"></div>
   <div id="bannerLok" class="hidden panel-box p-4 border-neon/50 bg-neon/5 text-sm flex flex-wrap items-center justify-between gap-3"><div id="bannerLokTxt"></div><button id="bannerLokBtn" class="rounded-lg px-3 py-2 text-xs font-bold border border-neon/50 text-neon">Rozumiem</button></div>
-  <div id="bannerPrzyp" class="hidden panel-box p-4 border-red-500/60 bg-red-950/30 text-sm flex flex-wrap items-center justify-between gap-3"><div id="bannerPrzypTxt"></div><button id="bannerPrzypBtn" class="rounded-lg px-3 py-2 text-xs font-bold text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">📋 Uzupełnij teraz</button></div>
+  <div id="bannerPrzyp" class="hidden panel-box p-4 border-red-500/60 bg-red-950/30 text-sm flex flex-wrap items-center justify-between gap-3"><div id="bannerPrzypTxt"></div><button id="bannerPrzypBtn" class="rounded-lg px-3 py-2 text-xs font-bold text-[#092841] bg-gradient-to-br from-[#a6daff] via-zloto to-[#83caff]">📋 Uzupełnij teraz</button></div>
 
   <section id="tab-liga" class="tab-panel space-y-4">
     <div class="grid lg:grid-cols-5 gap-4">
@@ -122,7 +132,7 @@
       <div class="grid grid-cols-2 gap-3 lg:col-span-2" id="kpiLiga"></div>
     </div>
     <div class="panel-box overflow-hidden">
-      <div class="panel-hd"><div><div class="eyebrow">Tabela</div><h2 class="font-display font-bold text-sm text-zloto">🏆 Klasyfikacja generalna</h2></div><span class="text-[11px] text-mut hidden sm:inline">🔴 czerwone wiersze = Klif, poza konkursem</span></div>
+      <div class="panel-hd"><div><div class="eyebrow">Tabela</div><h2 class="font-display font-bold text-sm text-zloto">🏆 Klasyfikacja generalna</h2></div><span class="text-[11px] text-mut hidden sm:inline">🔴 czerwone wiersze = poza konkursem</span></div>
       <div id="cardsLiga" class="md:hidden divide-y divide-linia"></div>
       <div class="overflow-x-auto hidden md:block"><table class="liga min-w-[900px] text-sm"><thead><tr>
         <th class="text-left">Miejsce</th><th class="text-left">Zawodnik</th><th class="text-left">Lokalizacja</th><th class="text-right">Obrót łączny</th><th class="text-right">Suma podejść</th><th class="text-right">Śr. podejść / dzień</th><th class="text-right">Zł / podejście</th><th class="text-right">Godziny</th><th class="text-right">Zł / h</th><th class="text-right">Rekord dnia (PB)</th>
@@ -174,7 +184,7 @@
     <div class="panel-box p-5 text-sm space-y-3">
       <div><div class="eyebrow mb-1">Podejścia</div><p>Podejście = każda rozpoczęta rozmowa sprzedażowa z klientem, także bez sprzedaży. Wpisujesz liczbę za dzień w Dzienniku podejść. Konwersja zł/podejście = obrót ÷ podejścia — pokazuje, kto strzela celnie, a kto tylko dużo.</p></div>
       <div><div class="eyebrow mb-1">Reguła 23:00</div><p>Wyniki z <b>dnia bieżącego</b> można wpisywać i poprawiać do <b>23:00</b>. Po tej godzinie dzień jest zamknięty na stałe — istniejący wpis zmienia wyłącznie kierownik (PIN). <b>Puste pola z minionych dni można uzupełnić jednorazowo</b> (system prosi o to od 21:00 i po każdym logowaniu).</p></div>
-      <div><div class="eyebrow mb-1">Klif</div><p>Antek, Michał i Szymon z Klifu wpisują dzienniki i mają pełne statystyki, ale w tym miesiącu są <b>poza konkursem</b> — bez miejsc i medali.</p></div>
+      <div><div class="eyebrow mb-1">Udział w konkursie</div><p id="contestRules"></p></div>
       <p class="text-zloto font-semibold pt-1">💪 Warroom nie ocenia ludzi — mierzy walkę. Wpisuj uczciwie, walcz codziennie, a tabela odda Ci sprawiedliwość.</p>
     </div>
   </section>
@@ -191,28 +201,34 @@
   <section id="tab-admin" class="tab-panel"></section>
 </main>
 
-<footer class="max-w-[1480px] mx-auto px-4 py-6 text-center text-[11px] text-mut">Zbita Szybka Elite · Executive Warroom · wrzesień 2026</footer>
-<div id="telOverlay" class="hidden fixed inset-0 z-[950] bg-[#050A23]/95 backdrop-blur-md flex items-center justify-center p-4">
+<footer id="seasonFooter" class="max-w-[1480px] mx-auto px-4 py-6 text-center text-[11px] text-mut">Zbita Szybka Elite · Executive Warroom · wrzesień 2026</footer>
+<div id="telOverlay" class="hidden fixed inset-0 z-[950] bg-[#0d1727]/95 backdrop-blur-md flex items-center justify-center p-4">
   <div class="panel-box w-full max-w-md p-6 space-y-3 border-zloto/40">
     <div class="eyebrow">Jednorazowo</div><h2 class="font-display font-bold text-zloto text-base">📱 Podaj swój numer telefonu</h2>
     <p class="text-xs text-mut">Kierownik użyje go tylko do przypomnień o wpisach w lidze (SMS o 21:00, gdy czegoś brakuje). Numer widzi wyłącznie kierownik.</p>
     <input id="telInput" type="tel" inputmode="tel" autocomplete="tel" placeholder="np. 501 234 567" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-lg num">
     <div id="telErr" class="text-xs text-red-300 min-h-[16px]"></div>
-    <button id="telZapisz" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ZAPISZ NUMER</button>
+    <button id="telZapisz" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#092841] bg-gradient-to-br from-[#a6daff] via-zloto to-[#83caff]">ZAPISZ NUMER</button>
   </div>
 </div>
-<div id="brakiOverlay" class="hidden fixed inset-0 z-[900] bg-[#050A23]/95 backdrop-blur-md overflow-y-auto p-4">
+<div id="brakiOverlay" class="hidden fixed inset-0 z-[900] bg-[#0d1727]/95 backdrop-blur-md overflow-y-auto p-4">
   <div class="panel-box w-full max-w-2xl mx-auto my-6 p-5 sm:p-6 space-y-4 border-zloto/40">
     <div><div class="eyebrow">Uzupełnij braki</div><h2 class="font-display font-bold text-zloto text-base">📋 Brakujące wpisy</h2>
       <p id="brakiTxt" class="text-xs text-mut mt-1"></p></div>
     <div id="brakiLista" class="space-y-3"></div>
-    <div class="flex gap-2 flex-wrap"><button id="brakiZapisz" class="flex-1 rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ZAPISZ WSZYSTKO</button><button id="brakiPozniej" class="rounded-xl px-4 py-3 text-xs font-bold border border-linia text-mut">Później</button></div>
+    <div class="flex gap-2 flex-wrap"><button id="brakiZapisz" class="flex-1 rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#092841] bg-gradient-to-br from-[#a6daff] via-zloto to-[#83caff]">ZAPISZ WSZYSTKO</button><button id="brakiPozniej" class="rounded-xl px-4 py-3 text-xs font-bold border border-linia text-mut">Później</button></div>
     <div id="brakiErr" class="text-xs text-red-300 min-h-[16px]"></div>
   </div>
 </div>
 <div id="toasty" class="fixed bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-50 pointer-events-none px-4"></div>
 
 <script type="module">
+import {SEASONS,seasonFor,tradingDays,seasonPlayer,dataPath,monthData,mergeSystems,warsawNow,seasonDay} from './league-config.mjs';
+const SEASON=seasonFor(new URLSearchParams(location.search).get('month'));
+const MM=String(SEASON.month+1).padStart(2,'0');
+document.title=`Liga Mistrzów · Zbita Szybka — ${SEASON.label}`;
+document.querySelectorAll('[data-month]').forEach(a=>{if(a.dataset.month===SEASON.key)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+
 // ╔══════════════════════════════════════════════════════════╗
 // ║  KONFIGURACJA FIREBASE (projekt: liga-mistrzow-zbita)     ║
 // ╚══════════════════════════════════════════════════════════╝
@@ -244,8 +260,8 @@ async function sprawdzHaslo(haslo, rekord){ if (!rekord || !rekord.sol || !rekor
 
 let fb = null, db = null, demo = false;
 
-const ROK = 2026, MIESIAC = 8, GODZINA_BLOKADY = 23, GODZINA_PRZYPOMNIENIA = 21, DNI_WOLNE = []; // dzień zamyka się o 23:00 i zostaje zamknięty
-const DNI = [1,2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,21,22,23,24,25,26,28,29,30];
+const ROK = SEASON.year, MIESIAC = SEASON.month, GODZINA_BLOKADY = 23, GODZINA_PRZYPOMNIENIA = 21, DNI_WOLNE = []; // dzień zamyka się o 23:00 i zostaje zamknięty
+const DNI = tradingDays(SEASON);
 const PLAYERS_BAZOWI = [
   { id:"antek_klif", n:"Antek (Klif)", lok:"Klif", klif:true },
   { id:"michal_klif", n:"Michał (Klif)", lok:"Klif", klif:true },
@@ -266,16 +282,19 @@ const PLAYERS_BAZOWI = [
   { id:"cupryjak_wwa", n:"Cupryjak (WWA)", lok:"Warszawa" },
   { id:"olivier_wwa", n:"Olivier (WWA)", lok:"Warszawa" }
 ];
-let PLAYERS = [...PLAYERS_BAZOWI];
+let PLAYERS = PLAYERS_BAZOWI.map(p=>seasonPlayer(p,SEASON));
 /** Skład = zawodnicy z kodu + zawodnicy dodani w panelu (baza: /zawodnicy). Zwraca true, gdy skład się zmienił. */
 function scalZawodnikow(){
-  const dodani = Object.entries(state.zawodnicy || {}).filter(([id]) => !PLAYERS_BAZOWI.some(p => p.id === id)).map(([id, z]) => ({ id, n: z.n, lok: z.lok, klif: !!z.klif, dodany: true }));
-  const nowy = [...PLAYERS_BAZOWI, ...dodani], zmiana = nowy.length !== PLAYERS.length || nowy.some((p, i) => p.id !== PLAYERS[i]?.id || p.n !== PLAYERS[i]?.n || p.lok !== PLAYERS[i]?.lok);
+  const dodani = Object.entries(state.zawodnicy || {}).filter(([id]) => !PLAYERS_BAZOWI.some(p => p.id === id)).map(([id, z]) => ({ id, n: z.n, lok: z.lok, pozaKonkursem: !!(z.pozaKonkursem ?? z.klif), dodany: true }));
+  const synced=Object.entries(state.systems?.players||{}).map(([id,p])=>({id,...p,synced:true}));
+  const byId=new Map([...PLAYERS_BAZOWI,...dodani].map(p=>[p.id,seasonPlayer(p,SEASON)]));
+  for(const p of synced)byId.set(p.id,{...byId.get(p.id),...seasonPlayer(p,SEASON)});
+  const nowy = [...byId.values()], zmiana = nowy.length !== PLAYERS.length || nowy.some((p, i) => p.id !== PLAYERS[i]?.id || p.n !== PLAYERS[i]?.n || p.lok !== PLAYERS[i]?.lok || p.synced !== PLAYERS[i]?.synced);
   PLAYERS = nowy;
   if (zmiana) ["tab-dzObrot","tab-dzPodejscia","tab-raport"].forEach(id => { const el = $(id); if (el){ el.dataset.built = ""; el.innerHTML = ""; } });
   return zmiana;
 }
-const KOLORY = ["#E8B84B","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#8FA3D9","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
+const KOLORY = ["#83caff","#5B8DEF","#E86A6A","#10B981","#C77DFF","#F2A65A","#38BDF8","#EF5BA1","#9BE85B","#aab9ca","#FFD166","#4CC9F0","#F94144","#90BE6D","#F8961E","#B5179E","#43AA8B","#F3722C"];
 const TABS = [["liga","🏆 Liga Mistrzów"],["podejscia","🎯 Ranking podejść"],["lokalizacje","🏢 Lokalizacje"],["dzObrot","💰 Dziennik obrotu"],["dzPodejscia","🎯 Dziennik podejść"],["wykresy","📊 Wykresy"],["analityka","📈 Analityka"],["raport","🧠 Mój raport"],["loza","🏆 Loża Mistrzów"],["legenda","📖 Legenda"],["admin","🔑 Kierownik"]];
 
 let state = { obrot:{}, podejscia:{}, godziny:{}, log:[], admin:{ unlockUntil:0, editMode:false }, cele:{}, uzytkownicy:{}, zawodnicy:{}, logowania:[], przypomnienia:{}, telefony:{}, wykluczenia:{}, podejscia_lok:{} };
@@ -356,18 +375,17 @@ function wyloguj() {
   toast("Wylogowano z systemu.");
 }
 
-$("loginBtn").onclick = zaloguj;
 $("logoutBtn").onclick = wyloguj;
 $("loginForm").onsubmit = (e) => { e.preventDefault(); zaloguj(); };
 $("loginInput").setAttribute("placeholder", "np. maks_rzm");
 sprawdzLogowanie();
 
-function dzisNr(){ const t = new Date(); if (t.getFullYear()!==ROK || t.getMonth()!==MIESIAC) return t < new Date(ROK,MIESIAC,1) ? 0 : 31; return t.getDate(); }
-function etykieta(d){ const dn = ["nd","pn","wt","śr","cz","pt","so"][new Date(ROK,MIESIAC,d).getDay()]; return `${String(d).padStart(2,"0")}.09 (${dn})`; }
+function dzisNr(){ return seasonDay(SEASON); }
+function etykieta(d){ const dn = ["nd","pn","wt","śr","cz","pt","so"][new Date(ROK,MIESIAC,d).getDay()]; return `${String(d).padStart(2,"0")}.${MM} (${dn})`; }
 function edycjaGlobalna(){ return !!state.admin?.editMode || (state.admin?.unlockUntil||0) > Date.now(); }
 function dzienZamkniety(d){ // czy minął termin 23:00 danego dnia
   const dz = dzisNr(); if (d < dz) return true; if (d > dz) return false;
-  return new Date().getHours() >= GODZINA_BLOKADY;
+  return warsawNow().hour >= GODZINA_BLOKADY;
 }
 function dzienZablokowany(d, istniejeWpis = true){
   if (DNI_WOLNE.includes(d) || adminSession || edycjaGlobalna()) return false;
@@ -425,16 +443,16 @@ function lokacje(w){
     status: i===0 ? "👑 Lider lokalizacji w Polsce" : i===1 ? "🔥 2. miejsce w sieci" : (srLok && x.obrot >= srLok) ? "📈 Powyżej średniej krajowej" : "🐢 Poniżej średniej krajowej" }));
 }
 
-const klasa = (w,m) => w.klif ? "klif" : m===1 ? "zloto" : m===2 ? "srebro" : m===3 ? "braz" : "";
-const kom = (w,m) => w.klif ? `<span class="text-klifTxt font-bold text-xs">🔴 KLIF</span><div class="text-[10px] text-klifTxt/80">poza konkursem</div>` : `<span class="text-zloto font-bold">${m===1?"🥇":m===2?"🥈":m===3?"🥉":""} ${m}.</span>`;
+const klasa = (w,m) => w.pozaKonkursem ? "pozaKonkursem" : m===1 ? "zloto" : m===2 ? "srebro" : m===3 ? "braz" : "";
+const kom = (w,m) => w.pozaKonkursem ? `<span class="text-klifTxt font-bold text-xs">POZA KONKURSEM</span><div class="text-[10px] text-klifTxt/80">poza konkursem</div>` : `<span class="text-zloto font-bold">${m===1?"🥇":m===2?"🥈":m===3?"🥉":""} ${m}.</span>`;
 
-const kartaM = (x, mi, glowna, pod) => `<div class="mk ${klasa(x,mi)}"><div class="m">${x.klif ? "🔴" : (mi===1?"🥇":mi===2?"🥈":mi===3?"🥉":mi+".")}</div><div class="min-w-0"><div class="n truncate">${x.n}</div><div class="l truncate">${x.klif ? "Klif · poza konkursem" : x.lok}</div></div><div><div class="v num ${x.klif?"":"text-zloto"}">${glowna}</div><div class="s num">${pod}</div></div></div>`;
+const kartaM = (x, mi, glowna, pod) => `<div class="mk ${klasa(x,mi)}"><div class="m">${x.pozaKonkursem ? "🔴" : (mi===1?"🥇":mi===2?"🥈":mi===3?"🥉":mi+".")}</div><div class="min-w-0"><div class="n truncate">${x.n}</div><div class="l truncate">${x.pozaKonkursem ? "Poza konkursem" : x.lok}</div></div><div><div class="v num ${x.pozaKonkursem?"":"text-zloto"}">${glowna}</div><div class="s num">${pod}</div></div></div>`;
 function renderLiga(w){
   const lista = [...w].sort((a,b)=>b.obrot-a.obrot); let m = 0;
-  let mm = 0; $("cardsLiga").innerHTML = lista.map(x=>{ if(!x.klif) mm++; const mi = x.klif?0:mm; return kartaM(x, mi, zl(x.obrot), `${fmt(x.sumaP)} podejść · ${x.konw?zl(x.konw)+"/podej.":"—"} · ${x.godz?x.godz.toFixed(1)+" h · "+zl(x.zlH)+"/h":"— h"}`); }).join("");
-  $("tbLiga").innerHTML = lista.map(x=>{ if(!x.klif) m++; const mi = x.klif?0:m; return `<tr class="${klasa(x,mi)}"><td>${kom(x,mi)}</td><td class="nazwa font-semibold">${x.n}</td><td class="text-mut">${x.lok}</td>
-    <td class="text-right num font-bold ${x.klif?"":"text-zloto"}">${zl(x.obrot)}</td><td class="text-right num">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-right num">${x.godz?x.godz.toFixed(1)+" h":"—"}</td><td class="text-right num">${x.zlH?zl(x.zlH):"—"}</td><td class="text-right num">${zl(x.pb)}</td></tr>`; }).join("");
-  const ucz = lista.filter(x=>!x.klif), siec = w.reduce((s,x)=>s+x.obrot,0), lok = lokacje(w), pbMax = [...w].sort((a,b)=>b.pb-a.pb)[0];
+  let mm = 0; $("cardsLiga").innerHTML = lista.map(x=>{ if(!x.pozaKonkursem) mm++; const mi = x.pozaKonkursem?0:mm; return kartaM(x, mi, zl(x.obrot), `${fmt(x.sumaP)} podejść · ${x.konw?zl(x.konw)+"/podej.":"—"} · ${x.godz?x.godz.toFixed(1)+" h · "+zl(x.zlH)+"/h":"— h"}`); }).join("");
+  $("tbLiga").innerHTML = lista.map(x=>{ if(!x.pozaKonkursem) m++; const mi = x.pozaKonkursem?0:m; return `<tr class="${klasa(x,mi)}"><td>${kom(x,mi)}</td><td class="nazwa font-semibold">${x.n}</td><td class="text-mut">${x.lok}</td>
+    <td class="text-right num font-bold ${x.pozaKonkursem?"":"text-zloto"}">${zl(x.obrot)}</td><td class="text-right num">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-right num">${x.godz?x.godz.toFixed(1)+" h":"—"}</td><td class="text-right num">${x.zlH?zl(x.zlH):"—"}</td><td class="text-right num">${zl(x.pb)}</td></tr>`; }).join("");
+  const ucz = lista.filter(x=>!x.pozaKonkursem), siec = w.reduce((s,x)=>s+x.obrot,0), lok = lokacje(w), pbMax = [...w].sort((a,b)=>b.pb-a.pb)[0];
   const pod = (x,i) => x ? `<div class="p p${i}"><div class="text-2xl">${["🥇","🥈","🥉"][i-1]}</div><div class="font-bold text-sm mt-1 truncate">${imie(x.n)}</div><div class="text-[10px] text-mut truncate">${x.lok}</div><div class="font-display font-bold num mt-1 ${i===1?"text-zloto":i===2?"text-slate-200":"text-[#C98A56]"}">${zl(x.obrot)}</div></div>` : `<div class="p p${i} opacity-50"><div class="text-2xl">${["🥇","🥈","🥉"][i-1]}</div><div class="text-xs text-mut mt-2">wolne miejsce</div></div>`;
   $("podium").innerHTML = pod(ucz[1],2) + pod(ucz[0],1) + pod(ucz[2],3);
   $("kpiLiga").innerHTML = [["Obrót sieci", zl(siec), "text-zloto"], ["Przewaga lidera", ucz[0] && ucz[1] ? "+" + zl(ucz[0].obrot - ucz[1].obrot) : "—", "text-slate-100"], ["Najmocniejsza wyspa", lok[0]?.obrot ? `${lok[0].lok} · ${lok[0].udzial.toFixed(1)}%` : "—", "text-neon"], ["Rekord dnia", pbMax?.pb ? `${zl(pbMax.pb)} · ${imie(pbMax.n)}` : "—", "text-szmaragd"]]
@@ -442,14 +460,16 @@ function renderLiga(w){
 }
 function renderPodejscia(w){
   const lista = [...w].sort((a,b)=>b.sumaP-a.sumaP); let m = 0;
-  let mm = 0; $("cardsPodejscia").innerHTML = lista.map(x=>{ if(!x.klif) mm++; const mi = x.klif?0:mm; return kartaM(x, mi, fmt(x.sumaP) + " podejść", `${x.srP.toFixed(1)}/dzień · ${zl(x.obrot)} · ${x.konw?zl(x.konw)+"/podej.":"—"}`); }).join("");
-  $("tbPodejscia").innerHTML = lista.map(x=>{ if(!x.klif) m++; const mi = x.klif?0:m;
-    const tytul = x.klif ? "🔴 Klif — poza konkursem" : mi===1 && x.sumaP ? "👑 Król podejść" : mi<=3 && x.sumaP ? "🔥 TOP 3 odwagi" : x.konw>=150 && x.sumaP>=10 ? "🎯 Snajper (wysoka konwersja)" : x.sumaP ? "⚔️ W grze" : "⏳ Czekamy na start";
-    return `<tr class="${klasa(x,mi)}"><td>${kom(x,mi)}</td><td class="nazwa font-semibold">${x.n}</td><td class="text-mut">${x.lok}</td><td class="text-right num font-bold ${x.klif?"":"text-neon"}">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${zl(x.obrot)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-xs">${tytul}</td></tr>`; }).join("");
+  let mm = 0; $("cardsPodejscia").innerHTML = lista.map(x=>{ if(!x.pozaKonkursem) mm++; const mi = x.pozaKonkursem?0:mm; return kartaM(x, mi, fmt(x.sumaP) + " podejść", `${x.srP.toFixed(1)}/dzień · ${zl(x.obrot)} · ${x.konw?zl(x.konw)+"/podej.":"—"}`); }).join("");
+  $("tbPodejscia").innerHTML = lista.map(x=>{ if(!x.pozaKonkursem) m++; const mi = x.pozaKonkursem?0:m;
+    const tytul = x.pozaKonkursem ? "Poza konkursem" : mi===1 && x.sumaP ? "👑 Król podejść" : mi<=3 && x.sumaP ? "🔥 TOP 3 odwagi" : x.konw>=150 && x.sumaP>=10 ? "🎯 Snajper (wysoka konwersja)" : x.sumaP ? "⚔️ W grze" : "⏳ Czekamy na start";
+    return `<tr class="${klasa(x,mi)}"><td>${kom(x,mi)}</td><td class="nazwa font-semibold">${x.n}</td><td class="text-mut">${x.lok}</td><td class="text-right num font-bold ${x.pozaKonkursem?"":"text-neon"}">${fmt(x.sumaP)}</td><td class="text-right num">${x.srP.toFixed(1)}</td><td class="text-right num">${zl(x.obrot)}</td><td class="text-right num">${x.konw?zl(x.konw):"—"}</td><td class="text-xs">${tytul}</td></tr>`; }).join("");
 }
 function renderLokalizacje(w){
-  $("cardsLokalizacje").innerHTML = lokacje(w).map((l,i)=>`<div class="mk ${i===0?"zloto":""}"><div class="m">${i===0?"🥇":i===1?"🥈":i===2?"🥉":(i+1)+"."}</div><div class="min-w-0"><div class="n truncate ${l.lok==="Klif"?"text-klifTxt":""}">${l.lok}</div><div class="l truncate">lider: ${imie(l.lider)} · ${l.udzial.toFixed(1)}% sieci</div></div><div><div class="v num text-zloto">${zl(l.obrot)}</div><div class="s num">${zl(l.naH)} / handl.</div></div></div>`).join("");
-  $("tbLokalizacje").innerHTML = lokacje(w).map((l,i)=>`<tr class="${i===0?"zloto":""}"><td class="text-zloto font-bold">${i===0?"🥇":i===1?"🥈":i===2?"🥉":""} ${i+1}.</td><td class="font-semibold ${l.lok==="Klif"?"text-klifTxt":""}">${l.lok}${l.lok==="Klif"?' <span class="text-[10px]">🔴 poza konkursem</span>':""}</td><td class="text-right num font-bold">${zl(l.obrot)}</td><td class="text-right num">${l.udzial.toFixed(1)}%</td><td class="text-right num">${l.akt}</td><td class="text-right num">${zl(l.naH)}</td><td class="text-mut text-xs">${l.lider} (${zl(l.liderO)})</td><td class="text-right num">${l.indeks} pkt</td><td class="text-xs">${l.status}</td></tr>`).join("");
+  let rank=0;const rows=lokacje(w).map(l=>({...l,pozaKonkursem:SEASON.excludedLocations.includes(l.lok)})).map(l=>({...l,miejsce:l.pozaKonkursem?0:++rank}));
+  const medal=l=>l.pozaKonkursem?"Poza konkursem":`${["","🥇","🥈","🥉"][l.miejsce]||""} ${l.miejsce}.`;
+  $("cardsLokalizacje").innerHTML=rows.map(l=>`<div class="mk ${l.pozaKonkursem?"pozaKonkursem":l.miejsce===1?"zloto":""}"><div class="m">${medal(l)}</div><div class="min-w-0"><div class="n truncate">${l.lok}</div><div class="l truncate">lider: ${imie(l.lider)} · ${l.udzial.toFixed(1)}% sieci</div></div><div><div class="v num text-zloto">${zl(l.obrot)}</div><div class="s num">${zl(l.naH)} / handl.</div></div></div>`).join("");
+  $("tbLokalizacje").innerHTML=rows.map(l=>`<tr class="${l.pozaKonkursem?"pozaKonkursem":l.miejsce===1?"zloto":""}"><td class="font-bold">${medal(l)}</td><td class="font-semibold">${l.lok}</td><td class="text-right num font-bold">${zl(l.obrot)}</td><td class="text-right num">${l.udzial.toFixed(1)}%</td><td class="text-right num">${l.akt}</td><td class="text-right num">${zl(l.naH)}</td><td class="text-mut text-xs">${l.lider} (${zl(l.liderO)})</td><td class="text-right num">${l.indeks} pkt</td><td class="text-xs">${l.pozaKonkursem?"Poza konkursem":l.miejsce===1?"Lider konkursu wysp":"W konkursie"}</td></tr>`).join("");
 }
 
 function renderDziennik(kind){
@@ -460,10 +480,10 @@ function renderDziennik(kind){
     el.innerHTML = `<div class="grid lg:grid-cols-5 gap-4">
       <div class="panel-box p-4 sm:p-5 lg:col-span-2 space-y-3">
         <div><div class="eyebrow">${cfg.ey}</div><h2 class="font-display font-bold text-sm text-zloto">${cfg.tytul}</h2></div>
-        <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Dzień września</label>
+        <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Dzień ${SEASON.genitive}</label>
         <select id="${cfg.id}-dzien" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${DNI.map(d=>`<option value="${d}" ${d===domyslny?"selected":""}>${etykieta(d)}</option>`).join("")}</select>
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Zawodnik</label>
-        <select id="${cfg.id}-gracz" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select>
+        <select id="${cfg.id}-gracz" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.pozaKonkursem?"🔴 ":""}${p.n}</option>`).join("")}</select>
         ${kind==="podejscia" ? `<div id="${cfg.id}-lokBox" class="hidden rounded-xl border border-neon/40 bg-neon/5 p-3 text-xs"><label class="flex items-center gap-2 cursor-pointer"><input id="${cfg.id}-lokTryb" type="checkbox"> <span><b class="text-neon">🏢 Wpisuję ŁĄCZNE podejścia całej wyspy</b> <span id="${cfg.id}-lokNazwa"></span><br><span class="text-mut">System podzieli je po równo między osoby, które tego dnia pracowały (mają wpisany obrót).</span></span></label><div class="text-[11px] text-mut mt-1">Łącznie w bazie za ten dzień: <b id="${cfg.id}-lokBiez" class="text-slate-100">—</b></div></div>` : ""}
         <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">${cfg.pole}</label>
         <input id="${cfg.id}-wart" type="number" min="0" step="${cfg.krok}" inputmode="decimal" placeholder="${cfg.ph}" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-2xl num font-bold text-zloto">
@@ -472,7 +492,7 @@ function renderDziennik(kind){
         <div class="seg grid grid-cols-3 gap-2 text-[11px]"><button data-v="0" class="rounded-lg py-2">0 — byłem, zero</button><button data-v="X" class="rounded-lg py-2">X — nieobecny</button><button data-v="L4" class="rounded-lg py-2">L4 — zwolnienie</button></div>
         <div id="${cfg.id}-trybInfo" class="text-[11px] text-mut min-h-[14px]"></div>
         <div id="${cfg.id}-lock" class="text-xs rounded-xl px-3 py-2 border"></div>
-        <button id="${cfg.id}-zapisz" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZAPISZ WYNIK</button>
+        <button id="${cfg.id}-zapisz" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#092841] bg-gradient-to-br from-[#a6daff] via-zloto to-[#83caff] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">ZAPISZ WYNIK</button>
         <div class="text-[11px] text-mut">W bazie dla tego dnia i gracza: <b id="${cfg.id}-biez" class="text-slate-100">—</b></div>
       </div>
       <div class="panel-box p-4 sm:p-5 lg:col-span-3 space-y-5">
@@ -485,12 +505,13 @@ function renderDziennik(kind){
     el._odswiez = () => {
       const d = +$(`${cfg.id}-dzien`).value, pid = $(`${cfg.id}-gracz`).value, istnieje = maWpis(cfg.klucz, d, pid), zab = dzienZablokowany(d, istnieje), lk = $(`${cfg.id}-lock`);
       lk.className = "text-xs rounded-xl px-3 py-2 border " + (zab ? "border-red-500/50 text-red-300 bg-red-950/30" : "border-szmaragd/40 text-szmaragd bg-emerald-950/20");
-      lk.textContent = zab ? `🔒 Dzień ${d}.09 jest zamknięty (po ${GODZINA_BLOKADY}:00) — wpis istnieje i może go zmienić tylko kierownik.` : adminSession ? "🔑 Tryb kierownika — edycja bez ograniczeń." : dzienZamkniety(d) ? `📋 Dzień ${d}.09 minął, ale pole jest puste — możesz uzupełnić brak (jednorazowo).` : `✅ Otwarte do ${GODZINA_BLOKADY}:00.`;
+      lk.textContent = zab ? `🔒 Dzień ${d}.${MM} jest zamknięty (po ${GODZINA_BLOKADY}:00) — wpis istnieje i może go zmienić tylko kierownik.` : adminSession ? "🔑 Tryb kierownika — edycja bez ograniczeń." : dzienZamkniety(d) ? `📋 Dzień ${d}.${MM} minął, ale pole jest puste — możesz uzupełnić brak (jednorazowo).` : `✅ Otwarte do ${GODZINA_BLOKADY}:00.`;
       $(`${cfg.id}-zapisz`).disabled = zab; $(`${cfg.id}-zapisz`).classList.toggle("opacity-40", zab);
+      if(PLAYERS.find(p=>p.id===pid)?.synced){lk.textContent="↗ Riviera: wynik pobierany automatycznie z Systems. Sprzedaż, podejścia i grafik poprawiaj w Systems.";$(`${cfg.id}-zapisz`).disabled=true;$(`${cfg.id}-zapisz`).classList.add("opacity-40");}
       const v = state[cfg.klucz]?.[d]?.[pid]; $(`${cfg.id}-biez`).textContent = v===undefined||v===""?"brak wpisu":String(v);
       if (kind === "podejscia"){ const pl = PLAYERS.find(q=>q.id===pid), lacz = pl && LOK_LACZNE.includes(pl.lok); $(`${cfg.id}-lokBox`).classList.toggle("hidden", !lacz); if (lacz){ $(`${cfg.id}-lokNazwa`).textContent = "(" + pl.lok + ")"; const r = state.podejscia_lok?.[d]?.[pl.lok]; $(`${cfg.id}-lokBiez`).textContent = r===undefined||r===""?"brak":String(r); } else $(`${cfg.id}-lokTryb`).checked = false; }
       const dane = state[cfg.klucz]?.[d] || {}; $(`${cfg.id}-dzienTytul`).textContent = etykieta(d);
-      $(`${cfg.id}-dzienPodglad`).innerHTML = PLAYERS.map(p=>`<div class="rounded-lg border ${p.klif?"border-red-900 bg-klif/60":"border-linia bg-noc/60"} px-2 py-1.5 flex justify-between gap-2"><span class="truncate ${p.klif?"text-klifTxt":"text-mut"}">${imie(p.n)}</span><b class="num">${dane[p.id]===undefined||dane[p.id]===""?"—":dane[p.id]}</b></div>`).join("");
+      $(`${cfg.id}-dzienPodglad`).innerHTML = PLAYERS.map(p=>`<div class="rounded-lg border ${p.pozaKonkursem?"border-red-900 bg-klif/60":"border-linia bg-noc/60"} px-2 py-1.5 flex justify-between gap-2"><span class="truncate ${p.pozaKonkursem?"text-klifTxt":"text-mut"}">${imie(p.n)}</span><b class="num">${dane[p.id]===undefined||dane[p.id]===""?"—":dane[p.id]}</b></div>`).join("");
     };
     $(`${cfg.id}-dzien`).onchange = el._odswiez; $(`${cfg.id}-gracz`).onchange = el._odswiez;
     const ustawTryb = (t) => { el._tryb = t; const w = $(`${cfg.id}-wart`), g = $(`${cfg.id}-godz`); if (t){ w.value = ""; w.disabled = true; if (g){ g.value = ""; g.disabled = true; } } else { w.disabled = false; if (g) g.disabled = false; }
@@ -505,10 +526,11 @@ function renderDziennik(kind){
   }
   el._odswiez();
   const hist = state.log.filter(x=>x.typ===cfg.klucz).slice(-12).reverse();
-  $(`${cfg.id}-hist`).innerHTML = hist.length ? hist.map(x=>{ const p = PLAYERS.find(q=>q.id===x.pid); return `<div class="py-2 flex items-center justify-between gap-3"><div class="min-w-0"><div class="font-semibold truncate ${p?.klif?"text-klifTxt":""}">${p?.n||x.pid}</div><div class="text-[11px] text-mut">${etykieta(x.d)} · ${new Date(x.t).toLocaleString("pl-PL",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit"})}${x.admin?" · 🔑":""}</div></div><div class="num font-bold ${kind==="obrot"?"text-zloto":"text-neon"}">${typeof x.v==="number"?(kind==="obrot"?zl(x.v):x.v):x.v}</div></div>`; }).join("") : `<div class="py-6 text-center text-mut text-sm">Jeszcze pusto — pierwszy wpis otwiera sezon.</div>`;
+  $(`${cfg.id}-hist`).innerHTML = hist.length ? hist.map(x=>{ const p = PLAYERS.find(q=>q.id===x.pid); return `<div class="py-2 flex items-center justify-between gap-3"><div class="min-w-0"><div class="font-semibold truncate ${p?.pozaKonkursem?"text-klifTxt":""}">${p?.n||x.pid}</div><div class="text-[11px] text-mut">${etykieta(x.d)} · ${new Date(x.t).toLocaleString("pl-PL",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit"})}${x.admin?" · 🔑":""}</div></div><div class="num font-bold ${kind==="obrot"?"text-zloto":"text-neon"}">${typeof x.v==="number"?(kind==="obrot"?zl(x.v):x.v):x.v}</div></div>`; }).join("") : `<div class="py-6 text-center text-mut text-sm">Jeszcze pusto — pierwszy wpis otwiera sezon.</div>`;
 }
 /** Wspólny zapis jednej wartości (obrót / podejścia / godziny) z logiem. */
 async function zapiszWartosc(klucz, d, pid, v, logTyp){
+  if(PLAYERS.find(p=>p.id===pid)?.synced)throw Error("Ten wynik pochodzi z Systems. Popraw go w systemie sprzedaży.");
   if (demo){ (state[klucz][d] ??= {})[pid] = v; if (logTyp) state.log.push({ t: Date.now(), typ: logTyp, d, pid, v, admin: adminSession }); return; }
   await fb.set(fb.ref(db, `${klucz}/${d}/${pid}`), v);
   if (logTyp) await fb.push(fb.ref(db, "log"), { t: Date.now(), typ: logTyp, d, pid, v, admin: adminSession });
@@ -552,14 +574,14 @@ async function zapisz(cfg, d, pid, surowe, godzSurowe, el){
 let chO = null, chP = null;
 function renderWykresy(w){
   if (typeof Chart === "undefined") return;
-  const labels = DNI.map(d=>d+".09");
+  const labels = DNI.map(d=>d+"."+MM);
   const opcje = (tytulY) => ({ responsive:true, maintainAspectRatio:false, interaction:{ mode:"index", intersect:false },
-    plugins:{ legend:{ position:"bottom", labels:{ color:"#EDF1FF", boxWidth:10, font:{ size:10 } } }, tooltip:{ backgroundColor:"#0B1440", borderColor:"#1E2B66", borderWidth:1, titleColor:"#E8B84B" } },
-    scales:{ x:{ ticks:{ color:"#8FA3D9", maxRotation:45, font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" }, title:{ display:true, text:tytulY, color:"#8FA3D9" } } } });
-  const dsO = w.map((x,i)=>({ label:x.n, data:x.cum, borderColor:KOLORY[i % KOLORY.length], backgroundColor:KOLORY[i % KOLORY.length]+"22", borderWidth: x.klif?1.5:2.2, borderDash: x.klif?[5,4]:[], tension:.35, pointRadius:0, pointHitRadius:12, spanGaps:false }));
-  const dsP = w.map((x,i)=>({ label:x.n, data:x.dzienneP, backgroundColor:KOLORY[i % KOLORY.length]+(x.klif?"66":"CC"), borderColor:KOLORY[i % KOLORY.length], borderWidth:1, stack:"p" }));
+    plugins:{ legend:{ position:"bottom", labels:{ color:"#EDF1FF", boxWidth:10, font:{ size:10 } } }, tooltip:{ backgroundColor:"#16263a", borderColor:"#365471", borderWidth:1, titleColor:"#83caff" } },
+    scales:{ x:{ ticks:{ color:"#aab9ca", maxRotation:45, font:{size:10} }, grid:{ color:"#365471" } }, y:{ ticks:{ color:"#aab9ca", font:{size:10} }, grid:{ color:"#365471" }, title:{ display:true, text:tytulY, color:"#aab9ca" } } } });
+  const dsO = w.map((x,i)=>({ label:x.n, data:x.cum, borderColor:KOLORY[i % KOLORY.length], backgroundColor:KOLORY[i % KOLORY.length]+"22", borderWidth: x.pozaKonkursem?1.5:2.2, borderDash: x.pozaKonkursem?[5,4]:[], tension:.35, pointRadius:0, pointHitRadius:12, spanGaps:false }));
+  const dsP = w.map((x,i)=>({ label:x.n, data:x.dzienneP, backgroundColor:KOLORY[i % KOLORY.length]+(x.pozaKonkursem?"66":"CC"), borderColor:KOLORY[i % KOLORY.length], borderWidth:1, stack:"p" }));
   if (chO){ chO.data.datasets = dsO; chO.update("none"); } else chO = new Chart($("chObrot"), { type:"line", data:{ labels, datasets:dsO }, options:opcje("zł narastająco") });
-  if (chP){ chP.data.datasets = dsP; chP.update("none"); } else chP = new Chart($("chPodejscia"), { type:"bar", data:{ labels, datasets:dsP }, options:{ ...opcje("podejścia / dzień"), scales:{ x:{ stacked:true, ticks:{ color:"#8FA3D9", font:{size:10} }, grid:{ color:"#1E2B66" } }, y:{ stacked:true, ticks:{ color:"#8FA3D9" }, grid:{ color:"#1E2B66" } } } } });
+  if (chP){ chP.data.datasets = dsP; chP.update("none"); } else chP = new Chart($("chPodejscia"), { type:"bar", data:{ labels, datasets:dsP }, options:{ ...opcje("podejścia / dzień"), scales:{ x:{ stacked:true, ticks:{ color:"#aab9ca", font:{size:10} }, grid:{ color:"#365471" } }, y:{ stacked:true, ticks:{ color:"#aab9ca" }, grid:{ color:"#365471" } } } } });
 }
 
 // ═══════════════ 🏆 LOŻA MISTRZÓW ═══════════════
@@ -626,7 +648,7 @@ function renderLoza(){
       <label class="block text-[10px] font-bold text-mut uppercase tracking-widest">Twoja sytuacja</label>
       <select id="lozaSyt" class="w-full bg-noc border border-linia rounded-xl px-3 py-2.5 text-sm"><option value="-1">🎲 dowolna — zaskocz mnie</option>${SYTUACJE.map((x,i)=>`<option value="${i}">${x.s}</option>`).join("")}</select>
       <div id="lozaKarta" class="rounded-2xl border border-zloto/30 bg-gradient-to-br from-panel2 to-panel p-5 min-h-[180px]"></div>
-      <button id="lozaBtn" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">🎾 POTRZEBUJĘ RADY</button>
+      <button id="lozaBtn" class="w-full rounded-xl py-3.5 font-display font-bold text-xs tracking-widest text-[#092841] bg-gradient-to-br from-[#a6daff] via-zloto to-[#83caff] shadow-lg shadow-zloto/20 hover:-translate-y-0.5 transition">🎾 POTRZEBUJĘ RADY</button>
     </div>
     <div class="panel-box p-5 lg:col-span-2"><div class="eyebrow mb-3">Legendy w Loży</div><div class="space-y-2 text-xs">${LEGENDY.map(a=>`<div class="flex gap-2 items-start"><span class="text-base leading-none">${a.d}</span><div><b class="text-slate-100">${a.n}</b><div class="text-mut">${a.fakt}</div></div></div>`).join("")}</div></div>
   </div>`;
@@ -648,7 +670,7 @@ function analityka(w){
   }
   const obroty = w.map(x=>x.obrot), sr = obroty.reduce((a,b)=>a+b,0)/w.length, sd = Math.sqrt(obroty.reduce((a,b)=>a+(b-sr)**2,0)/Math.max(1,w.length-1)) || 1;
   const maxO = Math.max(1,...obroty), maxPB = Math.max(1,...w.map(x=>x.pb));
-  const ucz = [...w].filter(x=>!x.klif).sort((a,b)=>b.obrot-a.obrot), lider = ucz[0];
+  const ucz = [...w].filter(x=>!x.pozaKonkursem).sort((a,b)=>b.obrot-a.obrot), lider = ucz[0];
   return w.map(x=>{
     const { dzn, praca } = dzienneMap[x.id], real = dzn.filter(v=>v!==null);
     const m = real.length ? real.reduce((a,b)=>a+b,0)/real.length : 0, s2 = real.length>1 ? Math.sqrt(real.reduce((a,b)=>a+(b-m)**2,0)/(real.length-1)) : 0;
@@ -656,7 +678,7 @@ function analityka(w){
     let zS=0,zN=0,bS=0,bN=0; praca.forEach((p,i)=>{ if (p===null) return; const v = lokDni[x.lok][i]||0; if (p){zS+=v;zN++;} else {bS+=v;bN++;} });
     const efekt = bN===0 ? "💯 zawsze obecny" : (()=>{ const ez=zN?zS/zN:0, eb=bN?bS/bN:0; const r = eb ? Math.round(100*(ez/eb-1)) : 100; return (r>=0?"+":"")+r+"% punktu"; })();
     const sim = out[x.id] || { prognoza:x.obrot, podloga:x.obrot, sufit:x.obrot, szansa:-1 };
-    const cel = state.cele?.[x.id] || CEL_DOMYSLNY, poz = x.klif ? 0 : ucz.findIndex(q=>q.id===x.id)+1, strata = lider ? lider.obrot - x.obrot : 0, srD = x.otwarte ? x.obrot/x.otwarte : 0;
+    const cel = state.cele?.[x.id] || CEL_DOMYSLNY, poz = x.pozaKonkursem ? 0 : ucz.findIndex(q=>q.id===x.id)+1, strata = lider ? lider.obrot - x.obrot : 0, srD = x.otwarte ? x.obrot/x.otwarte : 0;
     const q = ucz.length>1 ? (poz-1)/(ucz.length-1) : 0;
     const a = {
       cel, procCelu: Math.round(100*x.obrot/cel), udzialPL: siec ? (100*x.obrot/siec) : 0, udzialLok: lokS[x.lok] ? 100*x.obrot/lokS[x.lok] : 0,
@@ -664,7 +686,7 @@ function analityka(w){
       mvp: Math.min(10, 5*x.obrot/maxO + 3*(x.otwarte ? x.dniAkt/x.otwarte : 0) + 2*x.pb/maxPB), momentum, efekt,
       prognoza: sim.prognoza, podloga: sim.podloga, sufit: sim.sufit, szansa: sim.szansa
     };
-    if (x.klif){ Object.assign(a, { kurs:"—", pogon:"—", magiczna:"—", kelly:"—", status:"🔴 Klif — poza konkursem" }); }
+    if (x.pozaKonkursem){ Object.assign(a, { kurs:"—", pogon:"—", magiczna:"—", kelly:"—", status:"Poza konkursem" }); }
     else if (poz===1 && x.obrot>0){ Object.assign(a, { kurs: a.szansa>=99.5 ? "1.00 (Lock)" : a.szansa>0 ? (100/a.szansa).toFixed(2) : "—", pogon:"👑 LIDER", magiczna:"👑 LIDER", kelly: Math.max(0,(2*a.szansa-100)).toFixed(1)+"%", status:"👑 LIDER SIECI" }); }
     else Object.assign(a, { kurs: a.szansa>0 ? (100/a.szansa).toFixed(2) : "—", kelly:"0.0%", pogon: pozostale ? "+"+fmt(Math.ceil(strata/pozostale))+" zł/dz" : "—",
       magiczna: pozostale===0 ? (strata>0?"💀 ELIMINACJA":"—") : strata > pozostale*Math.max(1,x.pb) ? "💀 ELIMINACJA (mat.)" : strata > pozostale*srD*1.2 ? "🪦 POZA ZASIĘGIEM" : "GOŃ: "+fmt(strata)+" zł",
@@ -676,14 +698,14 @@ function renderAnalityka(w){
   const H = ["MIEJSCE","ZAWODNIK","OBRÓT","TWÓJ CEL","% CELU","DNI AKT.","UDZIAŁ PL","UDZIAŁ PUNKT","EFFICIENCY","ŚR. SUROWA","PROGNOZA MC","PODŁOGA","SUFIT","Z-SCORE","SHARPE","KELLY","MVP","SZANSA","KURS BUK","POGOŃ","L. MAGICZNA","PB","CV %","MOMENTUM","EFEKT OBECN.","STATUS","🎯 PODEJŚCIA","ŚR. POD./DZ","ZŁ / POD.","⏱ GODZINY","ZŁ / H"];
   const rows = analityka(w);
   $("tbAnalityka").innerHTML = `<thead><tr>${H.map((h,i)=>`<th class="${i<2||i===25||i===24||i===19||i===20?"text-left":"text-right"}">${h}</th>`).join("")}</tr></thead><tbody>` + rows.map(x=>{
-    const c = x.klif ? "klif" : x.poz===1 ? "zloto" : x.poz===2 ? "srebro" : x.poz===3 ? "braz" : "";
+    const c = x.pozaKonkursem ? "pozaKonkursem" : x.poz===1 ? "zloto" : x.poz===2 ? "srebro" : x.poz===3 ? "braz" : "";
     const R = (v) => `<td class="text-right num">${v}</td>`, L = (v) => `<td class="text-left">${v}</td>`;
-    return `<tr class="${c}">${L(x.klif?'<span class="text-klifTxt font-bold">🔴 KLIF</span>':`<span class="text-zloto font-bold">${x.poz===1?"🥇":x.poz===2?"🥈":x.poz===3?"🥉":""} ${x.poz}.</span>`)}<td class="nazwa font-semibold">${x.n}</td>${R(zl(x.obrot))}${R(zl(x.cel))}${R(x.procCelu+"%")}${R(x.dniAkt+" / "+x.otwarte)}${R(x.udzialPL.toFixed(1)+"%")}${R(x.udzialLok.toFixed(1)+"%")}${R(x.efficiency+" pkt")}${R(zl(x.otwarte?x.obrot/x.otwarte:0))}${R(x.klif?"—":zl(x.prognoza))}${R(x.klif?"—":zl(x.podloga))}${R(x.klif?"—":zl(x.sufit))}${R((x.zscore>=0?"+":"")+x.zscore.toFixed(2)+" σ")}${R(x.sharpe.toFixed(2))}${R(x.kelly)}${R(x.mvp.toFixed(1)+" / 10")}${R(x.szansa>=0?x.szansa.toFixed(1)+"%":"—")}${R(x.kurs)}${L(x.pogon)}${L(x.magiczna)}${R(zl(x.pb))}${R(x.cv.toFixed(1)+"%")}${L((x.momentum>=0?"▲ +":"▼ ")+x.momentum+"%")}${L(x.efekt)}${L(x.status)}${R(fmt(x.sumaP))}${R(x.srP.toFixed(1))}${R(x.konw?zl(x.konw):"—")}${R(x.godz?x.godz.toFixed(1)+" h":"—")}${R(x.zlH?zl(x.zlH):"—")}</tr>`; }).join("") + "</tbody>";
+    return `<tr class="${c}">${L(x.pozaKonkursem?'<span class="text-klifTxt font-bold">POZA KONKURSEM</span>':`<span class="text-zloto font-bold">${x.poz===1?"🥇":x.poz===2?"🥈":x.poz===3?"🥉":""} ${x.poz}.</span>`)}<td class="nazwa font-semibold">${x.n}</td>${R(zl(x.obrot))}${R(zl(x.cel))}${R(x.procCelu+"%")}${R(x.dniAkt+" / "+x.otwarte)}${R(x.udzialPL.toFixed(1)+"%")}${R(x.udzialLok.toFixed(1)+"%")}${R(x.efficiency+" pkt")}${R(zl(x.otwarte?x.obrot/x.otwarte:0))}${R(x.pozaKonkursem?"—":zl(x.prognoza))}${R(x.pozaKonkursem?"—":zl(x.podloga))}${R(x.pozaKonkursem?"—":zl(x.sufit))}${R((x.zscore>=0?"+":"")+x.zscore.toFixed(2)+" σ")}${R(x.sharpe.toFixed(2))}${R(x.kelly)}${R(x.mvp.toFixed(1)+" / 10")}${R(x.szansa>=0?x.szansa.toFixed(1)+"%":"—")}${R(x.kurs)}${L(x.pogon)}${L(x.magiczna)}${R(zl(x.pb))}${R(x.cv.toFixed(1)+"%")}${L((x.momentum>=0?"▲ +":"▼ ")+x.momentum+"%")}${L(x.efekt)}${L(x.status)}${R(fmt(x.sumaP))}${R(x.srP.toFixed(1))}${R(x.konw?zl(x.konw):"—")}${R(x.godz?x.godz.toFixed(1)+" h":"—")}${R(x.zlH?zl(x.zlH):"—")}</tr>`; }).join("") + "</tbody>";
 }
 
 // ═══════════════ 🧠 MÓJ RAPORT TRENERA ═══════════════
 function symulacja(w){
-  const dz = dzisNr(), pozostale = DNI.filter(d=>d>dz).length, ucz = w.filter(x=>!x.klif), SIM = 400;
+  const dz = dzisNr(), pozostale = DNI.filter(d=>d>dz).length, ucz = w.filter(x=>!x.pozaKonkursem), SIM = 400;
   const par = ucz.map(x=>{ const dod=[]; for (const d of DNI){ if (d>dz) break; const st = status(state.obrot?.[d]?.[x.id], d); if (st.typ==="kwota" && st.w>0) dod.push(Math.log(st.w)); }
     const mu = dod.length ? dod.reduce((a,b)=>a+b,0)/dod.length : 0; let sig = .5; if (dod.length>1){ sig = Math.sqrt(dod.reduce((a,b)=>a+(b-mu)**2,0)/(dod.length-1)) || .4; }
     return { id:x.id, obrot:x.obrot, p: x.otwarte ? dod.length/x.otwarte : 0, mu, sig, sumy:[] }; });
@@ -699,30 +721,30 @@ function renderRaport(w){
   if (!el.dataset.built){
     el.innerHTML = `<div class="panel-box p-4 sm:p-5 space-y-4">
       <div class="flex flex-wrap items-end justify-between gap-3"><div><div class="eyebrow">Osobista analityka</div><h2 class="font-display font-bold text-sm text-zloto">🧠 Mój raport trenera</h2></div>
-        <div class="flex gap-2 items-center"><select id="rapKto" class="bg-noc border border-linia rounded-xl px-3 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select><button id="rapCel" class="rounded-xl px-3 py-2 text-xs font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">✏️ mój cel</button><button id="rapTel" class="rounded-xl px-3 py-2 text-xs font-bold border border-linia text-mut hover:bg-panel2">📱 mój numer</button></div></div>
+        <div class="flex gap-2 items-center"><select id="rapKto" class="bg-noc border border-linia rounded-xl px-3 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}" ${p.id===loggedUser?"selected":""}>${p.pozaKonkursem?"🔴 ":""}${p.n}</option>`).join("")}</select><button id="rapCel" class="rounded-xl px-3 py-2 text-xs font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">✏️ mój cel</button><button id="rapTel" class="rounded-xl px-3 py-2 text-xs font-bold border border-linia text-mut hover:bg-panel2">📱 mój numer</button></div></div>
       <div id="rapTresc"></div></div>`;
     el.dataset.built = "1";
     $("rapKto").onchange = () => renderRaport(oblicz());
     $("rapTel").onclick = async () => { const pid = zalogowanyPid() || $("rapKto").value; const n = prompt("Twój numer telefonu (do przypomnień SMS):", state.telefony?.[pid] || ""); if (n === null) return; const t = await zapiszTelefon(pid, n); if (t){ toast("📱 Numer zapisany: " + t); if (demo) render(); } };
-    $("rapCel").onclick = async () => { const pid = $("rapKto").value; const nowy = parseInt(prompt("Twój indywidualny cel na wrzesień (zł):", state.cele?.[pid] || CEL_DOMYSLNY), 10); if (isNaN(nowy) || nowy < 1000) return; if (demo){ (state.cele ??= {})[pid] = nowy; render(); } else await fb.set(fb.ref(db, `cele/${pid}`), nowy); toast(`🎯 Cel ustawiony: ${zl(nowy)}`); };
+    $("rapCel").onclick = async () => { const pid = $("rapKto").value; const nowy = parseInt(prompt(`Twój indywidualny cel na ${SEASON.name} (zł):`, state.cele?.[pid] || CEL_DOMYSLNY), 10); if (isNaN(nowy) || nowy < 1000) return; if (demo){ (state.cele ??= {})[pid] = nowy; render(); } else await fb.set(fb.ref(db, `cele/${pid}`), nowy); toast(`🎯 Cel ustawiony: ${zl(nowy)}`); };
   }
   const pid = $("rapKto").value, x = w.find(q=>q.id===pid); if (!x) return;
   const { out, pozostale } = symulacja(w), sim = out[pid] || { prognoza: x.obrot, szansa: -1 };
-  const ucz = [...w].filter(q=>!q.klif).sort((a,b)=>b.obrot-a.obrot), lider = ucz[0], miejsce = ucz.findIndex(q=>q.id===pid)+1;
+  const ucz = [...w].filter(q=>!q.pozaKonkursem).sort((a,b)=>b.obrot-a.obrot), lider = ucz[0], miejsce = ucz.findIndex(q=>q.id===pid)+1;
   const cel = state.cele?.[pid] || CEL_DOMYSLNY, proc = Math.round(100*x.obrot/cel), brak = Math.max(0, cel - x.obrot), sr = x.otwarte ? x.obrot/x.otwarte : 0;
   const strata = lider ? lider.obrot - x.obrot : 0;
-  const pogon = x.klif ? "poza konkursem" : miejsce===1 && x.obrot>0 ? "👑 LIDER" : pozostale ? "+" + zl(Math.ceil(strata/pozostale)) + "/dzień" : "—";
-  const magiczna = x.klif ? "—" : miejsce===1 && x.obrot>0 ? "👑 prowadzisz" : pozostale===0 ? "koniec sezonu" : strata > pozostale*Math.max(1,x.pb) ? "💀 eliminacja matematyczna" : strata > pozostale*sr*1.2 ? "🪦 poza zasięgiem tempa (+20%)" : "GOŃ: " + zl(strata);
+  const pogon = x.pozaKonkursem ? "poza konkursem" : miejsce===1 && x.obrot>0 ? "👑 LIDER" : pozostale ? "+" + zl(Math.ceil(strata/pozostale)) + "/dzień" : "—";
+  const magiczna = x.pozaKonkursem ? "—" : miejsce===1 && x.obrot>0 ? "👑 prowadzisz" : pozostale===0 ? "koniec sezonu" : strata > pozostale*Math.max(1,x.pb) ? "💀 eliminacja matematyczna" : strata > pozostale*sr*1.2 ? "🪦 poza zasięgiem tempa (+20%)" : "GOŃ: " + zl(strata);
   const dzienne = []; for (const d of DNI){ if (d>dzisNr()) break; const st = status(state.obrot?.[d]?.[pid], d); if (!["l4","x","laska","przyszly"].includes(st.typ)) dzienne.push(st.typ==="kwota"?st.w:0); }
   let momentum = 0; if (dzienne.length>=6){ const o = dzienne.slice(-4), b = dzienne.slice(0,-4); const mo = o.reduce((a,c)=>a+c,0)/o.length, mb = b.reduce((a,c)=>a+c,0)/b.length; momentum = mb ? Math.round(100*(mo/mb-1)) : 0; }
   const master = brak===0 ? `🎯 Cel ${zl(cel)} wykonany (${zl(x.obrot)}). Teraz gra się o rekordy i styl.` : `Do celu ${zl(cel)} brakuje ${zl(brak)}. To: ${Math.ceil(brak/200)}× szyba (200 zł) LUB ${Math.ceil(brak/450)}× ładowarka 3w1 (450 zł) LUB ${Math.ceil(brak/150)}× azotek duo (150 zł) LUB ${Math.ceil(brak/80)}× sznurek (80 zł). Górę rozbija się na sztuki — sztuki się sprzedaje.${pozostale ? ` Tempo potrzebne: ${zl(Math.ceil(brak/pozostale))}/dzień przez ${pozostale} dni.` : ""}`;
   const K = (e,v,c="") => `<div class="panel-box p-3"><div class="eyebrow">${e}</div><div class="font-display font-bold text-sm mt-1 num ${c}">${v}</div></div>`;
   const dzis = dzisNr(), rada = LEGENDY[(dzis + pid.length) % LEGENDY.length];
   $("rapTresc").innerHTML = `
-    <div class="flex flex-wrap items-baseline gap-2 mb-3"><span class="font-display font-bold text-lg ${x.klif?"text-klifTxt":"text-zloto"}">${x.n}</span><span class="text-xs text-mut">${x.lok}${x.klif?" · 🔴 poza konkursem":" · miejsce "+miejsce+" / "+ucz.length}</span></div>
+    <div class="flex flex-wrap items-baseline gap-2 mb-3"><span class="font-display font-bold text-lg ${x.pozaKonkursem?"text-klifTxt":"text-zloto"}">${x.n}</span><span class="text-xs text-mut">${x.lok}${x.pozaKonkursem?" · 🔴 poza konkursem":" · miejsce "+miejsce+" / "+ucz.length}</span></div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
       ${K("Obrót", zl(x.obrot), "text-zloto")}${K("% celu ("+fmt(cel)+" zł)", proc+"%", proc>=100?"text-szmaragd":"")}${K("Średnia / dzień", zl(sr))}${K("Dni aktywne", x.dniAkt+" / "+x.otwarte)}
-      ${K("Rekord dnia", zl(x.pb), "text-zloto")}${K("Prognoza MC", x.klif?"—":zl(sim.prognoza))}${K("Szansa na złoto", x.klif?"—":sim.szansa.toFixed(1)+"%", sim.szansa>=50?"text-szmaragd":"")}${K("Pogoń", pogon)}
+      ${K("Rekord dnia", zl(x.pb), "text-zloto")}${K("Prognoza MC", x.pozaKonkursem?"—":zl(sim.prognoza))}${K("Szansa na złoto", x.pozaKonkursem?"—":sim.szansa.toFixed(1)+"%", sim.szansa>=50?"text-szmaragd":"")}${K("Pogoń", pogon)}
       ${K("Momentum", (momentum>=0?"▲ +":"▼ ")+momentum+"%", momentum>=0?"text-szmaragd":"text-red-300")}${K("Liczba magiczna", magiczna)}${K("Podejścia", fmt(x.sumaP)+" (śr. "+x.srP.toFixed(1)+")", "text-neon")}${K("Zł / podejście", x.konw?zl(x.konw):"—")}
       ${K("⏱ Godziny na zmianach", x.godz?x.godz.toFixed(1)+" h":"—")}${K("Zł / godzinę", x.zlH?zl(x.zlH):"—", "text-zloto")}
     </div>
@@ -752,7 +774,7 @@ function pokazInfoLok(){
   el.classList.remove("hidden");
   $("bannerLokBtn").onclick = () => { localStorage.setItem(klucz, "1"); el.classList.add("hidden"); };
 }
-function opisBrakow(braki){ return braki.map(b => `${b.d}.09: ${[b.brakO&&"obrót", b.brakP&&"podejścia", b.brakG&&"godziny"].filter(Boolean).join(", ")}`).join(" · "); }
+function opisBrakow(braki){ return braki.map(b => `${b.d}.${MM}: ${[b.brakO&&"obrót", b.brakP&&"podejścia", b.brakG&&"godziny"].filter(Boolean).join(", ")}`).join(" · "); }
 function pokazPrzypomnienie(){
   const pid = zalogowanyPid(), el = $("bannerPrzyp"); if (!el) return;
   const p = pid && state.przypomnienia?.[pid], braki = pid ? policzBraki(pid) : [];
@@ -764,7 +786,8 @@ function pokazPrzypomnienie(){
   $("bannerPrzypBtn").onclick = () => { if (braki.length) sprawdzBraki(true); else el.classList.add("hidden"); };
 }
 function policzBraki(pid){
-  const dz = dzisNr(), h = new Date().getHours(), braki = [];
+  if(PLAYERS.find(p=>p.id===pid)?.synced)return [];
+  const dz = dzisNr(), h = warsawNow().hour, braki = [];
   for (const d of DNI){
     if (d > dz) break;
     if (d === dz && h < GODZINA_PRZYPOMNIENIA) break; // dzisiejszy dzień pytamy od 21:00
@@ -818,7 +841,7 @@ $("brakiZapisz").onclick = async () => {
     if (demo) render();
   } catch(e){ err.textContent = "Błąd zapisu: " + e.message; }
 };
-setInterval(() => { if (new Date().getHours() >= GODZINA_PRZYPOMNIENIA) sprawdzBraki(false); }, 5*60000);
+setInterval(() => { if (warsawNow().hour >= GODZINA_PRZYPOMNIENIA) sprawdzBraki(false); }, 5*60000);
 
 // ═══════════════ 👥 UŻYTKOWNICY (konta w bazie, generowane z panelu) ═══════════════
 const SLOWA_HASLA = ["Szyba","Piana","Sznurek","Azotek","Mistrz","Podium","Finisz","Rekord","Gol","Serwis","Ekran","Etui","Puchar","Gwiazda","Trofeum","Warroom","Liga","Medal","Bramka","Finał","Kibic","Sezon","Tempo","Klif"];
@@ -830,7 +853,7 @@ function renderAdmin(){
   const el = $("tab-admin");
   if (!adminSession){
     el.innerHTML = `<div class="max-w-md mx-auto panel-box p-6 space-y-3"><div class="eyebrow">Dostęp chroniony</div><h2 class="font-display font-bold text-zloto text-sm">🔑 Panel kierownika</h2><p class="text-xs text-mut">Kierownik (konto <b>${ADMIN_LOGIN}</b>) ma ten panel otwarty automatycznie po zalogowaniu. Inne osoby mogą tu wejść wyłącznie hasłem kierownika.</p>
-      <input id="pin" type="password" autocomplete="current-password" placeholder="hasło kierownika" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-sm"><button id="pinBtn" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#141005] bg-gradient-to-br from-[#FFEBB0] via-zloto to-[#B8862B]">ODBLOKUJ</button><div id="pinErr" class="text-xs text-red-300 text-center min-h-[16px]"></div></div>`;
+      <input id="pin" type="password" autocomplete="current-password" placeholder="hasło kierownika" class="w-full bg-noc border border-linia rounded-xl px-3 py-3 text-sm"><button id="pinBtn" class="w-full rounded-xl py-3 font-display font-bold text-xs tracking-widest text-[#092841] bg-gradient-to-br from-[#a6daff] via-zloto to-[#83caff]">ODBLOKUJ</button><div id="pinErr" class="text-xs text-red-300 text-center min-h-[16px]"></div></div>`;
     const go = async () => { $("pinBtn").textContent = "⏳…"; const rek = state.admin?.haslo?.odcisk ? state.admin.haslo : ADMIN_DOMYSLNY; const ok = await sprawdzHaslo($("pin").value, rek); $("pinBtn").textContent = "ODBLOKUJ"; if (ok){ adminSession = true; toast("🔑 Tryb kierownika aktywny w tej karcie."); render(); } else $("pinErr").textContent = "Błędne hasło."; };
     $("pinBtn").onclick = go; $("pin").onkeydown = e => { if (e.key === "Enter") go(); };
     return;
@@ -849,7 +872,7 @@ function renderAdmin(){
     <div id="adm-konta" class="${admTab==="konta"?"":"hidden"}">
     <div class="panel-box p-5 space-y-3"><div class="eyebrow">Użytkownicy</div><h2 class="font-display font-bold text-zloto text-sm">👥 Dodawanie użytkowników — login i hasło generowane automatycznie</h2>
       <div class="grid sm:grid-cols-3 gap-2">
-        <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Zawodnik</div><select id="uPid" class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.klif?"🔴 ":""}${p.n}</option>`).join("")}</select></div>
+        <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Zawodnik</div><select id="uPid" class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm">${PLAYERS.map(p=>`<option value="${p.id}">${p.pozaKonkursem?"🔴 ":""}${p.n}</option>`).join("")}</select></div>
         <div><div class="text-[10px] text-mut uppercase tracking-wide mb-1">Login (puste = automatyczny)</div><input id="uLogin" placeholder="np. maks_rzm2" class="w-full bg-noc border border-linia rounded-lg px-2 py-2 text-sm"></div>
         <div class="flex items-end"><button id="uDodaj" class="w-full rounded-lg py-2 font-bold border border-zloto/50 text-zloto hover:bg-zloto/10 text-sm">➕ Dodaj i wygeneruj hasło</button></div>
       </div>
@@ -883,7 +906,7 @@ function renderAdmin(){
     </div>
     <div class="panel-box p-5 space-y-3"><div class="eyebrow">Dane</div><h2 class="font-display font-bold text-zloto text-sm">🧹 Reset i sesja</h2>
       <p class="text-xs text-mut">Reset kasuje WSZYSTKIE wpisy obrotu, podejść i historię — u każdego użytkownika. Nie da się cofnąć.</p>
-      <button id="aReset" class="w-full rounded-xl py-2.5 font-bold border border-red-500/50 text-red-300 hover:bg-red-950/40">Zresetuj wszystkie dane września</button>
+      <button id="aReset" class="w-full rounded-xl py-2.5 font-bold border border-red-500/50 text-red-300 hover:bg-red-950/40">Zresetuj wpisy ręczne: ${SEASON.label}</button>
       <button id="aHaslo" class="w-full rounded-xl py-2.5 font-bold border border-zloto/40 text-zloto hover:bg-zloto/10">Zmień hasło kierownika</button>
       <button id="aWyloguj" class="w-full rounded-xl py-2.5 font-bold border border-linia text-mut hover:bg-panel2">Wyloguj z trybu kierownika</button>
       <div class="text-[11px] text-mut pt-2">W tej karcie masz pełną edycję każdego dnia — wpisy oznaczane są 🔑 w historii. W kodzie strony nie ma żadnych haseł — tylko odcisk hasła kierownika.</div>
@@ -927,7 +950,7 @@ function renderAdmin(){
     }
     w.textContent = raport.join("\n"); $("uImport").value = ""; toast(`✅ Wgrano hasła: ${n} kont.`); if (demo) rysujUzytkownikow();
   };
-  const rysujDodanych = () => { const d = PLAYERS.filter(p=>p.dodany); $("zLista").innerHTML = d.length ? "Dodani z panelu: " + d.map(p=>`<span class="inline-flex items-center gap-1 border border-linia rounded px-2 py-0.5 mr-1 mb-1">${p.n} · ${p.lok}${p.klif?" · 🔴":""} <button data-zusun="${p.id}" class="text-red-300">✕</button></span>`).join("") : "Brak zawodników dodanych z panelu (18 z listy podstawowej jest w kodzie)."; $("zLista").querySelectorAll("[data-zusun]").forEach(b => b.onclick = async () => { const id = b.dataset.zusun; if (!confirm(`Usunąć zawodnika ${id} z listy i jego konto? Wpisane wyniki zostaną w bazie.`)) return; if (demo){ delete state.zawodnicy[id]; delete state.uzytkownicy[id]; scalZawodnikow(); render(); } else { await fb.remove(fb.ref(db, `zawodnicy/${id}`)); await fb.remove(fb.ref(db, `uzytkownicy/${id}`)); } toast(`Usunięto ${id}.`); }); };
+  const rysujDodanych = () => { const d = PLAYERS.filter(p=>p.dodany); $("zLista").innerHTML = d.length ? "Dodani z panelu: " + d.map(p=>`<span class="inline-flex items-center gap-1 border border-linia rounded px-2 py-0.5 mr-1 mb-1">${p.n} · ${p.lok}${p.pozaKonkursem?" · 🔴":""} <button data-zusun="${p.id}" class="text-red-300">✕</button></span>`).join("") : "Brak zawodników dodanych z panelu (18 z listy podstawowej jest w kodzie)."; $("zLista").querySelectorAll("[data-zusun]").forEach(b => b.onclick = async () => { const id = b.dataset.zusun; if (!confirm(`Usunąć zawodnika ${id} z listy i jego konto? Wpisane wyniki zostaną w bazie.`)) return; if (demo){ delete state.zawodnicy[id]; delete state.uzytkownicy[id]; scalZawodnikow(); render(); } else { await fb.remove(fb.ref(db, `zawodnicy/${id}`)); await fb.remove(fb.ref(db, `uzytkownicy/${id}`)); } toast(`Usunięto ${id}.`); }); };
   rysujDodanych();
   $("zDodaj").onclick = async () => {
     const imie = $("zImie").value.trim(), lokWyb = $("zLok").value, lokNowa = $("zLokNowa").value.trim(), lok = lokWyb === "__nowa" ? lokNowa : lokWyb, klif = $("zKlif").checked;
@@ -954,7 +977,7 @@ function renderAdmin(){
     .map(([e,v,c]) => `<div class="panel-box p-3"><div class="eyebrow">${e}</div><div class="font-display font-bold text-base mt-1 num ${c}">${v}</div></div>`).join("");
   const tresc = (w) => `Cześć ${imie(w.p.n)}! Kierownik prosi o uzupełnienie ligi: ${opisBrakow(w.braki)}. Wejdź na https://ziebka17.github.io/liga-mistrzow/ i uzupełnij dziś — dzięki!`;
   const telOf = (pid) => state.telefony?.[pid] || "";
-  $("admBraki").innerHTML = wiersze.map(w => `<tr class="${w.p.klif?"klif":""}"><td class="nazwa font-semibold">${w.p.n}</td><td class="num whitespace-nowrap">${telOf(w.p.id) ? `<a href="tel:${telOf(w.p.id)}" class="text-neon">${telOf(w.p.id)}</a> <button data-tel="${w.p.id}" class="text-[10px] text-mut border border-linia rounded px-1">✏️</button>` : `<button data-tel="${w.p.id}" class="text-[11px] border border-yellow-500/50 text-yellow-300 rounded px-2 py-0.5">brak — wpisz</button>`}${telOf(w.p.id) ? ` <button data-telusun="${w.p.id}" class="text-[10px] text-red-300 border border-red-500/30 rounded px-1">usuń</button>` : ""}</td><td class="whitespace-nowrap">${(()=>{ const x = state.wykluczenia?.[w.p.id]; const dzisISO = new Date().toISOString().slice(0,10); const akt = x && (x.do === "zawsze" || (x.do && dzisISO <= x.do)); return akt ? `<span class="text-yellow-300 text-[11px]">🔕 ${x.do === "zawsze" ? "wyciszony" : "do " + x.do.slice(8,10) + "." + x.do.slice(5,7)}</span> <button data-wycisz="${w.p.id}" class="text-[10px] text-mut border border-linia rounded px-1">zmień</button>` : `<span class="text-szmaragd text-[11px]">🔔 aktywne</span> <button data-wycisz="${w.p.id}" class="text-[10px] text-mut border border-linia rounded px-1">wycisz</button>`; })()}</td><td>${w.braki.length ? `<span class="text-red-300">${opisBrakow(w.braki)}</span>` : `<span class="text-szmaragd">✅ komplet</span>`}</td><td class="text-mut">${w.log ? kiedy(w.log.t) + " " + (w.log.urz||"") : "nigdy"}</td><td class="text-mut">${w.wpis ? kiedy(w.wpis.t) : "—"}</td><td class="text-mut">${w.przyp ? "🔔 " + kiedy(w.przyp.t) : "—"}</td><td class="whitespace-nowrap"><button data-przyp="${w.p.id}" class="text-[11px] border ${w.braki.length?"border-red-500/40 text-red-300":"border-linia text-mut"} rounded px-2 py-0.5 mr-1">🔔 przypomnij</button>${w.braki.length ? `<button data-kopiuj="${w.p.id}" class="text-[11px] border border-linia text-mut rounded px-2 py-0.5">📋 kopiuj</button>` : ""}</td></tr>`).join("");
+  $("admBraki").innerHTML = wiersze.map(w => `<tr class="${w.p.pozaKonkursem?"pozaKonkursem":""}"><td class="nazwa font-semibold">${w.p.n}</td><td class="num whitespace-nowrap">${telOf(w.p.id) ? `<a href="tel:${telOf(w.p.id)}" class="text-neon">${telOf(w.p.id)}</a> <button data-tel="${w.p.id}" class="text-[10px] text-mut border border-linia rounded px-1">✏️</button>` : `<button data-tel="${w.p.id}" class="text-[11px] border border-yellow-500/50 text-yellow-300 rounded px-2 py-0.5">brak — wpisz</button>`}${telOf(w.p.id) ? ` <button data-telusun="${w.p.id}" class="text-[10px] text-red-300 border border-red-500/30 rounded px-1">usuń</button>` : ""}</td><td class="whitespace-nowrap">${(()=>{ const x = state.wykluczenia?.[w.p.id]; const dzisISO = new Date().toISOString().slice(0,10); const akt = x && (x.do === "zawsze" || (x.do && dzisISO <= x.do)); return akt ? `<span class="text-yellow-300 text-[11px]">🔕 ${x.do === "zawsze" ? "wyciszony" : "do " + x.do.slice(8,10) + "." + x.do.slice(5,7)}</span> <button data-wycisz="${w.p.id}" class="text-[10px] text-mut border border-linia rounded px-1">zmień</button>` : `<span class="text-szmaragd text-[11px]">🔔 aktywne</span> <button data-wycisz="${w.p.id}" class="text-[10px] text-mut border border-linia rounded px-1">wycisz</button>`; })()}</td><td>${w.braki.length ? `<span class="text-red-300">${opisBrakow(w.braki)}</span>` : `<span class="text-szmaragd">✅ komplet</span>`}</td><td class="text-mut">${w.log ? kiedy(w.log.t) + " " + (w.log.urz||"") : "nigdy"}</td><td class="text-mut">${w.wpis ? kiedy(w.wpis.t) : "—"}</td><td class="text-mut">${w.przyp ? "🔔 " + kiedy(w.przyp.t) : "—"}</td><td class="whitespace-nowrap"><button data-przyp="${w.p.id}" class="text-[11px] border ${w.braki.length?"border-red-500/40 text-red-300":"border-linia text-mut"} rounded px-2 py-0.5 mr-1">🔔 przypomnij</button>${w.braki.length ? `<button data-kopiuj="${w.p.id}" class="text-[11px] border border-linia text-mut rounded px-2 py-0.5">📋 kopiuj</button>` : ""}</td></tr>`).join("");
   const wyslij = async (lista) => {
     const wlasna = prompt(`Treść przypomnienia dla ${lista.length===1 ? imie(lista[0].p.n) : lista.length + " osób"} (puste = domyślna, czyli lista braków):`, "");
     if (wlasna === null) return;
@@ -982,8 +1005,8 @@ function renderAdmin(){
   $("admPrzypKazdy").onclick = () => wyslij(wiersze);
   $("admKopiujWszyscy").onclick = () => kopiuj(zZal.length ? "Liga Mistrzów — zaległości do uzupełnienia:\n" + zZal.map(w => `• ${imie(w.p.n)}: ${opisBrakow(w.braki)}`).join("\n") + "\nWejdźcie na https://ziebka17.github.io/liga-mistrzow/ i uzupełnijcie dziś. Dzięki!" : "Wszyscy mają komplet wpisów. 🎉", zZal.length + " os.");
   // ── AKTYWNOŚĆ ──
-  $("admLogowania").innerHTML = [...state.logowania].reverse().slice(0, 150).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<div class="py-2 px-3 flex justify-between gap-2"><span class="${p?.klif?"text-klifTxt":""} font-semibold truncate">${l.urz||""} ${p ? p.n : l.login}${l.admin?" 🔑":""}</span><span class="text-mut whitespace-nowrap">${kiedy(l.t)}</span></div>`; }).join("") || `<div class="p-4 text-mut">Brak logowań (log zbierany od tej wersji).</div>`;
-  const rysujLog = () => { const f = $("admLogFiltr").value; $("admLog").innerHTML = [...state.log].reverse().filter(l => !f || l.pid === f).slice(0, 200).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<tr><td class="text-mut whitespace-nowrap">${kiedy(l.t)}</td><td class="${p?.klif?"text-klifTxt":""} font-semibold">${p ? p.n : l.pid}${l.admin?" 🔑":""}</td><td>${l.typ === "obrot" ? "💰 obrót" : l.lok ? "🏢 podejścia wyspy " + l.lok : "🎯 podejścia"}</td><td class="text-mut">${etykieta(l.d)}</td><td class="text-right num font-bold">${typeof l.v === "number" ? (l.typ === "obrot" ? zl(l.v) : l.v) : l.v}</td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak wpisów.</td></tr>`; };
+  $("admLogowania").innerHTML = [...state.logowania].reverse().slice(0, 150).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<div class="py-2 px-3 flex justify-between gap-2"><span class="${p?.pozaKonkursem?"text-klifTxt":""} font-semibold truncate">${l.urz||""} ${p ? p.n : l.login}${l.admin?" 🔑":""}</span><span class="text-mut whitespace-nowrap">${kiedy(l.t)}</span></div>`; }).join("") || `<div class="p-4 text-mut">Brak logowań (log zbierany od tej wersji).</div>`;
+  const rysujLog = () => { const f = $("admLogFiltr").value; $("admLog").innerHTML = [...state.log].reverse().filter(l => !f || l.pid === f).slice(0, 200).map(l => { const p = PLAYERS.find(x => x.id === l.pid); return `<tr><td class="text-mut whitespace-nowrap">${kiedy(l.t)}</td><td class="${p?.pozaKonkursem?"text-klifTxt":""} font-semibold">${p ? p.n : l.pid}${l.admin?" 🔑":""}</td><td>${l.typ === "obrot" ? "💰 obrót" : l.lok ? "🏢 podejścia wyspy " + l.lok : "🎯 podejścia"}</td><td class="text-mut">${etykieta(l.d)}</td><td class="text-right num font-bold">${typeof l.v === "number" ? (l.typ === "obrot" ? zl(l.v) : l.v) : l.v}</td></tr>`; }).join("") || `<tr><td colspan="5" class="text-mut py-3">Brak wpisów.</td></tr>`; };
   rysujLog(); $("admLogFiltr").onchange = rysujLog;
   $("uHurt").onclick = async () => {
     const bez = PLAYERS.filter(p => !Object.values(state.uzytkownicy || {}).some(u => u.pid === p.id));
@@ -995,18 +1018,25 @@ function renderAdmin(){
   $("aOdbl").onclick = () => zapiszAdmin({ unlockUntil: Date.now() + 30*60000 }).then(()=>toast("🔓 Zespół może edytować przez 30 minut."));
   $("aTryb").onclick = () => zapiszAdmin({ editMode: !state.admin?.editMode });
   $("aZamknij").onclick = () => zapiszAdmin({ unlockUntil: 0, editMode: false });
-  $("aReset").onclick = async () => { if (prompt('Wpisz RESET, aby skasować wszystkie dane września:') !== "RESET") return toast("Anulowano."); if (demo){ state.obrot={}; state.podejscia={}; state.log=[]; render(); } else { await fb.remove(fb.ref(db,"obrot")); await fb.remove(fb.ref(db,"podejscia")); await fb.remove(fb.ref(db,"log")); } toast("🧹 Dane wyzerowane."); };
+  $("aReset").onclick = async () => { if (prompt(`Wpisz RESET, aby skasować ręczne wpisy miesiąca ${SEASON.label}:`) !== "RESET") return toast("Anulowano."); if (demo){ state.obrot={}; state.podejscia={}; state.log=[]; render(); } else { await fb.remove(fb.ref(db,"obrot")); await fb.remove(fb.ref(db,"podejscia")); await fb.remove(fb.ref(db,"log")); await fb.remove(fb.ref(db,"godziny")); await fb.remove(fb.ref(db,"podejscia_lok")); } toast("🧹 Ręczne wpisy miesiąca wyzerowane."); };
   $("aWyloguj").onclick = () => { adminSession = false; render(); toast("Wylogowano z trybu kierownika."); };
   $("aHaslo").onclick = async () => { const n = prompt("Nowe hasło kierownika (min. 8 znaków):"); if (!n) return; if (n.length < 8) return toast("Hasło min. 8 znaków.", "err"); const sol = losowaSol(), odcisk = await odciskHasla(n, sol); const rek = { sol, odcisk, pid: ADMIN_LOGIN, t: Date.now() }; if (demo){ state.admin.haslo = { sol, odcisk }; (state.uzytkownicy ??= {})[ADMIN_LOGIN] = rek; } else { await fb.update(fb.ref(db, "admin"), { haslo: { sol, odcisk } }); await fb.set(fb.ref(db, `uzytkownicy/${ADMIN_LOGIN}`), rek); } toast("✅ Hasło kierownika zmienione."); };
 }
 
 function renderStatus(){
-  const dz = dzisNr(), h = new Date().getHours(), nr = DNI.indexOf(dz) + 1;
+  $("seasonLabel").textContent=SEASON.label.toUpperCase();
+  $("seasonFooter").textContent=`ZbitaSzybka Systems · Liga Mistrzów · ${SEASON.label}`;
+  $("contestRules").textContent=SEASON.key==="2026-10"?"Klif bierze udział w konkursie. Kraków (KRK) i Antek Riviera są poza konkursem — bez miejsc i medali. Riviera jest nową wyspą; pozostali jej zawodnicy uczestniczą w konkursie. Wyniki Riviery pobierane są z Systems, pozostałe wyspy wpisują je w dziennikach ligi.":"We wrześniu zawodnicy Klifu są poza konkursem — bez miejsc i medali. Zachowujemy wyniki i zasady tej edycji.";
+  $("systemsInfo").classList.toggle("hidden",SEASON.key!=="2026-10");
+  const stamp=state.systems?.updatedAt;
+  $("systemsStatus").textContent=stamp?`Sprzedaż, podejścia i godziny z grafiku aktualizują się automatycznie. Ostatnie pobranie: ${new Date(stamp).toLocaleString("pl-PL",{timeZone:"Europe/Warsaw"})}. Pozostałe wyspy uzupełniają dzienniki w lidze.${Date.now()-Date.parse(stamp)>180000?" Połączenie jest opóźnione — wyświetlamy ostatnio pobrane dane.":""}`:"Oczekiwanie na pierwsze połączenie z Systems. Pozostałe wyspy uzupełniają dzienniki w lidze.";
+
+  const dz = dzisNr(), h = warsawNow().hour, nr = DNI.indexOf(dz) + 1;
   // podtytuł: cały skład podstawowy (Klif liczony mimo pauzy w tym miesiącu) + zawodnicy dodani z panelu, o ile biorą udział
-  const ucz = PLAYERS.filter(p => !p.dodany || !p.klif), wyspy = new Set(ucz.map(p => p.lok)).size;
+  const ucz = PLAYERS, wyspy = new Set(ucz.map(p => p.lok)).size;
   const odm = (n, j, m, w) => n === 1 ? j : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? m : w;
   $("heroInfo").textContent = `${DNI.length} dni handlowych · ${ucz.length} ${odm(ucz.length, "zawodnik", "zawodników", "zawodników")} · ${wyspy} ${odm(wyspy, "wyspa", "wyspy", "wysp")} w Polsce`;
-  $("matchday").textContent = DNI.includes(dz) ? `MATCHDAY ${nr} / 26 · ${etykieta(dz)}` : dz === 0 ? "Sezon startuje 1.09" : dz === 31 ? "Sezon zakończony" : `${dz}.09 · dzień wolny`;
+  $("matchday").textContent = DNI.includes(dz) ? `MATCHDAY ${nr} / ${DNI.length} · ${etykieta(dz)}` : dz === 0 ? `Sezon startuje 1.${MM}` : dz === 32 ? "Sezon zakończony" : `${dz}.${MM} · dzień wolny`;
   $("statusLock").textContent = adminSession ? "🔑 kierownik" : edycjaGlobalna() ? "🔓 edycja otwarta" : !DNI.includes(dz) ? "📅 brak dnia handlowego" : h >= GODZINA_BLOKADY ? `🔒 po ${GODZINA_BLOKADY}:00 — dziś zamknięte` : `🟢 dziś otwarte do ${GODZINA_BLOKADY}:00`;
 }
 
@@ -1038,11 +1068,13 @@ function trybPodgladu(powod){
   if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "WKLEJ_TUTAJ") return trybPodgladu("");
   try {
     const [{ initializeApp }, dbMod] = await Promise.all([ import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"), import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js") ]);
-    fb = { ref: dbMod.ref, onValue: dbMod.onValue, set: dbMod.set, update: dbMod.update, remove: dbMod.remove, push: dbMod.push };
+    fb = { ref: (database,path)=>dbMod.ref(database,dataPath(path,SEASON)), onValue: dbMod.onValue, set: dbMod.set, update: dbMod.update, remove: dbMod.remove, push: dbMod.push };
     const app = initializeApp(firebaseConfig); db = dbMod.getDatabase(app);
     fb.onValue(fb.ref(db, "/"), snap => {
-      const v = snap.val() || {};
-      state = { obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {}, zawodnicy: v.zawodnicy || {}, logowania: Object.values(v.logowania || {}).sort((a,b)=>a.t-b.t).slice(-300), przypomnienia: v.przypomnienia || {}, telefony: v.telefony || {}, wykluczenia: v.wykluczenia || {}, podejscia_lok: v.podejscia_lok || {} };
+      const root=snap.val()||{}; const monthly=mergeSystems(monthData(root,SEASON)); const v={...root,...monthly};
+      for(const key of ["obrot","podejscia","godziny","log","cele","podejscia_lok","przypomnienia"])v[key]=monthly[key]||{};
+      v.systems=SEASON.key==="2026-10"?monthly.systems:null;
+      state = { systems:v.systems, obrot: v.obrot || {}, podejscia: v.podejscia || {}, godziny: v.godziny || {}, log: Object.values(v.log || {}).sort((a,b)=>a.t-b.t).slice(-200), admin: v.admin || { unlockUntil:0, editMode:false }, cele: v.cele || {}, uzytkownicy: v.uzytkownicy || {}, zawodnicy: v.zawodnicy || {}, logowania: Object.values(v.logowania || {}).sort((a,b)=>a.t-b.t).slice(-300), przypomnienia: v.przypomnienia || {}, telefony: v.telefony || {}, wykluczenia: v.wykluczenia || {}, podejscia_lok: v.podejscia_lok || {} };
       bazaZaladowana = true; scalZawodnikow(); render(); pokazPrzypomnienie(); sprawdzTelefon(); pokazInfoLok(); sprawdzLogowanie(true); sprawdzBraki(); $("kropka").className = "w-2 h-2 rounded-full bg-szmaragd"; $("statusTxt").textContent = "na żywo";
     }, err => { $("kropka").className = "w-2 h-2 rounded-full bg-red-500"; $("statusTxt").textContent = "błąd bazy"; toast("Firebase: " + err.message + " — sprawdź reguły bazy.", "err"); });
   } catch (e) { trybPodgladu("Nie udało się pobrać biblioteki Firebase (brak sieci albo zamknięty podgląd). Na GitHub Pages połączenie działa normalnie."); }
