@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {SEASONS,seasonFor,seasonPlayer,tradingDays,dataPath,monthData,mergeSystems,seasonDay} from './league-config.mjs';
+test('Firebase day arrays with null gaps preserve manual entries and merge source',()=>{
+ const raw={obrot:[null,{antek_klif:99,michal_klif:333},null,{michal_klif:444}],systems:{version:1,month:'2026-10',players:{antek_klif:{}},obrot:[null,{antek_klif:4430},null,{antek_klif:200}]}};
+ const before=structuredClone(raw),result=mergeSystems(raw);
+ assert.deepEqual(result.obrot,{'1':{michal_klif:333,antek_klif:4430},'3':{michal_klif:444,antek_klif:200}});
+ assert.deepEqual(raw,before);assert.deepEqual(mergeSystems(result),result);
+});
 test('months never mix historical values or write paths',()=>{
  const sep=SEASONS['2026-09'],oct=seasonFor('2026-10');
  const root={obrot:{1:{x:99}},miesiace:{'2026-10':{obrot:{1:{x:12}}}}};

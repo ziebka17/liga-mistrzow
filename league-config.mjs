@@ -25,9 +25,10 @@ export function mergeSystems(month){
  const result={...month};const source=month.systems;
  if(!source||source.month!=='2026-10'||source.version!==1)return result;
  for(const key of ['obrot','podejscia','godziny']){
-  result[key]=structuredClone(month[key]||{});
+  // Firebase serializes dense numeric day keys as arrays, with null gaps.
+  result[key]=Object.fromEntries(Object.entries(month[key]||{}).filter(([,rows])=>rows&&typeof rows==='object').map(([day,rows])=>[day,{...rows}]));
   for(const rows of Object.values(result[key]))for(const id of Object.keys(source.players||{}))delete rows[id];
-  for(const [day,rows]of Object.entries(source[key]||{}))result[key][day]={...(result[key][day]||{}),...rows};
+  for(const [day,rows]of Object.entries(source[key]||{}))if(rows&&typeof rows==='object')result[key][day]={...(result[key][day]||{}),...rows};
  }
  return result;
 }
